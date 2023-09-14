@@ -1,6 +1,8 @@
 import React from "react";
 import Login from "./pages/login";
 import Home from "./pages/Home";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./pages/ProtectedRoute";
 
 enum SidePanelState {
   Login,
@@ -22,9 +24,19 @@ const SidePanel = () => {
   };
 
   return (
-    <>
-      <Home />
-    </>
+    <MemoryRouter initialEntries={["/home"]}>
+      <Routes>
+        <Route
+          path="home"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="login" element={<Login />} />
+      </Routes>
+    </MemoryRouter>
   );
 };
 

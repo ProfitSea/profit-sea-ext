@@ -3,6 +3,7 @@ import CustomInput from "../components/CustomInput";
 import Logo from "../components/Logo";
 import { Button, Divider } from "@mui/material";
 import SocialButton from "../components/SocialButton";
+import { redirect } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = React.useState("");
@@ -44,6 +45,9 @@ const Login = () => {
             "&:hover": {
               backgroundColor: "#FBBB00",
             },
+          }}
+          onClick={() => {
+            return redirect("/home");
           }}
         >
           LOGIN
