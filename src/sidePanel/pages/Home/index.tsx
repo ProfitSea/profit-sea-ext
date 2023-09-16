@@ -1,59 +1,23 @@
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { Breadcrumbs, MenuItem, Select } from "@mui/material";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import CustomButton from "../../components/CustomButton";
 import CustomDivider from "../../components/CustomDivider";
+import Header from "../../components/Header";
 import CustomHomeButton from "./CustomHomeButton";
-import { useNavigate } from "react-router-dom";
-
-const breadcrumbs = [
-  <p key={1} className="text-[#FBBB00] text-xs" onClick={() => {}}>
-    List Builder
-  </p>,
-  <p key={2} className="text-xs" onClick={() => {}}>
-    Product Type
-  </p>,
-  <p key={3} className="text-xs" onClick={() => {}}>
-    Product Analysis
-  </p>,
-];
+import BreadCrumbs from "../../components/BreadCrumbs";
 
 const Home = () => {
   const navigate = useNavigate();
   return (
     <div className="">
-      <div className="h-[30px] flex items-center justify-start px-[8px] gap-[12px]">
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={10}
-          onChange={() => {}}
-          sx={{
-            height: "25px",
-            "& .MuiSelect-select": {
-              fontSize: "11px",
-            },
-          }}
-        >
-          <MenuItem value={10}>New List Name</MenuItem>
-        </Select>
-        <img src="/assets/icons/map.png" className="w-[22px]" alt="map" />
-        <img src="/assets/icons/anchor.png" className="w-[22px]" alt="anchor" />
-      </div>
+      <Header />
       <CustomDivider orientation="horizontal" />
       <div className="h-[40px] flex items-center justify-start px-[8px] gap-[12px]">
         <p className="text-lg">New List Name</p>
         <img src="/assets/icons/pen.png" className="w-[18px]" alt="edit" />
       </div>
       <CustomDivider orientation="horizontal" />
-      <div className="h-[30px] flex items-center justify-start px-[8px]">
-        <Breadcrumbs
-          separator={<NavigateNextIcon fontSize="small" />}
-          aria-label="breadcrumb"
-        >
-          {breadcrumbs}
-        </Breadcrumbs>
-      </div>
+      <BreadCrumbs />
       <CustomDivider orientation="horizontal" />
       <div className="h-[80px] bg-[#F5F5F5] flex justify-center items-center">
         {" "}

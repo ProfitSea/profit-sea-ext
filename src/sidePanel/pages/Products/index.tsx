@@ -1,46 +1,60 @@
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { Breadcrumbs, MenuItem, Select } from "@mui/material";
 import React from "react";
+import BreadCrumbs from "../../components/BreadCrumbs";
+import CustomButton from "../../components/CustomButton";
 import CustomDivider from "../../components/CustomDivider";
+import Header from "../../components/Header";
 import AnchorSvgIcon from "../../components/svg-icons/AnchorSvgIcon";
 import DiscountSvgIcon from "../../components/svg-icons/DiscountSvgIcon";
-import MapSvgIcon from "../../components/svg-icons/MapSvgIcon";
+import CustomTag from "./CustomTag";
 
-const breadcrumbs = [
-  <p key={1} className="text-[#FBBB00] text-xs" onClick={() => {}}>
-    List Builder
-  </p>,
-  <p key={2} className="text-xs" onClick={() => {}}>
-    Product Type
-  </p>,
-  <p key={3} className="text-xs" onClick={() => {}}>
-    Product Analysis
-  </p>,
-];
-
-interface CustomTagProps {
-  active: boolean;
-  name: string;
-  count: number;
-  icon: React.ReactElement;
-}
-
-const CustomTag: React.FC<CustomTagProps> = ({ active, name, count, icon }) => {
+const Product = () => {
   return (
-    <div
-      className={`h-9 px-2 py-1.5 ${
-        active ? "bg-[#FBBB00] text-white" : "bg-[#EBEBEB] text-[#737373]"
-      } rounded-2xl justify-start items-center gap-2 inline-flex`}
-    >
-      <div className="justify-start items-center gap-2 flex">
-        <div className="w-4 h-4 text-xs relative">{icon}</div>
-        <div className="w-[70px] text-xs font-normal font-['SF Pro Text'] leading-tight">
-          {name}
-        </div>
-      </div>
-      <div className="justify-center text-white items-center flex rounded-full bg-[#737373]">
-        <div className="self-stretch p-[5px] flex-col justify-start items-center inline-flex">
-          <div className="w-3.5 h-3.5 text-[12px] relative">{count}</div>
+    <div className="w-80 h-[200px] px-3.5 bg-white flex-col justify-start items-start gap-3.5 inline-flex">
+      <div className="self-stretch h-[158px] py-[17px] bg-white flex-col justify-start items-start gap-3.5 flex">
+        <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
+          <div className="w-16 h-16 rounded-lg justify-center items-center flex">
+            <div className="grow shrink basis-0 self-stretch p-px bg-white rounded-[5px] justify-center items-center inline-flex">
+              <img
+                className="w-[62px] h-[62px]"
+                src="https://via.placeholder.com/62x62"
+              />
+            </div>
+          </div>
+          <div className="grow shrink basis-0 flex-col justify-center items-start inline-flex">
+            <div className="self-stretch text-zinc-800 text-[13px] font-semibold font-['SF Pro Text'] leading-tight">
+              US FOODS
+              <br />
+              Packer
+              <br />
+              Potato, French-fry 1/2" Crinkle-cut Frozen
+            </div>
+            <div className="self-stretch text-neutral-500 text-xs font-normal font-['SF Pro Text'] leading-[18px]">
+              #3351426 | 6/5 LB | $0.96 / LB
+            </div>
+          </div>
+          <div className="justify-center items-end gap-2.5 flex">
+            <div className="h-[79px] flex-col justify-start items-center inline-flex">
+              <div className="w-[87px] h-[47px] text-center text-zinc-800 text-sm font-semibold font-['SF Pro Text'] leading-[21px]">
+                $28.99 CS
+              </div>
+              <div className="w-[90px] h-[23px] relative">
+                <div className="w-[21px] h-[21px] left-0 top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex">
+                  <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                    +
+                  </div>
+                </div>
+                <div className="w-[26px] h-[23px] left-[33px] top-0 absolute rounded-[5px] border border-slate-200" />
+                <div className="w-5 left-[36px] top-[2.50px] absolute text-center text-black text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                  10
+                </div>
+                <div className="w-[21px] h-[21px] left-[69px] top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex">
+                  <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                    -
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -50,38 +64,14 @@ const CustomTag: React.FC<CustomTagProps> = ({ active, name, count, icon }) => {
 const Products = () => {
   return (
     <div className="">
-      <div className="h-[30px] flex items-center justify-start px-[8px] gap-[12px]">
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={10}
-          onChange={() => {}}
-          sx={{
-            height: "25px",
-            "& .MuiSelect-select": {
-              fontSize: "11px",
-            },
-          }}
-        >
-          <MenuItem value={10}>New List Name</MenuItem>
-        </Select>
-        <img src="/assets/icons/map.png" className="w-[22px]" alt="map" />
-        <img src="/assets/icons/anchor.png" className="w-[22px]" alt="anchor" />
-      </div>
+      <Header />
       <CustomDivider orientation="horizontal" />
       <div className="h-[40px] flex items-center justify-start px-[8px] gap-[12px]">
         <p className="text-lg">Main Order Guide (72 Items)</p>
         <img src="/assets/icons/pen.png" className="w-[18px]" alt="edit" />
       </div>
       <CustomDivider orientation="horizontal" />
-      <div className="h-[30px] flex items-center justify-start px-[8px]">
-        <Breadcrumbs
-          separator={<NavigateNextIcon fontSize="small" />}
-          aria-label="breadcrumb"
-        >
-          {breadcrumbs}
-        </Breadcrumbs>
-      </div>
+      <BreadCrumbs />
       <CustomDivider orientation="horizontal" />
       <div className="h-[100px] bg-[#F5F5F5] flex flex-col items-start justify-center px-[8px] gap-[12px] overflow-x-auto">
         <div className="flex flex-row gap-[12px]">
@@ -161,13 +151,33 @@ const Products = () => {
             name="Hooks"
             active={false}
             count={26}
-            icon={
-              <img src="/assets/icons/map.svg" alt="map" />
-            }
+            icon={<img src="/assets/icons/map.svg" alt="map" />}
           />
         </div>
       </div>
       <CustomDivider orientation="horizontal" />
+      <div className="h-[380px] bg-[#F5F5F5] flex flex-col overflow-y-auto">
+        <Product />
+        <CustomDivider orientation="horizontal" />
+        <Product />
+        <CustomDivider orientation="horizontal" />
+        <Product />
+        <CustomDivider orientation="horizontal" />
+        <Product />
+      </div>
+      <CustomDivider orientation="horizontal" />
+      <div className="h-[60px] px-[10px] flex items-center justify-center">
+        <CustomButton
+          title="Continue to Product Type"
+          bgColor="#FBBB00"
+          textColor="white"
+          onClick={() => {}}
+        />
+      </div>
+      <div className="text-[#FBBB00] px-[12px] flex flex-row gap-[20px]">
+        <p className="">How it works</p>
+        <p>Privacy Policy</p>
+      </div>
     </div>
   );
 };
