@@ -3,9 +3,10 @@ import CustomInput from "../components/CustomInput";
 import Logo from "../components/Logo";
 import { Button, Divider } from "@mui/material";
 import SocialButton from "../components/SocialButton";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
@@ -47,7 +48,7 @@ const Login = () => {
             },
           }}
           onClick={() => {
-            return redirect("/home");
+            return navigate("/home");
           }}
         >
           LOGIN

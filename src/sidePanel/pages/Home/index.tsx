@@ -4,6 +4,7 @@ import React from "react";
 import CustomButton from "../../components/CustomButton";
 import CustomDivider from "../../components/CustomDivider";
 import CustomHomeButton from "./CustomHomeButton";
+import { useNavigate } from "react-router-dom";
 
 const breadcrumbs = [
   <p key={1} className="text-[#FBBB00] text-xs" onClick={() => {}}>
@@ -18,6 +19,7 @@ const breadcrumbs = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <div className="">
       <div className="h-[30px] flex items-center justify-start px-[8px] gap-[12px]">
@@ -71,7 +73,9 @@ const Home = () => {
         title="Open US Foods"
         bgColor="#4A4A4A"
         textColor="white"
-        onClick={() => {}}
+        onClick={() => {
+          navigate("/products");
+        }}
       />
       <CustomHomeButton
         title="Open Sysco"
