@@ -48,7 +48,7 @@ const Login = () => {
             },
           }}
           onClick={() => {
-            return navigate("/home");
+            return navigate("/list-builder");
           }}
         >
           LOGIN
