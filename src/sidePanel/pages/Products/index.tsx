@@ -3,8 +3,8 @@ import BreadCrumbs from "../../components/BreadCrumbs";
 import CustomButton from "../../components/CustomButton";
 import CustomDivider from "../../components/CustomDivider";
 import Header from "../../components/Header";
-import CustomTag from "./CustomTag";
 import Product from "./Product";
+import Tags from "./Tags";
 
 const Products = () => {
   const [vendorTags, setVendorTags] = React.useState([
@@ -67,62 +67,8 @@ const Products = () => {
       <BreadCrumbs />
       <CustomDivider orientation="horizontal" />
       <div className="h-[100px] bg-[#F5F5F5] flex flex-col items-start justify-center px-[8px] gap-[12px] overflow-x-auto">
-        <div className="flex flex-row gap-[12px]">
-          {vendorTags.map((tag, index) => (
-            <CustomTag
-              id={tag.id}
-              key={index}
-              name={tag.name}
-              active={tag.active}
-              count={tag.count}
-              icon={tag.icon}
-              onActive={(id: number) => {
-                let updatedTags = vendorTags.map((tag) => {
-                  if (tag.id === id) {
-                    return {
-                      ...tag,
-                      active: true,
-                    };
-                  } else {
-                    return {
-                      ...tag,
-                      active: false,
-                    };
-                  }
-                });
-                setVendorTags(updatedTags);
-              }}
-            />
-          ))}
-        </div>
-        <div className="flex flex-row gap-[12px]">
-          {productTags.map((tag, index) => (
-            <CustomTag
-              id={tag.id}
-              key={index}
-              name={tag.name}
-              active={tag.active}
-              count={tag.count}
-              icon={tag.icon}
-              onActive={(id: number) => {
-                let updatedTags = productTags.map((tag) => {
-                  if (tag.id === id) {
-                    return {
-                      ...tag,
-                      active: true,
-                    };
-                  } else {
-                    return {
-                      ...tag,
-                      active: false,
-                    };
-                  }
-                });
-                setProductTags(updatedTags);
-              }}
-            />
-          ))}
-        </div>
+        <Tags tags={vendorTags} setTags={setVendorTags} />
+        <Tags tags={productTags} setTags={setProductTags} />
       </div>
       <CustomDivider orientation="horizontal" />
       <div className="h-[380px] bg-[#F5F5F5] flex flex-col overflow-y-auto">
