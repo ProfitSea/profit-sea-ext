@@ -1,3 +1,4 @@
+import { DeleteOutlined } from "@mui/icons-material";
 import React from "react";
 
 const Product = () => {
@@ -45,14 +46,25 @@ const Product = () => {
                 <div className="w-5 left-[36px] top-[2.50px] absolute text-center text-black text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
                   {quantity}
                 </div>
-                <button
-                  onClick={() => setQuantity((prev) => prev - 1)}
-                  className="w-[21px] h-[21px] left-[69px] top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
-                >
-                  <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-                    -
-                  </div>
-                </button>
+                {quantity !== 0 ? (
+                  <button
+                    onClick={() => setQuantity((prev) => prev - 1)}
+                    className="w-[21px] h-[21px] left-[69px] top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
+                  >
+                    <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                      -
+                    </div>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {}}
+                    className="w-[21px] h-[21px] left-[69px] top-[1px] absolute justify-center items-center gap-2.5 inline-flex"
+                  >
+                    <div className="text-stone-800 text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                      <DeleteOutlined />
+                    </div>
+                  </button>
+                )}
               </div>
             </div>
           </div>
