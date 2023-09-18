@@ -1,6 +1,6 @@
 import React from "react";
-import DiscountSvgIcon from "../../components/svg-icons/DiscountSvgIcon";
-import AnchorSvgIcon from "../../components/svg-icons/AnchorSvgIcon";
+import DiscountSvgIcon from "./svg-icons/DiscountSvgIcon";
+import AnchorSvgIcon from "./svg-icons/AnchorSvgIcon";
 
 interface CustomTagProps {
   id: number;

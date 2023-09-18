@@ -5,6 +5,7 @@ import { CircularProgress } from "@mui/material";
 const Login = React.lazy(() => import("./pages/login"));
 const Home = React.lazy(() => import("./pages/Home"));
 const ListBuilder = React.lazy(() => import("./pages/ListBuilder"));
+const ProductsType = React.lazy(() => import("./pages/ProductsType"));
 const ProtectedRoute = React.lazy(() => import("./pages/ProtectedRoute"));
 
 const SidePanel = () => {
@@ -31,6 +32,14 @@ const SidePanel = () => {
             element={
               <ProtectedRoute>
                 <ListBuilder />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="productsType"
+            element={
+              <ProtectedRoute>
+                <ProductsType />
               </ProtectedRoute>
             }
           />

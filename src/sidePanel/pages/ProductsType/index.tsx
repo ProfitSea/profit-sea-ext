@@ -5,10 +5,8 @@ import CustomDivider from "../../components/CustomDivider";
 import Header from "../../components/Header";
 import Product from "./Product";
 import Tags from "../../components/Tags";
-import { useNavigate } from "react-router-dom";
 
-const ListBuilder = () => {
-  const navigate = useNavigate();
+const ProductsType = () => {
   const [vendorTags, setVendorTags] = React.useState([
     {
       id: 1,
@@ -88,9 +86,7 @@ const ListBuilder = () => {
           title="Continue to Product Type"
           bgColor="#FBBB00"
           textColor="white"
-          onClick={() => {
-            navigate("/productsType");
-          }}
+          onClick={() => {}}
         />
       </div>
       <div className="text-[#FBBB00] px-[12px] flex flex-row gap-[20px]">
@@ -101,4 +97,4 @@ const ListBuilder = () => {
   );
 };
 
-export default ListBuilder;
+export default ProductsType;
