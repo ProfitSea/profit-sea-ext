@@ -15,7 +15,7 @@ const BreadCrumbs = () => {
     </p>,
   ];
   return (
-    <div className="h-[30px] flex items-center justify-start px-[8px]">
+    <div className="flex-none h-[30px] flex items-center justify-start px-[8px]">
       <Breadcrumbs
         separator={<NavigateNextIcon fontSize="small" />}
         aria-label="breadcrumb"
