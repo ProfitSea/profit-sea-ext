@@ -59,40 +59,38 @@ const ProductsType = () => {
   ]);
 
   return (
-    <div className="">
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <CustomDivider orientation="horizontal" />
-      <div className="h-[40px] flex items-center justify-start px-[8px] gap-[12px]">
-        <p className="text-lg">Main Order Guide (72 Items)</p>
-        <img src="/assets/icons/pen.png" className="w-[18px]" alt="edit" />
-      </div>
-      <CustomDivider orientation="horizontal" />
-      <BreadCrumbs />
-      <CustomDivider orientation="horizontal" />
-      <div className="h-[100px] bg-[#F5F5F5] flex flex-col items-start justify-center px-[8px] gap-[12px] overflow-x-auto">
-        <Tags tags={vendorTags} setTags={setVendorTags} />
-        <Tags tags={productTags} setTags={setProductTags} />
-      </div>
-      <CustomDivider orientation="horizontal" />
-      <div className="h-[380px] bg-[#F5F5F5] flex flex-col overflow-y-auto">
-        <Product />
+      <div className="flex-1 flex flex-col">
         <CustomDivider orientation="horizontal" />
-        <Product />
+        <div className="flex-none h-[40px] flex items-center justify-start px-[8px] gap-[12px]">
+          <p className="text-lg">Main Order Guide (72 Items)</p>
+          <img src="/assets/icons/pen.png" className="w-[18px]" alt="edit" />
+        </div>
         <CustomDivider orientation="horizontal" />
-        <Product />
+        <BreadCrumbs />
         <CustomDivider orientation="horizontal" />
-        <Product />
-      </div>
-      <CustomDivider orientation="horizontal" />
-      <div className="h-[60px] px-[10px] flex items-center justify-center">
-        <CustomButton
-          title="Continue to Analysis"
-          bgColor="#FBBB00"
-          textColor="white"
-          onClick={() => {
-            navigate("/productsAnalysis");
-          }}
-        />
+        <div className="flex-none h-[100px] bg-[#F5F5F5] flex flex-col items-start justify-center px-[8px] gap-[12px] overflow-x-auto">
+          <Tags tags={vendorTags} setTags={setVendorTags} />
+          <Tags tags={productTags} setTags={setProductTags} />
+        </div>
+        <CustomDivider orientation="horizontal" />
+        <div className="flex-grow bg-[#F5F5F5] flex flex-col overflow-y-auto">
+          <Product />
+          <CustomDivider orientation="horizontal" />
+          <Product />
+        </div>
+        <CustomDivider orientation="horizontal" />
+        <div className="h-[60px] px-[10px] flex items-center justify-center">
+          <CustomButton
+            title="Continue to Analysis"
+            bgColor="#FBBB00"
+            textColor="white"
+            onClick={() => {
+              navigate("/productsAnalysis");
+            }}
+          />
+        </div>
       </div>
       <Footer />
     </div>

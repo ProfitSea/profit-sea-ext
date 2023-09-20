@@ -3,8 +3,8 @@ import React from "react";
 const Product = () => {
 
   return (
-    <div className="w-[100%] h-[170px] px-3.5 bg-white border-t border-neutral-200 flex-col justify-start items-start gap-3.5 inline-flex">
-      <div className="self-stretch h-[158px] py-[17px] bg-white border-t border-neutral-200 flex-col justify-start items-start gap-3.5 flex">
+    <div className="w-[100%] h-[170px] px-3.5 bg-white flex-col justify-start items-start gap-3.5 inline-flex">
+      <div className="self-stretch h-[158px] py-[17px] bg-white flex-col justify-start items-start gap-3.5 flex">
         <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
           <div className="w-16 h-16 rounded-lg justify-center items-center flex">
             <div className="grow shrink basis-0 self-stretch p-px bg-white rounded-[5px] border border-neutral-200 justify-center items-center inline-flex">
