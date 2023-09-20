@@ -3,7 +3,7 @@ import { MenuItem, Select } from "@mui/material";
 
 const Header = () => {
   return (
-    <div className="h-[30px] flex items-center justify-start px-[8px] gap-[12px]">
+    <div className="h-[40px] flex items-center justify-start px-[8px] gap-[12px]">
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"

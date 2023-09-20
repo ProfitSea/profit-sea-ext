@@ -1,15 +1,13 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import BreadCrumbs from "../../components/BreadCrumbs";
 import CustomButton from "../../components/CustomButton";
 import CustomDivider from "../../components/CustomDivider";
 import Header from "../../components/Header";
 import Tags from "../../components/Tags";
-import Product from "./Product";
+import AnalysisProduct from "./AnalysisProduct";
 import Footer from "../../components/Footer";
 
-const ProductsType = () => {
-  const navigate = useNavigate();
+const ProductsAnalysis = () => {
   const [vendorTags, setVendorTags] = React.useState([
     {
       id: 1,
@@ -74,14 +72,14 @@ const ProductsType = () => {
         <Tags tags={productTags} setTags={setProductTags} />
       </div>
       <CustomDivider orientation="horizontal" />
-      <div className="h-[380px] bg-[#F5F5F5] flex flex-col overflow-y-auto">
-        <Product />
+      <div className="bg-[#F5F5F5] flex flex-col overflow-y-auto">
+        <AnalysisProduct />
         <CustomDivider orientation="horizontal" />
-        <Product />
+        <AnalysisProduct />
         <CustomDivider orientation="horizontal" />
-        <Product />
+        <AnalysisProduct />
         <CustomDivider orientation="horizontal" />
-        <Product />
+        <AnalysisProduct />
       </div>
       <CustomDivider orientation="horizontal" />
       <div className="h-[60px] px-[10px] flex items-center justify-center">
@@ -89,9 +87,7 @@ const ProductsType = () => {
           title="Continue to Analysis"
           bgColor="#FBBB00"
           textColor="white"
-          onClick={() => {
-            navigate("/productsAnalysis");
-          }}
+          onClick={() => {}}
         />
       </div>
       <Footer />
@@ -99,4 +95,4 @@ const ProductsType = () => {
   );
 };
 
-export default ProductsType;
+export default ProductsAnalysis;

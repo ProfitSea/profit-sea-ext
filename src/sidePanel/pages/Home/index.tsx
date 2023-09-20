@@ -5,6 +5,7 @@ import CustomDivider from "../../components/CustomDivider";
 import Header from "../../components/Header";
 import CustomHomeButton from "./CustomHomeButton";
 import BreadCrumbs from "../../components/BreadCrumbs";
+import Footer from "../../components/Footer";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -67,10 +68,7 @@ const Home = () => {
           onClick={() => {}}
         />
       </div>
-      <div className="text-[#FBBB00] px-[12px] flex flex-row gap-[20px]">
-        <p className="">How it works</p>
-        <p>Privacy Policy</p>
-      </div>
+      <Footer />
     </div>
   );
 };

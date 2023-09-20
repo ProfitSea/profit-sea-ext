@@ -6,6 +6,7 @@ import Header from "../../components/Header";
 import Product from "./Product";
 import Tags from "../../components/Tags";
 import { useNavigate } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 const ListBuilder = () => {
   const navigate = useNavigate();
@@ -93,10 +94,7 @@ const ListBuilder = () => {
           }}
         />
       </div>
-      <div className="text-[#FBBB00] px-[12px] flex flex-row gap-[20px]">
-        <p className="">How it works</p>
-        <p>Privacy Policy</p>
-      </div>
+      <Footer />
     </div>
   );
 };

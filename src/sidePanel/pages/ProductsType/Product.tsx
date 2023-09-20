@@ -1,11 +1,9 @@
-import { DeleteOutlined } from "@mui/icons-material";
 import React from "react";
 
 const Product = () => {
-  const [quantity, setQuantity] = React.useState(10);
 
   return (
-    <div className="w-80 h-[170px] px-3.5 bg-white border-t border-neutral-200 flex-col justify-start items-start gap-3.5 inline-flex">
+    <div className="w-[100%] h-[170px] px-3.5 bg-white border-t border-neutral-200 flex-col justify-start items-start gap-3.5 inline-flex">
       <div className="self-stretch h-[158px] py-[17px] bg-white border-t border-neutral-200 flex-col justify-start items-start gap-3.5 flex">
         <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
           <div className="w-16 h-16 rounded-lg justify-center items-center flex">
@@ -17,7 +15,7 @@ const Product = () => {
             </div>
           </div>
           <div className="grow shrink basis-0 flex-col justify-center items-start inline-flex">
-            <div className="self-stretch text-zinc-800 text-[13px] font-semibold font-['SF Pro Text'] leading-tight">
+            <div className="self-stretch text-zinc-800 text-[13px] font-semibold font-['SF Pro Text'] leading-[1.4]">
               US FOODS
               <br />
               Packer
