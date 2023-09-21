@@ -18,7 +18,7 @@ const SidePanel = () => {
         </div>
       }
     >
-      <MemoryRouter initialEntries={["/home"]}>
+      <MemoryRouter initialEntries={["/login"]}>
         <Routes>
           <Route
             path="home"
