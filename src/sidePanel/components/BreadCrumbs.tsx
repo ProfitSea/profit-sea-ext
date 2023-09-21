@@ -69,7 +69,7 @@ const BreadCrumbs = () => {
         separator={<NavigateNextIcon fontSize="small" />}
         aria-label="breadcrumb"
         sx={{
-          '& .css-4pdmu4-MuiBreadcrumbs-ol': {
+          '& .css-nhb8h9': {
             flexWrap: 'nowrap',
           },
         }} 
