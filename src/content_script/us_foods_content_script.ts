@@ -1,3 +1,5 @@
+import "./index.css";
+
 // Observer for dynamically loaded productContainer
 const UsFoodsBodyObserver = new MutationObserver((mutationsList, observer) => {
   for (const mutation of mutationsList) {
@@ -6,7 +8,6 @@ const UsFoodsBodyObserver = new MutationObserver((mutationsList, observer) => {
         "app-group-product-list-desktop"
       );
       if (productContainer) {
-        console.log("productContainer found");
         // Disconnect the body observer once we found the container
         observer.disconnect();
         // Initialize product observer
@@ -34,18 +35,23 @@ const initializeProductObserver = (productContainer: any) => {
 
           const div = document.createElement("div");
           div.className =
-            "flex flex-row gap-[5px] items-center justify-center cursor-pointer";
+            "mt-2 flex flex-row gap-[5px] items-center justify-center cursor-pointer";
           const p = document.createElement("p");
           const img = document.createElement("img");
-          img.src = chrome.runtime.getURL("/assets/icons/add.png");
+          img.src = chrome.runtime.getURL("assets/icons/add.png");
           img.alt = "add";
           p.innerHTML = "Add To ProfitSea";
-          p.className = "bg-transparent font-semibold mt-2 your-button-class";
+          p.className = "bg-transparent font-semibold your-button-class";
 
           div.appendChild(p);
           div.appendChild(img);
           div.onclick = () => {
-            const imgSrc = card.querySelector("img")?.src || null;
+            const productImageDiv = card.querySelector(".product-image-column");
+            if (!productImageDiv) return;
+            // Query for the image element within that div
+            const productImageElement = productImageDiv.querySelector("img");
+            // Get the image source URL
+            const imgSrc = productImageElement?.getAttribute("src") || null;
             const brand =
               card.querySelector(".brand-row")?.textContent?.trim() || null;
             const description =
@@ -81,7 +87,7 @@ const initializeProductObserver = (productContainer: any) => {
                 )
                 ?.textContent?.trim() || null;
 
-            console.log({
+            const product = {
               vendor: "US Foods",
               imgSrc,
               brand,
@@ -90,6 +96,10 @@ const initializeProductObserver = (productContainer: any) => {
               packSize,
               prices: priceDetails,
               lineNumber,
+            };
+            chrome.runtime.sendMessage({
+              action: "recieve_New_Product",
+              payload: product,
             });
           };
 
@@ -101,4 +111,16 @@ const initializeProductObserver = (productContainer: any) => {
   productObserver.observe(productContainer, { childList: true, subtree: true });
 };
 
-export default UsFoodsBodyObserver;
+function onPageLoaded() {
+  UsFoodsBodyObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.action === "historyUpdated") {
+    // Do something when history is updated
+    onPageLoaded();
+  }
+});

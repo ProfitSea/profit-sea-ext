@@ -1,38 +1,47 @@
 import { DeleteOutlined } from "@mui/icons-material";
 import React from "react";
+import ProductInterface from "../../utils/product.interface";
 
-const Product = () => {
-  const [quantity, setQuantity] = React.useState(10);
+interface ProductProps {
+  product: ProductInterface;
+  deleteProduct: (productNumber: ProductInterface["productNumber"]) => void;
+}
+
+const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
+  const [quantity, setQuantity] = React.useState(product.quantity || 0);
 
   return (
     <div className="w-[100%] px-3.5 bg-white flex-col justify-start items-start gap-3.5 inline-flex">
-      <div className="self-stretch h-[158px] py-[17px] bg-white flex-col justify-start items-start gap-3.5 flex">
+      <div className="self-stretch py-[17px] bg-white flex-col justify-start items-start gap-3.5 flex">
         <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
-          <div className="w-16 h-16 rounded-lg justify-center items-center flex">
-            <div className="grow shrink basis-0 self-stretch p-px bg-white rounded-[5px] justify-center items-center inline-flex">
-              <img
-                className="w-[62px] h-[62px]"
-                src="https://via.placeholder.com/62x62"
-              />
-            </div>
+          <div className="w-16 h-16 bg-white rounded-md flex justify-center items-center border-[1px] border-zinc-300 ">
+            <img
+              className="w-[62px] h-[62px] p-[2px] rounded-md max-w-none"
+              src={product?.imgSrc}
+            />
           </div>
-          <div className="grow shrink basis-0 flex-col justify-center items-start inline-flex">
+          <div className="w-[200px] grow shrink basis-0 flex-col justify-center items-start inline-flex">
             <div className="self-stretch text-zinc-800 text-[13px] font-semibold font-['SF Pro Text'] leading-[1.4]">
-              US FOODS
+              {product?.vendor}
               <br />
-              Packer
+              <span className="text-[12px] font-light">{product?.brand}</span>
               <br />
-              Potato, French-fry 1/2" Crinkle-cut Frozen
+              {product?.description}
             </div>
-            <div className="self-stretch text-neutral-500 text-xs font-normal font-['SF Pro Text'] leading-[18px]">
-              #3351426 | 6/5 LB | $0.96 / LB
+            <div className="self-stretch text-neutral-500 text-[12px] font-light font-['SF Pro Text'] leading-[18px]">
+              {`${product?.productNumber} | ${product?.packSize}`}
             </div>
           </div>
           <div className="justify-center items-end gap-2.5 flex">
             <div className="h-[79px] flex-col justify-start items-center inline-flex">
-              <div className="w-[87px] h-[47px] text-center text-zinc-800 text-sm font-semibold font-['SF Pro Text'] leading-[21px]">
-                $28.99 CS
-              </div>
+              {product?.prices.map((price, index) => (
+                <div
+                  key={price.price + index}
+                  className="w-[87px] h-[47px] text-center text-zinc-800 text-sm font-semibold font-['SF Pro Text'] leading-[21px]"
+                >
+                  {`${price?.price} ${price?.unit}`}
+                </div>
+              ))}
               <div className="w-[90px] h-[23px] relative">
                 <button
                   onClick={() => setQuantity((prev) => prev + 1)}
@@ -57,7 +66,7 @@ const Product = () => {
                   </button>
                 ) : (
                   <button
-                    onClick={() => {}}
+                    onClick={() => deleteProduct(product.productNumber)}
                     className="w-[21px] h-[21px] left-[69px] top-[1px] absolute justify-center items-center gap-2.5 inline-flex"
                   >
                     <div className="text-stone-800 text-xs font-semibold font-['SF Pro Text'] leading-[18px]">

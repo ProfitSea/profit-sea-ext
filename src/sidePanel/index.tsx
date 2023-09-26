@@ -6,8 +6,4 @@ import "./index.css";
 
 const root = createRoot(document.getElementById("root")!);
 
-root.render(
-  <React.StrictMode>
-    <SidePanel />
-  </React.StrictMode>
-);
+root.render(<SidePanel />);

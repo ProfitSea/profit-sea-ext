@@ -41,6 +41,9 @@ const Home = () => {
             bgColor="#4A4A4A"
             textColor="white"
             onClick={() => {
+              chrome.tabs.create({
+                url: "https://order.usfoods.com/desktop/lists",
+              });
               navigate("/listbuilder");
             }}
           />
