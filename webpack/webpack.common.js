@@ -12,6 +12,11 @@ module.exports = {
       "content_script",
       "us_foods_content_script.ts"
     ),
+    sysco_content_script: path.join(
+      srcDir,
+      "content_script",
+      "sysco_content_script.ts"
+    ),
   },
   output: {
     path: path.join(__dirname, "../dist/js"),
