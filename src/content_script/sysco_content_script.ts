@@ -1,7 +1,6 @@
 const addProfitSeaColumn = (dataHeader: Element) => {
   const newCol = document.createElement("div");
-  newCol.className =
-    "col data-grid-col last-ordered-col profitsea-col"; // Add relevant classes
+  newCol.className = "col data-grid-col last-ordered-col profitsea-col"; // Add relevant classes
   newCol.innerText = "ProfitSea";
 
   // Get the first column
@@ -26,11 +25,71 @@ const createAddBtnDiv = () => {
 
   div.appendChild(p);
   div.appendChild(img);
-  div.onclick = () => {
-    alert("Clicked");
-  };
 
   return div;
+};
+
+const scrapProductDetails = (row: Element) => {
+  // Initializing an empty object for the product
+  const product: any = {
+    prices: [],
+    vendor: "Sysco",
+  };
+
+  // Utility function to safely get innerText and trim it
+  const getText = (element: HTMLElement | null) =>
+    element ? element.innerText.trim() : null;
+
+  // imgSrc
+  const imgElement = row.querySelector(
+    ".product-info-image img"
+  ) as HTMLImageElement;
+  if (imgElement) product.imgSrc = imgElement.src;
+
+  // brand
+  const brandElement = row.querySelector(
+    ".product-info-name .product-label-style:last-child"
+  ) as HTMLElement;
+  product.brand = getText(brandElement);
+
+  // description
+  const descriptionElement = row.querySelector(
+    ".product-info-name .product-name-label"
+  ) as HTMLElement;
+  product.description = getText(descriptionElement);
+
+  // productNumber
+  const productNumberElement = row.querySelector(
+    ".product-info-name .product-label-style:first-child"
+  ) as HTMLElement;
+  product.productNumber = getText(productNumberElement);
+
+  // packSize
+  const packSizeElement = row.querySelector(
+    ".product-info-name .product-label-style:nth-child(2)"
+  ) as HTMLElement;
+  product.packSize = getText(packSizeElement);
+
+  // prices
+  const parsePriceAndUnit = (priceElement: HTMLElement | null) => {
+    if (!priceElement) return null;
+
+    const parsedText = priceElement.innerText.split(" ");
+    const price = parseFloat(parsedText[0].replace("$", ""));
+    const unit = parsedText[1];
+
+    return { price, unit };
+  };
+
+  const priceElements = Array.from(
+    row.querySelectorAll(".net-price .aui-label")
+  ) as HTMLElement[];
+
+  for (const priceElement of priceElements) {
+    const priceUnitObj = parsePriceAndUnit(priceElement);
+    if (priceUnitObj) product.prices.push(priceUnitObj);
+  }
+  return product;
 };
 
 // Observer for dynamically loaded productContainer
@@ -71,6 +130,14 @@ const initializeProductObserver = (productsContainer: any) => {
           if (row.querySelector(".profitsea-add-btn")) return;
 
           const btnDiv = createAddBtnDiv();
+
+          btnDiv.onclick = () => {
+            const productDetails = scrapProductDetails(row);
+            chrome.runtime.sendMessage({
+              action: "recieve_New_Product",
+              payload: productDetails,
+            });
+          };
 
           // Insert the new column (with button) after the first column (drag-col) of the row
           let firstCol = row.querySelector(".drag-col");

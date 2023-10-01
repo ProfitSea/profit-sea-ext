@@ -25,7 +25,6 @@ const ListBuilder = () => {
           unit: "CS",
         },
       ],
-      lineNumber: "Line # 1",
     },
     {
       vendor: "US Foods",
@@ -41,7 +40,6 @@ const ListBuilder = () => {
           unit: "EA",
         },
       ],
-      lineNumber: "Line # 2",
     },
   ] as ProductInterface[]);
   const [vendorTags, setVendorTags] = React.useState([
@@ -113,7 +111,7 @@ const ListBuilder = () => {
       <div className="flex-1 flex flex-col">
         <CustomDivider orientation="horizontal" />
         <div className="flex-none h-[40px] flex items-center justify-start px-[8px] gap-[12px]">
-          <p contentEditable className="text-lg">Main Order Guide (72 Items)</p>
+          <p className="text-lg">Main Order Guide (72 Items)</p>
           <img src="/assets/icons/pen.png" className="w-[18px]" alt="edit" />
         </div>
         <CustomDivider orientation="horizontal" />
