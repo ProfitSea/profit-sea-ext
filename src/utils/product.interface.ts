@@ -5,7 +5,7 @@ interface Price {
 
 interface ProductInterface {
   vendor: string;
-  imgSrc: string;
+  imgSrc: string | null;
   brand: string;
   description: string;
   productNumber: string;

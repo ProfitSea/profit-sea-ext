@@ -7,7 +7,7 @@ import Product from "./Product";
 import Tags from "../../components/Tags";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer";
-import ProductInterface from "../../utils/product.interface";
+import ProductInterface from "../../../utils/product.interface";
 
 const ListBuilder = () => {
   const navigate = useNavigate();

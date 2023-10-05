@@ -1,6 +1,6 @@
 import { DeleteOutlined } from "@mui/icons-material";
 import React from "react";
-import ProductInterface from "../../utils/product.interface";
+import ProductInterface from "../../../utils/product.interface";
 
 interface ProductProps {
   product: ProductInterface;

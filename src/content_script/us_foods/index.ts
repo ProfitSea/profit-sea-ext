@@ -1,44 +1,46 @@
+import productsApi from "../../api/productsApi";
 import "../index.css";
 
-const scrapProductDetails = (card: Element) => {
-  const productImageDiv = card.querySelector(".product-image-column");
-  if (!productImageDiv) return;
-  // Query for the image element within that div
-  const productImageElement = productImageDiv.querySelector("img");
-  // Get the image source URL
-  const imgSrc = productImageElement?.getAttribute("src") || null;
-  const brand = card.querySelector(".brand-row")?.textContent?.trim() || null;
-  const description =
-    card.querySelector(".description-row")?.textContent?.trim() || null;
-  const productNumber =
-    card.querySelector('[data-cy*="product-number-"]')?.textContent?.trim() ||
-    null;
-  const packSize =
-    card.querySelector('[data-cy*="product-packsize-"]')?.textContent?.trim() ||
-    null;
+// Utility functions
+const getText = (element: HTMLElement) =>
+  element ? element.innerText.trim() : null;
+
+const extractPrices = (card: Element) => {
   const prices = card.querySelectorAll(".price-text");
-  const priceDetails = [] as any;
+  return Array.from(prices).map((priceElement) => {
+    const priceText = priceElement.textContent?.trim() || "";
+    return {
+      price: parseFloat(priceText.replace(/[^0-9\.]+/g, "")),
+      unit: priceText.split(/\s+/).pop(),
+    };
+  });
+};
 
-  for (const priceElement of prices) {
-    if (!priceElement || !priceElement.textContent) return;
-    const priceText = priceElement.textContent.trim();
-    const unit = priceText.split(/\s+/).pop();
-    const price = Number(priceText.replace(/[^0-9\.]+/g, ""));
-
-    priceDetails.push({
-      price: price,
-      unit: unit,
-    });
-  }
+const scrapProductDetails: any = (card: Element) => {
+  const imgSrc = card
+    .querySelector(".product-image-column img")
+    ?.getAttribute("src");
+  const brand = getText(card.querySelector(".brand-row") as HTMLElement);
+  const description = getText(
+    card.querySelector(".description-row") as HTMLElement
+  );
+  const productNumber = getText(
+    card.querySelector('[data-cy*="product-number-"]') as HTMLElement
+  );
+  const packSize = getText(
+    card.querySelector('[data-cy*="product-packsize-"]') as HTMLElement
+  );
+  const prices = extractPrices(card);
 
   return {
     vendor: "US Foods",
-    imgSrc,
+    imgSrc: imgSrc ? imgSrc : null,
     brand,
     description,
     productNumber,
     packSize,
-    prices: priceDetails,
+    prices,
+    quantity: 0,
   };
 };
 
@@ -50,72 +52,62 @@ const createAddBtnDiv = (card: Element) => {
   const img = document.createElement("img");
   img.src = chrome.runtime.getURL("assets/icons/add.png");
   img.alt = "add";
-  p.innerHTML = "Add To ProfitSea";
+  p.textContent = "Add To ProfitSea";
   p.className = "bg-transparent font-semibold your-button-class";
-  div.appendChild(p);
-  div.appendChild(img);
-  div.onclick = () => {
-    const product = scrapProductDetails(card);
-    chrome.runtime.sendMessage({
-      action: "recieve_New_Product",
-      payload: product,
-    });
+  div.append(p, img);
+
+  div.onclick = async () => {
+    try {
+      const product = scrapProductDetails(card);
+      if (!product) return;
+      await productsApi.addProduct(product);
+      chrome.runtime.sendMessage({
+        action: "recieve_New_Product",
+        payload: product,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
+
   return div;
 };
 
-// Observer for dynamically loaded productContainer
-const UsFoodsBodyObserver = new MutationObserver((mutationsList, observer) => {
-  for (const mutation of mutationsList) {
+const observeBody = new MutationObserver((mutations) => {
+  for (const mutation of mutations) {
     if (mutation.type === "childList") {
       const productContainer = document.querySelector(
         "app-group-product-list-desktop"
       );
       if (productContainer) {
-        // Disconnect the body observer once we found the container
-        observer.disconnect();
-        // Initialize product observer
-        initializeProductObserver(productContainer);
+        observeBody.disconnect();
+        observeProducts(productContainer);
       }
     }
   }
 });
 
-// Observer for dynamically loaded products inside the productContainer
-const initializeProductObserver = (productContainer: any) => {
-  const productObserver = new MutationObserver((mutationsList, observer) => {
-    for (const mutation of mutationsList) {
+const observeProducts = (container: Element) => {
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
       if (mutation.type === "childList") {
-        const newCards = (mutation.target as Element).querySelectorAll(
-          ".card-outline"
+        const newCards = Array.from(
+          container.querySelectorAll(".card-outline")
         );
         for (const card of newCards) {
-          const ellipsisElement = card.querySelector(".order-price-column");
-          if (!ellipsisElement || !ellipsisElement.parentNode) return;
-
-          const existingButton =
-            ellipsisElement.parentNode.querySelector(".your-button-class");
-          if (existingButton) return;
-
-          const btnDiv = createAddBtnDiv(card);
-          ellipsisElement.appendChild(btnDiv);
+          const target = card.querySelector(".order-price-column");
+          if (target && !target.querySelector(".your-button-class")) {
+            target.appendChild(createAddBtnDiv(card));
+          }
         }
       }
     }
   });
-  productObserver.observe(productContainer, { childList: true, subtree: true });
+  observer.observe(container, { childList: true, subtree: true });
 };
 
-function onPageLoaded() {
-  UsFoodsBodyObserver.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-}
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   if (request.action === "usfoods_historyUpdated") {
-    // Do something when history is updated
-    onPageLoaded();
+    observeBody.observe(document.body, { childList: true, subtree: true });
   }
 });

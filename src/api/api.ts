@@ -2,6 +2,8 @@ import axios from "axios";
 let baseDomain = "http://localhost:5000";
 
 export const appName = "profit_sea";
+const apiToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NTFjMmQxZTRjOTg5NjVmMzNlMzNkYjciLCJpYXQiOjE2OTY0ODkyNTEsImV4cCI6MTc1MDQ4OTI1MSwidHlwZSI6ImFjY2VzcyJ9.sxEkQWQev14azfM32iQVVbW63W9B5CzvFJyburuiBFU";
 
 export const customHeaders = {
   Accept: "application/json",
@@ -20,8 +22,9 @@ instance.interceptors.request.use(
     if (!navigator.onLine) {
       debugger;
     }
-    const apiToken = chrome.storage.sync.get(`${appName}_accessToken`);
-    if (apiToken) config.headers["Authorization"] = "bearer " + apiToken;
+    // const apiToken = chrome.storage.sync.get(`${appName}_accessToken`);
+    // if (apiToken) config.headers["Authorization"] = "bearer " + apiToken;
+    config.headers["Authorization"] = "bearer " + apiToken;
     return config;
   },
   (error) => {

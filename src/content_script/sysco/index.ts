@@ -1,3 +1,5 @@
+import productsApi from "../../api/productsApi";
+
 const addProfitSeaColumn = (dataHeader: Element) => {
   const newCol = document.createElement("div");
   newCol.className = "col data-grid-col last-ordered-col profitsea-col"; // Add relevant classes
@@ -131,12 +133,18 @@ const initializeProductObserver = (productsContainer: any) => {
 
           const btnDiv = createAddBtnDiv();
 
-          btnDiv.onclick = () => {
-            const productDetails = scrapProductDetails(row);
-            chrome.runtime.sendMessage({
-              action: "recieve_New_Product",
-              payload: productDetails,
-            });
+          btnDiv.onclick = async () => {
+            try {
+              const productDetails = scrapProductDetails(row);
+              await productsApi.addProduct(productDetails);
+              chrome.runtime.sendMessage({
+                action: "recieve_New_Product",
+                payload: productDetails,
+              });
+            } catch (err) {
+              console.log(err);
+              debugger;
+            }
           };
 
           // Insert the new column (with button) after the first column (drag-col) of the row
