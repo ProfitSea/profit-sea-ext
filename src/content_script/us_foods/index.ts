@@ -1,4 +1,4 @@
-import "./index.css";
+import "../index.css";
 
 const scrapProductDetails = (card: Element) => {
   const productImageDiv = card.querySelector(".product-image-column");

@@ -10,12 +10,14 @@ module.exports = {
     us_foods_content_script: path.join(
       srcDir,
       "content_script",
-      "us_foods_content_script.ts"
+      "us_foods",
+      "index.ts"
     ),
     sysco_content_script: path.join(
       srcDir,
       "content_script",
-      "sysco_content_script.ts"
+      "sysco",
+      "index.ts"
     ),
   },
   output: {
