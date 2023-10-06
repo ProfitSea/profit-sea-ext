@@ -51,6 +51,12 @@ const ListBuilder = () => {
     setProducts(newProducts);
   };
 
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "refreshListBuilderProducts") {
+      fetchProducts();
+    }
+  });
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header refresh refreshOnClick={fetchProducts} />

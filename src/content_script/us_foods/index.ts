@@ -1,5 +1,6 @@
 import productsApi from "../../api/productsApi";
 import { createNotification } from "../../notification";
+import { refreshListBuilderProducts } from "../../utils/actions/messageToSidepanel";
 import "../index.css";
 
 // Utility functions
@@ -62,7 +63,8 @@ const createAddBtnDiv = (card: Element) => {
       const product = scrapProductDetails(card);
       if (!product) return;
       await productsApi.addProduct(product);
-      createNotification("Product Added", "Product added successfully");
+      createNotification("Product Uploaded", "Product Uploaded successfully");
+      refreshListBuilderProducts();
     } catch (err) {
       console.error(err);
     }

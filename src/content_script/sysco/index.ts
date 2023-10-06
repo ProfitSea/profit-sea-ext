@@ -1,6 +1,6 @@
-import { create } from "@mui/material/styles/createTransitions";
 import productsApi from "../../api/productsApi";
 import { createNotification } from "../../notification";
+import { refreshListBuilderProducts } from "../../utils/actions/messageToSidepanel";
 
 const addProfitSeaColumn = (dataHeader: Element) => {
   const newCol = document.createElement("div");
@@ -139,7 +139,11 @@ const initializeProductObserver = (productsContainer: any) => {
             try {
               const productDetails = scrapProductDetails(row);
               await productsApi.addProduct(productDetails);
-              createNotification("Product Uploaded", "Product uploaded successfully");
+              createNotification(
+                "Product Uploaded",
+                "Product uploaded successfully"
+              );
+              refreshListBuilderProducts();
             } catch (err) {
               console.log(err);
               debugger;
