@@ -1,4 +1,6 @@
+import { create } from "@mui/material/styles/createTransitions";
 import productsApi from "../../api/productsApi";
+import { createNotification } from "../../notification";
 
 const addProfitSeaColumn = (dataHeader: Element) => {
   const newCol = document.createElement("div");
@@ -137,13 +139,7 @@ const initializeProductObserver = (productsContainer: any) => {
             try {
               const productDetails = scrapProductDetails(row);
               await productsApi.addProduct(productDetails);
-              chrome.runtime.sendMessage({
-                type: "createNotification",
-                data: {
-                  title: "Product Uploaded",
-                  message: "The product has been successfully uploaded.",
-                },
-              });
+              createNotification("Product Uploaded", "Product uploaded successfully");
             } catch (err) {
               console.log(err);
               debugger;

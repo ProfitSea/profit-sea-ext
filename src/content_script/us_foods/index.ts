@@ -1,4 +1,5 @@
 import productsApi from "../../api/productsApi";
+import { createNotification } from "../../notification";
 import "../index.css";
 
 // Utility functions
@@ -61,13 +62,7 @@ const createAddBtnDiv = (card: Element) => {
       const product = scrapProductDetails(card);
       if (!product) return;
       await productsApi.addProduct(product);
-      chrome.runtime.sendMessage({
-        type: "createNotification",
-        data: {
-          title: "Product Uploaded",
-          message: "The product has been successfully uploaded.",
-        },
-      });
+      createNotification("Product Added", "Product added successfully");
     } catch (err) {
       console.error(err);
     }
