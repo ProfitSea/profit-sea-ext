@@ -138,8 +138,11 @@ const initializeProductObserver = (productsContainer: any) => {
               const productDetails = scrapProductDetails(row);
               await productsApi.addProduct(productDetails);
               chrome.runtime.sendMessage({
-                action: "recieve_New_Product",
-                payload: productDetails,
+                type: "createNotification",
+                data: {
+                  title: "Product Uploaded",
+                  message: "The product has been successfully uploaded.",
+                },
               });
             } catch (err) {
               console.log(err);

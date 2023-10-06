@@ -43,4 +43,11 @@ instance.interceptors.response.use(
   }
 );
 
+export function toQueryString(obj: any) {
+  return Object.keys(obj)
+      .filter(key => obj[key] !== null && obj[key] !== undefined)
+      .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]))
+      .join('&');
+}
+
 export default instance;

@@ -17,7 +17,7 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
           <div className="w-16 h-16 bg-white rounded-md flex justify-center items-center border-[1px] border-zinc-300 ">
             <img
               className="w-[62px] h-[62px] p-[2px] rounded-md max-w-none"
-              src={product?.imgSrc}
+              src={product.imgSrc}
             />
           </div>
           <div className="w-[200px] grow shrink basis-0 flex-col justify-center items-start inline-flex">

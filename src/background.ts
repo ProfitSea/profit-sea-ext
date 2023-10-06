@@ -38,3 +38,15 @@ chrome.runtime.onInstalled.addListener((details) => {
     });
   }
 });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "createNotification") {
+    const notifOptions: chrome.notifications.NotificationOptions<true> = {
+      type: "basic",
+      iconUrl: chrome.runtime.getURL("icon.png"),
+      title: message.data.title,
+      message: message.data.message,
+    };
+    chrome.notifications.create(notifOptions);
+  }
+});

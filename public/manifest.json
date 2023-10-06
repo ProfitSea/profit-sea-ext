@@ -41,7 +41,13 @@
     "persistant": false
   },
 
-  "permissions": ["storage", "sidePanel", "activeTab", "tabs"],
+  "permissions": [
+    "storage",
+    "sidePanel",
+    "activeTab",
+    "tabs",
+    "notifications"
+  ],
 
   "host_permissions": ["http://*/*", "https://*/*", "<all_urls>"],
 

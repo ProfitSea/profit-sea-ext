@@ -1,12 +1,13 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import CustomTag from "./CustomTag";
 
 interface Props {
-  tags: any;
+  tags: TagType[];
   setTags: any;
+  setFilter: Dispatch<SetStateAction<string | null>>;
 }
 
-const Tags: React.FC<Props> = ({ tags, setTags }) => {
+const Tags: React.FC<Props> = ({ tags, setTags, setFilter }) => {
   return (
     <div className="flex flex-row gap-[12px]">
       {tags.map((tag: any, index: number) => (
@@ -18,8 +19,9 @@ const Tags: React.FC<Props> = ({ tags, setTags }) => {
           count={tag.count}
           icon={tag.icon}
           onActive={(id: number) => {
-            let updatedTags = tags.map((tag: any) => {
+            let updatedTags = tags.map((tag: TagType) => {
               if (tag.id === id) {
+                setFilter(tag.filterValue);
                 return {
                   ...tag,
                   active: true,

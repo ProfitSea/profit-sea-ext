@@ -62,8 +62,11 @@ const createAddBtnDiv = (card: Element) => {
       if (!product) return;
       await productsApi.addProduct(product);
       chrome.runtime.sendMessage({
-        action: "recieve_New_Product",
-        payload: product,
+        type: "createNotification",
+        data: {
+          title: "Product Uploaded",
+          message: "The product has been successfully uploaded.",
+        },
       });
     } catch (err) {
       console.error(err);
