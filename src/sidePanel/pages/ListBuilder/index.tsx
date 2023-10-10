@@ -15,6 +15,9 @@ import Product from "./Product";
 const ListBuilder = () => {
   const navigate = useNavigate();
   const [products, setProducts] = React.useState([] as ProductInterface[]);
+  const [filteredProducts, setFilteredProducts] = React.useState(
+    [] as ProductInterface[]
+  );
   const [loading, setLoading] = React.useState(false);
   const [vendorTags, setVendorTags] = React.useState(vendorsTagsData);
   const [productTags, setProductTags] = React.useState(productTagsData);
@@ -28,6 +31,7 @@ const ListBuilder = () => {
         vendor: vendorFilter,
       });
       setProducts(res.results);
+      setFilteredProducts(res.results);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -37,8 +41,43 @@ const ListBuilder = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
+    if (vendorFilter) {
+      if (vendorFilter === "all") {
+        setFilteredProducts(products);
+      } else {
+        const filteredProducts = products.filter(
+          (product) => product.vendor === vendorFilter
+        );
+        setFilteredProducts(filteredProducts);
+      }
+    } else {
+      setFilteredProducts(products);
+    }
   }, [vendorFilter]);
+
+  useEffect(() => {
+    if (products.length > 0) {
+      const updatedVendorTags = vendorTags.map((tag) => {
+        if (tag.filterValue === "all") {
+          return {
+            ...tag,
+            count: products.length,
+          };
+        }
+        if (tag.filterValue) {
+          return {
+            ...tag,
+            count: products.filter(
+              (product) => product.vendor === tag.filterValue
+            ).length,
+          };
+        }
+        return tag; // return the tag unchanged if it doesn't match any condition
+      });
+
+      setVendorTags(updatedVendorTags);
+    }
+  }, [products]);
 
   useEffect(() => {
     fetchProducts();
@@ -87,8 +126,8 @@ const ListBuilder = () => {
             <p className="flex flex-1 justify-center items-center">
               Loading...
             </p>
-          ) : products.length > 0 ? (
-            products.map((product, index) => (
+          ) : filteredProducts.length > 0 ? (
+            filteredProducts.map((product, index) => (
               <div key={index}>
                 <Product product={product} deleteProduct={deleteProduct} />
                 <CustomDivider orientation="horizontal" />

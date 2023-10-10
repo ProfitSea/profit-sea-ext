@@ -5,7 +5,7 @@ export const vendorsTagsData: TagType[] = [
     active: true,
     count: 72,
     icon: "discount",
-    filterValue: null,
+    filterValue: 'all',
   },
   {
     id: 2,
