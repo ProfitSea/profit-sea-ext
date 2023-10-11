@@ -27,16 +27,12 @@ const ListBuilder = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await productsApi.getProducts({
-        vendor: vendorFilter,
-      });
+      const res = await productsApi.getProducts({});
       setProducts(res.results);
-      setFilteredProducts(res.results);
       setLoading(false);
     } catch (error) {
       console.log(error);
       setLoading(false);
-      debugger;
     }
   };
 
@@ -53,7 +49,7 @@ const ListBuilder = () => {
     } else {
       setFilteredProducts(products);
     }
-  }, [vendorFilter]);
+  }, [vendorFilter, products]);
 
   useEffect(() => {
     if (products.length > 0) {
@@ -83,18 +79,30 @@ const ListBuilder = () => {
     fetchProducts();
   }, []);
 
-  const deleteProduct = (productNumber: ProductInterface["productNumber"]) => {
-    const newProducts = products.filter(
-      (p: ProductInterface) => p.productNumber !== productNumber
-    );
-    setProducts(newProducts);
+  const deleteProduct = async (productId: string) => {
+    try {
+      await productsApi.deleteProduct(productId);
+      fetchProducts();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === "refreshListBuilderProducts") {
-      fetchProducts();
-    }
-  });
+  useEffect(() => {
+    const messageListener = (request: any, sender: any, sendResponse: any) => {
+      if (request.action === "refreshListBuilderProducts") {
+        console.log("refreshing list builder products");
+        fetchProducts();
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
+
+    // Cleanup function: Remove the listener when the component unmounts.
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">

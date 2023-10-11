@@ -1,5 +1,5 @@
 import { DeleteOutlined } from "@mui/icons-material";
-import React, { useEffect } from "react";
+import React from "react";
 import ProductInterface from "../../../utils/product.interface";
 import productsApi from "../../../api/productsApi";
 
@@ -10,7 +10,9 @@ interface ProductProps {
 
 const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
   const [quantity, setQuantity] = React.useState(product.quantity);
-  const [timeoutId, setTimeoutId] = React.useState<ReturnType<typeof setTimeout> | null>(null);
+  const [timeoutId, setTimeoutId] = React.useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
   const updateProducts = async () => {
     try {
@@ -20,7 +22,6 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
     } catch (error) {
       alert("Error updating product");
       console.log(error);
-      debugger;
     }
   };
 
@@ -28,7 +29,7 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
     if (timeoutId) clearTimeout(timeoutId);
 
     // Increment or decrement based on the boolean flag
-    setQuantity(prev => increment ? prev + 1 : prev - 1);
+    setQuantity((prev) => (increment ? prev + 1 : prev - 1));
 
     const id = setTimeout(() => {
       updateProducts();
@@ -93,7 +94,7 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
                   </button>
                 ) : (
                   <button
-                    onClick={() => deleteProduct(product.productNumber)}
+                    onClick={() => deleteProduct(product.id!)}
                     className="w-[21px] h-[21px] left-[69px] top-[1px] absolute justify-center items-center gap-2.5 inline-flex"
                   >
                     <div className="text-stone-800 text-xs font-semibold font-['SF Pro Text'] leading-[18px]">

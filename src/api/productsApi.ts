@@ -15,18 +15,18 @@ class ProductsApi {
       return request;
     } catch (error) {
       console.log(error);
-      debugger;
+      throw error;
     }
   }
 
   async getProducts(filterProducts: FilterProductsType) {
     try {
-      const queryString = toQueryString(filterProducts);
+      const queryString = toQueryString({ ...filterProducts, limit: 100 });
       const request = await API.get(`${routes.get}?${queryString}`);
       return request.data;
     } catch (error) {
       console.log(error);
-      debugger;
+      throw error;
     }
   }
 
@@ -36,7 +36,7 @@ class ProductsApi {
       return request;
     } catch (error) {
       console.log(error);
-      debugger;
+      throw error;
     }
   }
 
@@ -46,7 +46,7 @@ class ProductsApi {
       return request;
     } catch (error) {
       console.log(error);
-      debugger;
+      throw error;
     }
   }
 }
