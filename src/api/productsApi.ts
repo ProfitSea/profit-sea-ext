@@ -39,5 +39,15 @@ class ProductsApi {
       debugger;
     }
   }
+
+  async deleteProduct(productId: string) {
+    try {
+      const request = await API.delete(`${routes.update}/${productId}`);
+      return request;
+    } catch (error) {
+      console.log(error);
+      debugger;
+    }
+  }
 }
 export default new ProductsApi();
