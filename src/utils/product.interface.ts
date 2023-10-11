@@ -12,6 +12,7 @@ interface ProductInterface {
   packSize: string;
   prices: Price[];
   quantity: number | 0;
+  id?: string;
 }
 
 export default ProductInterface;

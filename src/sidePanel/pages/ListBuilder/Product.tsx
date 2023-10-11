@@ -1,6 +1,7 @@
 import { DeleteOutlined } from "@mui/icons-material";
-import React from "react";
+import React, { useEffect } from "react";
 import ProductInterface from "../../../utils/product.interface";
+import productsApi from "../../../api/productsApi";
 
 interface ProductProps {
   product: ProductInterface;
@@ -8,7 +9,33 @@ interface ProductProps {
 }
 
 const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
-  const [quantity, setQuantity] = React.useState(product.quantity || 0);
+  const [quantity, setQuantity] = React.useState(product.quantity);
+  const [timeoutId, setTimeoutId] = React.useState<ReturnType<typeof setTimeout> | null>(null);
+
+  const updateProducts = async () => {
+    try {
+      await productsApi.updateProduct(product.id!, {
+        quantity,
+      });
+    } catch (error) {
+      alert("Error updating product");
+      console.log(error);
+      debugger;
+    }
+  };
+
+  const handleUpdateQuantity = (increment: boolean) => {
+    if (timeoutId) clearTimeout(timeoutId);
+
+    // Increment or decrement based on the boolean flag
+    setQuantity(prev => increment ? prev + 1 : prev - 1);
+
+    const id = setTimeout(() => {
+      updateProducts();
+    }, 500); // waits for 500ms after the last button press
+
+    setTimeoutId(id);
+  };
 
   return (
     <div className="w-[100%] px-3.5 bg-white flex-col justify-start items-start gap-3.5 inline-flex">
@@ -44,7 +71,7 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
               ))}
               <div className="w-[90px] h-[23px] relative">
                 <button
-                  onClick={() => setQuantity((prev) => prev + 1)}
+                  onClick={() => handleUpdateQuantity(true)}
                   className="w-[21px] h-[21px] left-0 top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
                 >
                   <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
@@ -57,7 +84,7 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
                 </div>
                 {quantity !== 0 ? (
                   <button
-                    onClick={() => setQuantity((prev) => prev - 1)}
+                    onClick={() => handleUpdateQuantity(false)}
                     className="w-[21px] h-[21px] left-[69px] top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
                   >
                     <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">

@@ -3,7 +3,7 @@ export const vendorsTagsData: TagType[] = [
     id: 1,
     name: "All Vendors",
     active: true,
-    count: 72,
+    count: 0,
     icon: "discount",
     filterValue: 'all',
   },
@@ -12,7 +12,7 @@ export const vendorsTagsData: TagType[] = [
     name: "US Foods",
     filterValue: "US Foods",
     active: false,
-    count: 46,
+    count: 0,
     icon: "discount",
   },
   {
@@ -20,7 +20,7 @@ export const vendorsTagsData: TagType[] = [
     name: "Sysco",
     filterValue: "Sysco",
     active: false,
-    count: 26,
+    count: 0,
     icon: "discount",
   },
 ];
