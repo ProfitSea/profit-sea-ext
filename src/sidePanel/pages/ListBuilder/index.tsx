@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import productsApi from "../../../api/productsApi";
 import { productTagsData } from "../../../utils/data/productTags.data";
@@ -12,19 +12,20 @@ import Header from "../../components/Header";
 import Tags from "../../components/Tags";
 import Product from "./Product";
 
+const defaultProducts: ProductInterface[] = [];
+
 const ListBuilder = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = React.useState([] as ProductInterface[]);
-  const [filteredProducts, setFilteredProducts] = React.useState(
-    [] as ProductInterface[]
-  );
-  const [loading, setLoading] = React.useState(false);
-  const [vendorTags, setVendorTags] = React.useState(vendorsTagsData);
-  const [productTags, setProductTags] = React.useState(productTagsData);
-  const [vendorFilter, setVendorFilter] = React.useState<string | null>(null);
+
+  const [products, setProducts] = useState(defaultProducts);
+  const [filteredProducts, setFilteredProducts] = useState(defaultProducts);
+  const [loading, setLoading] = useState(false);
+  const [vendorTags, setVendorTags] = useState(vendorsTagsData);
+  const [productTags, setProductTags] = useState(productTagsData);
+  const [vendorFilter, setVendorFilter] = useState<string | null>("all");
   const [productFilter, setProductFilter] = React.useState<string | null>(null);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       const res = await productsApi.getProducts({});
@@ -34,62 +35,12 @@ const ListBuilder = () => {
       console.log(error);
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    if (vendorFilter) {
-      if (vendorFilter === "all") {
-        setFilteredProducts(products);
-      } else {
-        const filteredProducts = products.filter(
-          (product) => product.vendor === vendorFilter
-        );
-        setFilteredProducts(filteredProducts);
-      }
-    } else {
-      setFilteredProducts(products);
-    }
-  }, [vendorFilter, products]);
-
-  useEffect(() => {
-    if (products.length > 0) {
-      const updatedVendorTags = vendorTags.map((tag) => {
-        if (tag.filterValue === "all") {
-          return {
-            ...tag,
-            count: products.length,
-          };
-        }
-        if (tag.filterValue) {
-          return {
-            ...tag,
-            count: products.filter(
-              (product) => product.vendor === tag.filterValue
-            ).length,
-          };
-        }
-        return tag; // return the tag unchanged if it doesn't match any condition
-      });
-
-      setVendorTags(updatedVendorTags);
-    }
-  }, [products]);
+  }, []);
 
   useEffect(() => {
     fetchProducts();
-  }, []);
 
-  const deleteProduct = async (productId: string) => {
-    try {
-      await productsApi.deleteProduct(productId);
-      fetchProducts();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    const messageListener = (request: any, sender: any, sendResponse: any) => {
+    const messageListener = (request: any) => {
       if (request.action === "refreshListBuilderProducts") {
         console.log("refreshing list builder products");
         fetchProducts();
@@ -97,12 +48,40 @@ const ListBuilder = () => {
     };
 
     chrome.runtime.onMessage.addListener(messageListener);
+    return () => chrome.runtime.onMessage.removeListener(messageListener);
+  }, [fetchProducts]);
 
-    // Cleanup function: Remove the listener when the component unmounts.
-    return () => {
-      chrome.runtime.onMessage.removeListener(messageListener);
-    };
-  }, []);
+  useEffect(() => {
+    const newFilteredProducts =
+      vendorFilter === "all"
+        ? products
+        : products.filter((product) => product.vendor === vendorFilter);
+    setFilteredProducts(newFilteredProducts);
+  }, [vendorFilter, products]);
+
+  useEffect(() => {
+    const updatedVendorTags = vendorTags.map((tag) => ({
+      ...tag,
+      count:
+        tag.filterValue === "all"
+          ? products.length
+          : products.filter((product) => product.vendor === tag.filterValue)
+              .length,
+    }));
+    setVendorTags(updatedVendorTags);
+  }, [products]);
+
+  const deleteProduct = useCallback(
+    async (productId: string) => {
+      try {
+        await productsApi.deleteProduct(productId);
+        fetchProducts();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [fetchProducts]
+  );
 
   return (
     <div className="flex flex-col min-h-screen">
