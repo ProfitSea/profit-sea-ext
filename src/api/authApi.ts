@@ -8,10 +8,8 @@ class AuthApi {
   async getMe() {
     try {
       const request = await API.get(routes.me);
-      debugger;
       return request;
     } catch (error) {
-      debugger;
     }
   }
 }

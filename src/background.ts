@@ -1,6 +1,6 @@
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
-  .catch((error) => console.error(error));
+  .catch((error) => console.log(error));
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (changeInfo.status !== "complete") return;
@@ -48,5 +48,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       message: message.data.message,
     };
     chrome.notifications.create(notifOptions);
+  } else if (message.type === "open_api_key_verification_page") {
+    chrome.tabs.create({ url: "apiKeyVerification.html" });
   }
 });

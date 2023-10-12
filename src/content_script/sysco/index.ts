@@ -146,7 +146,10 @@ const initializeProductObserver = (productsContainer: any) => {
               refreshListBuilderProducts();
             } catch (err) {
               console.log(err);
-              debugger;
+              createNotification(
+                "Product Uploading Failed",
+                "Please contact ProfitSea Admin"
+              );
             }
           };
 

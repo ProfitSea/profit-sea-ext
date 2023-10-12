@@ -7,6 +7,7 @@ interface CustomInputProps {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   value: string;
   type: string;
+  sx?: any;
 }
 
 const CustomInput: FC<CustomInputProps> = ({
@@ -60,7 +61,7 @@ const CustomInput: FC<CustomInputProps> = ({
       onChange={onChange}
       value={value}
       sx={{
-        width: "280px",
+        width: "100%",
         height: "35px",
         backgroundColor: "#FFFFFF",
         padding: "21px 14px 21px 14px",

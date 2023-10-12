@@ -66,7 +66,11 @@ const createAddBtnDiv = (card: Element) => {
       createNotification("Product Uploaded", "Product Uploaded successfully");
       refreshListBuilderProducts();
     } catch (err) {
-      console.error(err);
+      console.log(err);
+      createNotification(
+        "Product Uploading Failed",
+        "Please contact ProfitSea Admin"
+      );
     }
   };
 
