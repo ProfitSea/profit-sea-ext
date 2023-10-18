@@ -60,10 +60,8 @@ const CustomTag: React.FC<CustomTagProps> = ({
           {name}
         </div>
       </div>
-      <div className="justify-center text-white items-center flex rounded-full bg-[#737373]">
-        <div className="self-stretch p-[5px] flex-col justify-start items-center inline-flex">
-          <div className="w-3.5 h-3.5 text-[12px] relative">{count}</div>
-        </div>
+      <div className="justify-center w-[27px] items-center flex rounded-full bg-[#737373] p-[5px]">
+        <span className="text-[12px] text-white">{count}</span>
       </div>
     </div>
   );

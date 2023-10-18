@@ -6,8 +6,20 @@ const srcDir = path.join(__dirname, "..", "src");
 module.exports = {
   entry: {
     sidePanel: path.join(srcDir, "sidePanel", "index.tsx"),
+    apiKeyVerification: path.join(srcDir, "apiKeyVerification", "index.tsx"),
     background: path.join(srcDir, "background.ts"),
-    content_script: path.join(srcDir, "content_script.tsx"),
+    us_foods_content_script: path.join(
+      srcDir,
+      "content_script",
+      "us_foods",
+      "index.ts"
+    ),
+    sysco_content_script: path.join(
+      srcDir,
+      "content_script",
+      "sysco",
+      "index.ts"
+    ),
   },
   output: {
     path: path.join(__dirname, "../dist/js"),

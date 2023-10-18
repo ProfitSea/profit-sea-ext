@@ -1,5 +1,4 @@
-import React from "react";
-import CustomInput from "../components/CustomInput";
+import React, { useEffect } from "react";
 import Logo from "../components/Logo";
 import { Button, Divider } from "@mui/material";
 import SocialButton from "../components/SocialButton";
@@ -7,8 +6,26 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+
+  const navigateToHome = () => {
+    chrome.storage.local.get("profit_sea_api_key", (result) => {
+      if (result.profit_sea_api_key) {
+        navigate("/home");
+      } else {
+        chrome.runtime.sendMessage({
+          type: "open_api_key_verification_page",
+        });
+      }
+    });
+  };
+
+  useEffect(() => {
+    chrome.storage.local.get("profit_sea_api_key", (result) => {
+      if (result.profit_sea_api_key) {
+        navigate("/home");
+      }
+    });
+  }, []);
 
   return (
     <div className="flex flex-col justify-center items-center bg-black h-screen min-w-[30vh] gap-10">
@@ -16,23 +33,6 @@ const Login = () => {
         <Logo />
       </div>
       <div className="flex flex-col justify-center items-center gap-[9px]">
-        <CustomInput
-          placeholder="Enter your email"
-          onChange={(e) => setEmail(e.target.value)}
-          value={email}
-          type="email"
-        />
-        <CustomInput
-          placeholder="Enter your password"
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-          type="password"
-        />
-        <div className="text-gray-500 text-xs w-[100%] font-semibold text-right">
-          <p>
-            Misplaced yer map? <u className="cursor-pointer">Reset Password</u>
-          </p>
-        </div>
         <Button
           sx={{
             width: "100%",
@@ -48,7 +48,7 @@ const Login = () => {
             },
           }}
           onClick={() => {
-            return navigate("/home");
+            navigateToHome();
           }}
         >
           LOGIN

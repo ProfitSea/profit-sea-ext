@@ -41,6 +41,9 @@ const Home = () => {
             bgColor="#4A4A4A"
             textColor="white"
             onClick={() => {
+              chrome.tabs.create({
+                url: "https://order.usfoods.com/desktop/lists",
+              });
               navigate("/listbuilder");
             }}
           />
@@ -48,7 +51,12 @@ const Home = () => {
             title="Open Sysco"
             bgColor="#4A4A4A"
             textColor="white"
-            onClick={() => {}}
+            onClick={() => {
+              chrome.tabs.create({
+                url: "https://shop.sysco.com/app/lists",
+              });
+              navigate("/listbuilder");
+            }}
           />
           <CustomHomeButton
             title="Open Performance Food Group"
