@@ -138,6 +138,7 @@ const initializeProductObserver = (productsContainer: any) => {
         rows.forEach((row: Element) => {
           if (row.querySelector(".profitsea-add-btn")) return;
           let disable = false;
+
           const availabilityLabel = row.querySelector(
             ".availability-indicator-label label"
           );
@@ -145,6 +146,14 @@ const initializeProductObserver = (productsContainer: any) => {
             availabilityLabel &&
             availabilityLabel.textContent === "Unavailable"
           ) {
+            disable = true;
+          }
+
+          const isOutOfStock =
+            row.querySelector(
+              '.availability-indicator-label label[data-id="product_details_stock_status_label"]'
+            )?.textContent === "Out of stock";
+          if (isOutOfStock) {
             disable = true;
           }
 
