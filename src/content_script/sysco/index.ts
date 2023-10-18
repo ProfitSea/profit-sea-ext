@@ -14,7 +14,7 @@ const addProfitSeaColumn = (dataHeader: Element) => {
   firstCol.after(newCol);
 };
 
-const createAddBtnDiv = () => {
+const createAddBtnDiv = (disable: Boolean) => {
   const div = document.createElement("div");
   div.className = "col last-ordered-col profitsea-add-btn cmROMX label pointer";
   div.role = "presentation";
@@ -29,6 +29,11 @@ const createAddBtnDiv = () => {
 
   div.appendChild(p);
   div.appendChild(img);
+
+  if (disable) {
+    div.style.opacity = "0.5";
+    div.style.cursor = "not-allowed";
+  }
 
   return div;
 };
@@ -132,26 +137,38 @@ const initializeProductObserver = (productsContainer: any) => {
 
         rows.forEach((row: Element) => {
           if (row.querySelector(".profitsea-add-btn")) return;
+          let disable = false;
+          const availabilityLabel = row.querySelector(
+            ".availability-indicator-label label"
+          );
+          if (
+            availabilityLabel &&
+            availabilityLabel.textContent === "Unavailable"
+          ) {
+            disable = true;
+          }
 
-          const btnDiv = createAddBtnDiv();
+          const btnDiv = createAddBtnDiv(disable);
 
-          btnDiv.onclick = async () => {
-            try {
-              const productDetails = scrapProductDetails(row);
-              await productsApi.addProduct(productDetails);
-              createNotification(
-                "Product Uploaded",
-                "Product uploaded successfully"
-              );
-              refreshListBuilderProducts();
-            } catch (err) {
-              console.log(err);
-              createNotification(
-                "Product Uploading Failed",
-                "Please contact ProfitSea Admin"
-              );
-            }
-          };
+          if (!disable) {
+            btnDiv.onclick = async () => {
+              try {
+                const productDetails = scrapProductDetails(row);
+                await productsApi.addProduct(productDetails);
+                createNotification(
+                  "Product Uploaded",
+                  "Product uploaded successfully"
+                );
+                refreshListBuilderProducts();
+              } catch (err) {
+                console.log(err);
+                createNotification(
+                  "Product Uploading Failed",
+                  "Please contact ProfitSea Admin"
+                );
+              }
+            };
+          }
 
           // Insert the new column (with button) after the first column (drag-col) of the row
           let firstCol = row.querySelector(".drag-col");
