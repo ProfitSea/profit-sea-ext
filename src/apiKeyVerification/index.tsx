@@ -7,6 +7,7 @@ import Logo from "../sidePanel/components/Logo";
 
 const ApiKeyVerification = () => {
   const [apiKey, setApiKey] = React.useState("");
+  const [email, setEmail] = React.useState("");
 
   return (
     <div className="h-[100vh] w-[100%] bg-black flex flex-col justify-center items-center gap-[20px]">
@@ -14,7 +15,16 @@ const ApiKeyVerification = () => {
         <Logo />
       </div>
       <div className="w-[400px] flex flex-col justify-center">
-        <p className="text-white">API KEY</p>
+        <p className="text-white">Email</p>
+        <CustomInput
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
+          value={email}
+          placeholder="Enter Your Email"
+          type="email"
+        />
+        <p className="mt-[10px] text-white">API KEY</p>
         <CustomInput
           onChange={(e) => {
             setApiKey(e.target.value);
