@@ -14,10 +14,10 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
     typeof setTimeout
   > | null>(null);
 
-  const updateProducts = async () => {
+  const updateProducts = async (newQuantity: number) => {
     try {
       await productsApi.updateProduct(product.id!, {
-        quantity,
+        quantity: newQuantity,
       });
     } catch (error) {
       alert("Error updating product");
@@ -29,10 +29,11 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
     if (timeoutId) clearTimeout(timeoutId);
 
     // Increment or decrement based on the boolean flag
-    setQuantity((prev) => (increment ? prev + 1 : prev - 1));
+    const newQuantity = increment ? quantity + 1 : quantity - 1;
+    setQuantity(newQuantity);
 
     const id = setTimeout(() => {
-      updateProducts();
+      updateProducts(newQuantity);
     }, 500); // waits for 500ms after the last button press
 
     setTimeoutId(id);

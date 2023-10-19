@@ -99,6 +99,16 @@ const observeProducts = (container: Element) => {
           container.querySelectorAll(".card-outline")
         );
         for (const card of newCards) {
+          // const outOfStockNotification = card.querySelector(
+          //   '.top-drawer > p[data-cy="product-card-top-drawer-text"]'
+          // );
+          // if (
+          //   outOfStockNotification &&
+          //   outOfStockNotification.textContent === "Out of Stock"
+          // ) {
+          //   continue;
+          // }
+
           const target = card.querySelector(".order-price-column");
           if (target && !target.querySelector(".your-button-class")) {
             target.appendChild(createAddBtnDiv(card));
