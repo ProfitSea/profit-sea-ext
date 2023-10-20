@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Divider } from "@mui/material";
 import React, { useCallback, useLayoutEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import authApi from "../api/authApi";
@@ -123,6 +123,40 @@ const ApiKeyVerification = () => {
           >
             Verify
           </Button>
+          <div className="w-[100%] mt-[20px]">
+            <Divider
+              sx={{
+                color: "#FBBB00",
+                "&::before, &::after": {
+                  borderColor: "#E8ECF4",
+                },
+              }}
+              orientation="horizontal"
+              flexItem
+              variant="fullWidth"
+            >
+              Don't Have API Key?
+            </Divider>
+          </div>
+          <a href="https://profit-sea.vercel.app" target="_blank">
+            <Button
+              sx={{
+                width: "100%",
+                height: "35px",
+                backgroundColor: "#FBBB08",
+                padding: "21px 14px 21px 14px",
+                borderRadius: "5px",
+                fontSize: "15px",
+                color: "white",
+                marginTop: "10px",
+                "&:hover": {
+                  backgroundColor: "#FBBB00",
+                },
+              }}
+            >
+              Generate API Key
+            </Button>
+          </a>
         </form>
       )}
     </div>
