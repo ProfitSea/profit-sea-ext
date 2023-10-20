@@ -1,6 +1,6 @@
+import { CircularProgress } from "@mui/material";
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { CircularProgress } from "@mui/material";
 import ProductsAnalysis from "./pages/ProductsAnalysis";
 
 const Login = React.lazy(() => import("./pages/login"));
@@ -10,6 +10,13 @@ const ProductsType = React.lazy(() => import("./pages/ProductsType"));
 const ProtectedRoute = React.lazy(() => import("./pages/ProtectedRoute"));
 
 const SidePanel = () => {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === "refresh_side_panel_after_login") {
+      // Implement your logic here to refresh the side panel
+      location.reload(); // This is a simple way to refresh the current page
+    }
+  });
+
   return (
     <React.Suspense
       fallback={

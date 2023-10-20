@@ -8,8 +8,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   const navigateToHome = () => {
-    chrome.storage.local.get("profit_sea_api_key", (result) => {
-      if (result.profit_sea_api_key) {
+    chrome.storage.local.get("profit_sea_token", (result) => {
+      if (result.profit_sea_token) {
         navigate("/home");
       } else {
         chrome.runtime.sendMessage({
@@ -20,8 +20,8 @@ const Login = () => {
   };
 
   useEffect(() => {
-    chrome.storage.local.get("profit_sea_api_key", (result) => {
-      if (result.profit_sea_api_key) {
+    chrome.storage.local.get("profit_sea_token", (result) => {
+      if (result.profit_sea_token) {
         navigate("/home");
       }
     });

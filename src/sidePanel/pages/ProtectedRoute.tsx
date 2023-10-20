@@ -7,13 +7,13 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const navigate = useNavigate();
-  // useLayoutEffect(() => {
-  //   chrome.storage.local.get(["user"], (result) => {
-  //     if (!result.user) {
-  //       return navigate("/login");
-  //     }
-  //   });
-  // }, []);
+  useLayoutEffect(() => {
+    chrome.storage.local.get(["profit_sea_token"], (result) => {
+      if (!result.profit_sea_token) {
+        return navigate("/login");
+      }
+    });
+  }, []);
   return children as React.ReactElement;
 };
 

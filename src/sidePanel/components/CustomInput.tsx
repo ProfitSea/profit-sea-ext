@@ -8,6 +8,7 @@ interface CustomInputProps {
   value: string;
   type: string;
   sx?: any;
+  required?: boolean;
 }
 
 const CustomInput: FC<CustomInputProps> = ({
@@ -15,6 +16,7 @@ const CustomInput: FC<CustomInputProps> = ({
   onChange,
   value,
   type,
+  required = false,
 }) => {
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -28,8 +30,9 @@ const CustomInput: FC<CustomInputProps> = ({
         placeholder={placeholder}
         onChange={onChange}
         value={value}
+        required={required}
         sx={{
-          width: "280px",
+          width: "100%",
           height: "35px",
           backgroundColor: "#FFFFFF",
           padding: "21px 14px 21px 14px",
@@ -69,6 +72,7 @@ const CustomInput: FC<CustomInputProps> = ({
         fontSize: "14px",
       }}
       type={type}
+      required={required}
     />
   );
 };
