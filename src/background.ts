@@ -39,7 +39,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender: any, sendResponse) => {
   if (message.type === "createNotification") {
     const notifOptions: chrome.notifications.NotificationOptions<true> = {
       type: "basic",

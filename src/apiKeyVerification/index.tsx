@@ -56,28 +56,6 @@ const ApiKeyVerification = () => {
             Welcome to the ProfitSea
           </h1>
           <p className="text-white">You're logged in.</p>
-          <Button
-            sx={{
-              width: "100%",
-              height: "35px",
-              backgroundColor: "#FBBB00",
-              padding: "21px 14px 21px 14px",
-              borderRadius: "5px",
-              fontSize: "15px",
-              color: "white",
-              marginTop: "10px",
-              "&:hover": {
-                backgroundColor: "#FBBB00",
-              },
-            }}
-            onClick={() => {
-              chrome.runtime.sendMessage({
-                type: "open_side_panel",
-              });
-            }}
-          >
-            Open Side Panel
-          </Button>
         </div>
       ) : (
         <form
