@@ -1,10 +1,19 @@
 import axios from "axios";
 import { authRoutes } from "./authApi";
-// const baseDomain = "http://localhost:5000";
-const baseDomain = "https://dinedynamics.uc.r.appspot.com";
 
-export const webApp = "https://profit-sea.vercel.app";
-// export const webApp = "http://localhost:5173";
+const env = "dev";
+// const env = "prod";
+
+export let baseDomain = "";
+export let webApp = "";
+
+if (env === "dev") {
+  baseDomain = "http://localhost:5000";
+  webApp = "http://localhost:5173";
+} else if (env === "prod") {
+  baseDomain = "https://dinedynamics.uc.r.appspot.com";
+  webApp = "https://profit-sea.vercel.app";
+}
 
 export const appName = "profit_sea";
 export const accessToken = "profit_sea_token";

@@ -87,7 +87,7 @@ const scrapProductDetails = (row: Element) => {
     const price = parseFloat(parsedText[0].replace("$", ""));
     const unit = parsedText[1];
 
-    return { price, unit };
+    return { price, unit, quantity: 0 };
   };
 
   const priceElements = Array.from(

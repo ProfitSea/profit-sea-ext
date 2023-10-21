@@ -1,7 +1,7 @@
 import { DeleteOutlined } from "@mui/icons-material";
 import React from "react";
-import ProductInterface from "../../../utils/product.interface";
 import productsApi from "../../../api/productsApi";
+import ProductInterface from "../../../utils/product.interface";
 
 interface ProductProps {
   product: ProductInterface;
@@ -9,15 +9,15 @@ interface ProductProps {
 }
 
 const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
-  const [quantity, setQuantity] = React.useState(product.quantity);
+  const [prices, setPrices] = React.useState(product.prices);
   const [timeoutId, setTimeoutId] = React.useState<ReturnType<
     typeof setTimeout
   > | null>(null);
 
-  const updateProducts = async (newQuantity: number) => {
+  const updateProducts = async () => {
     try {
       await productsApi.updateProduct(product.id!, {
-        quantity: newQuantity,
+        prices,
       });
     } catch (error) {
       alert("Error updating product");
@@ -25,15 +25,21 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
     }
   };
 
-  const handleUpdateQuantity = (increment: boolean) => {
+  const handleUpdateQuantity = (increment: boolean, index: number) => {
     if (timeoutId) clearTimeout(timeoutId);
 
-    // Increment or decrement based on the boolean flag
-    const newQuantity = increment ? quantity + 1 : quantity - 1;
-    setQuantity(newQuantity);
+    // Increment or decrement based on the boolean flag and index
+    const newQuantity = increment
+      ? prices[index].quantity + 1
+      : prices[index].quantity - 1;
+    setPrices((prevPrices) => {
+      const newPrices = [...prevPrices];
+      newPrices[index].quantity = newQuantity;
+      return newPrices;
+    });
 
     const id = setTimeout(() => {
-      updateProducts(newQuantity);
+      updateProducts();
     }, 500); // waits for 500ms after the last button press
 
     setTimeoutId(id);
@@ -61,49 +67,49 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
               {`${product?.productNumber} | ${product?.packSize}`}
             </div>
           </div>
-          <div className="justify-center items-end gap-2.5 flex">
-            <div className="h-[79px] flex-col justify-start items-center inline-flex">
+          <div className="justify-center items-center gap-2.5 flex">
+            <div className="max-h-[200px] flex-col justify-start items-center flex gap-3">
               {product?.prices.map((price, index) => (
-                <div
-                  key={price.price + index}
-                  className="w-[87px] h-[47px] text-center text-zinc-800 text-sm font-semibold font-['SF Pro Text'] leading-[21px]"
-                >
-                  {`${price?.price} ${price?.unit}`}
+                <div key={price.price + index}>
+                  <div className="w-[87px] h-[30px] text-center text-zinc-800 text-sm font-semibold font-['SF Pro Text'] leading-[21px]">
+                    {`${price?.price} ${price?.unit}`}
+                  </div>
+
+                  <div className="w-[90px] h-[23px] relative">
+                    <button
+                      onClick={() => handleUpdateQuantity(true, index)}
+                      className="w-[21px] h-[21px] left-0 top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
+                    >
+                      <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                        +
+                      </div>
+                    </button>
+                    <div className="w-[26px] h-[23px] left-[33px] top-0 absolute rounded-[5px] border border-slate-200" />
+                    <div className="w-5 left-[36px] top-[2.50px] absolute text-center text-black text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                      {price.quantity}
+                    </div>
+                    {price.quantity !== 0 ? (
+                      <button
+                        onClick={() => handleUpdateQuantity(false, index)}
+                        className="w-[21px] h-[21px] left-[69px] top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
+                      >
+                        <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                          -
+                        </div>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => deleteProduct(product.id!)}
+                        className="w-[21px] h-[21px] left-[69px] top-[1px] absolute justify-center items-center gap-2.5 inline-flex"
+                      >
+                        <div className="text-stone-800 text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                          <DeleteOutlined />
+                        </div>
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
-              <div className="w-[90px] h-[23px] relative">
-                <button
-                  onClick={() => handleUpdateQuantity(true)}
-                  className="w-[21px] h-[21px] left-0 top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
-                >
-                  <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-                    +
-                  </div>
-                </button>
-                <div className="w-[26px] h-[23px] left-[33px] top-0 absolute rounded-[5px] border border-slate-200" />
-                <div className="w-5 left-[36px] top-[2.50px] absolute text-center text-black text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-                  {quantity}
-                </div>
-                {quantity !== 0 ? (
-                  <button
-                    onClick={() => handleUpdateQuantity(false)}
-                    className="w-[21px] h-[21px] left-[69px] top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
-                  >
-                    <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-                      -
-                    </div>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => deleteProduct(product.id!)}
-                    className="w-[21px] h-[21px] left-[69px] top-[1px] absolute justify-center items-center gap-2.5 inline-flex"
-                  >
-                    <div className="text-stone-800 text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-                      <DeleteOutlined />
-                    </div>
-                  </button>
-                )}
-              </div>
             </div>
           </div>
         </div>

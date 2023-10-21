@@ -1,6 +1,7 @@
 interface Price {
   price: number;
   unit: string;
+  quantity: number | 0;
 }
 
 interface ProductInterface {
@@ -11,7 +12,6 @@ interface ProductInterface {
   productNumber: string;
   packSize: string;
   prices: Price[];
-  quantity: number | 0;
   id?: string;
 }
 

@@ -14,6 +14,7 @@ const extractPrices = (card: Element) => {
     return {
       price: parseFloat(priceText.replace(/[^0-9\.]+/g, "")),
       unit: priceText.split(/\s+/).pop(),
+      quantity: 0,
     };
   });
 };
@@ -42,7 +43,6 @@ const scrapProductDetails: any = (card: Element) => {
     productNumber,
     packSize,
     prices,
-    quantity: 0,
   };
 };
 
