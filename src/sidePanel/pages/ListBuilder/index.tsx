@@ -85,7 +85,7 @@ const ListBuilder = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header refresh refreshOnClick={fetchProducts} />
+      <Header refreshOnClick={fetchProducts} />
       <div className="flex-1 flex flex-col">
         <CustomDivider orientation="horizontal" />
         <div className="flex-none h-[40px] flex items-center justify-start px-[8px] gap-[12px]">

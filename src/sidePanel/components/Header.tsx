@@ -9,11 +9,11 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ refresh = false, refreshOnClick }) => {
   const navigate = useNavigate();
-  
+
   const logout = async () => {
     chrome.storage.local.remove("profit_sea_token");
     navigate("/login");
-  }
+  };
 
   return (
     <div className="h-[40px] flex items-center justify-start px-[8px] gap-[12px]">

@@ -1,10 +1,10 @@
 import axios from "axios";
 import { authRoutes } from "./authApi";
-const baseDomain = "http://localhost:5000";
-// let baseDomain = "https://dinedynamics.uc.r.appspot.com";
+// const baseDomain = "http://localhost:5000";
+const baseDomain = "https://dinedynamics.uc.r.appspot.com";
 
-// const webApp = "https://profit-sea.vercel.app"
-export const webApp = "http://localhost:5173";
+export const webApp = "https://profit-sea.vercel.app";
+// export const webApp = "http://localhost:5173";
 
 export const appName = "profit_sea";
 export const accessToken = "profit_sea_token";
@@ -41,7 +41,7 @@ instance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    
+
     // If it's a 401 and not the refresh token endpoint and the request hasn't been retried yet
     if (
       error.response.status === 401 &&
@@ -49,7 +49,7 @@ instance.interceptors.response.use(
       !originalRequest._retry
     ) {
       originalRequest._retry = true; // Mark the request as retried
-      
+
       // Fetch stored refresh token
       const data = await new Promise((resolve) => {
         chrome.storage.local.get(`${appName}_refresh_token`, (result) => {
@@ -62,9 +62,12 @@ instance.interceptors.response.use(
 
       try {
         // Request new tokens with the refresh token
-        const res = await axios.post(`${baseDomain}/${authRoutes.refreshToken}`, {
-          refreshToken: data,
-        });
+        const res = await axios.post(
+          `${baseDomain}/${authRoutes.refreshToken}`,
+          {
+            refreshToken: data,
+          }
+        );
 
         if (res.status === 200) {
           let { access, refresh } = res.data;
@@ -75,10 +78,10 @@ instance.interceptors.response.use(
             [refreshToken]: refresh.token,
           });
           // Update the token in Axios headers
-          instance.defaults.headers['Authorization'] = 'Bearer ' + access.token;
-          
+          instance.defaults.headers["Authorization"] = "Bearer " + access.token;
+
           // Modify original request headers
-          originalRequest.headers['Authorization'] = 'Bearer ' + access.token;
+          originalRequest.headers["Authorization"] = "Bearer " + access.token;
           // Re-send the original request
           return instance(originalRequest);
         } else {
@@ -93,7 +96,6 @@ instance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 export function toQueryString(obj: any) {
   return Object.keys(obj)
