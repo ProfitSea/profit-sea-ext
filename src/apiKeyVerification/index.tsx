@@ -1,6 +1,7 @@
 import { Button, Divider } from "@mui/material";
 import React, { useCallback, useLayoutEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { webApp } from "../api/api";
 import authApi from "../api/authApi";
 import CustomInput from "../sidePanel/components/CustomInput";
 import Logo from "../sidePanel/components/Logo";
@@ -18,14 +19,17 @@ const ApiKeyVerification = () => {
     setError("");
 
     try {
-      const data: any = await authApi.verifyApiKey({ email, apiKey });
-      chrome.storage.local.set({ profit_sea_token: data.token.access.token });
+      const { tokens }: any = await authApi.verifyApiKey({ email, apiKey });
+
+      chrome.storage.local.set({ profit_sea_token: tokens.access.token });
+      chrome.storage.local.set({
+        profit_sea_refresh_token: tokens.refresh.token,
+      });
       setLoggedIn(true);
 
       chrome.runtime.sendMessage({
         type: "refresh_side_panel_after_login",
       });
-
     } catch (err: any) {
       setError(err?.response?.data?.message || "An error occurred.");
     } finally {
@@ -138,7 +142,7 @@ const ApiKeyVerification = () => {
               Don't Have API Key?
             </Divider>
           </div>
-          <a href="https://profit-sea.vercel.app" target="_blank">
+          <a href={webApp} target="_blank">
             <Button
               sx={{
                 width: "100%",
