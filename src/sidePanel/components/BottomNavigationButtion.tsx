@@ -1,34 +1,20 @@
 import React from "react";
+import { Pages, buttonsData } from "../../utils/enums/pages.enum";
 import CustomButton from "./CustomButton";
 
 interface BottomNavigationButtonProps {
-  page: string;
-  setPage: React.Dispatch<React.SetStateAction<string>>;
+  page: Pages;
+  setPage: React.Dispatch<React.SetStateAction<Pages>>;
 }
 
 const BottomNavigationButton: React.FC<BottomNavigationButtonProps> = ({
   page,
   setPage,
 }) => {
-  const buttonsData: any = {
-    listbuilder: {
-      title: "Continue to Product Type",
-      navigateTo: "productsType",
-    },
-    productsType: {
-      title: "Continue to Analysis",
-      navigateTo: "productsAnalysis",
-    },
-    productsAnalysis: {
-      title: "Accept and Create Order",
-      navigateTo: "",
-    },
-  };
-
   return (
     <div className="h-[60px] px-[10px] flex items-center justify-center">
       <CustomButton
-        title={buttonsData[page].title}
+        title={buttonsData[page as keyof typeof buttonsData].title}
         bgColor="#FBBB00"
         textColor="white"
         onClick={() => {

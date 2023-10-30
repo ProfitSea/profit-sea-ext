@@ -17,11 +17,12 @@ import TagFilters from "../../components/TagFilters";
 import ListBuilder from "../ListBuilder";
 import ProductsAnalysis from "../ProductsAnalysis";
 import ProductsType from "../ProductsType";
+import { Pages } from "../../../utils/enums/pages.enum";
 
 interface DefaultLayoutProps {}
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
-  const [page, setPage] = useState("listbuilder");
+  const [page, setPage] = useState(Pages.LIST_BUILDER);
   const [vendorFilter, setVendorFilter] = useState<string | null>("all");
   const [productFilter, setProductFilter] = React.useState<string | null>(null);
   const [lists, setLists] = useState([] as any);
@@ -70,11 +71,11 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
 
   const renderPages = useMemo(() => {
     switch (page) {
-      case "listbuilder":
+      case Pages.LIST_BUILDER:
         return <ListBuilder currentList={currentList} />;
-      case "productsAnalysis":
+      case Pages.PRODUCTS_ANALYSIS:
         return <ProductsAnalysis />;
-      case "productsType":
+      case Pages.PRODUCTS_TYPE:
         return <ProductsType />;
       default:
         return <ListBuilder currentList={currentList} />;

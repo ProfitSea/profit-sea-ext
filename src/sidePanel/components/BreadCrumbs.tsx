@@ -1,21 +1,16 @@
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Breadcrumbs } from "@mui/material";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  Pages,
+  breadcrumbsData,
+  pageToActiveIndex,
+} from "../../utils/enums/pages.enum";
 
 interface BreadCrumbsProps {
-  page: string;
-  setPage: Dispatch<SetStateAction<string>>;
+  page: Pages;
+  setPage: Dispatch<SetStateAction<Pages>>;
 }
-
-interface PageToActiveIndex {
-  [key: string]: number;
-}
-
-const pageToActiveIndex: PageToActiveIndex = {
-  listbuilder: 0,
-  productsType: 1,
-  productsAnalysis: 2,
-};
 
 const BreadCrumbs: React.FC<BreadCrumbsProps> = ({ page, setPage }) => {
   const [activeIndex, setActiveIndex] = useState(pageToActiveIndex[page] || 0);
@@ -24,22 +19,7 @@ const BreadCrumbs: React.FC<BreadCrumbsProps> = ({ page, setPage }) => {
     setActiveIndex(pageToActiveIndex[page] || 0);
   }, [page]);
 
-  const breadcrumbs = [
-    {
-      label: "List Builder",
-      pageName: "listbuilder",
-    },
-    {
-      label: "Product Type",
-      pageName: "productsType",
-    },
-    {
-      label: "Product Analysis",
-      pageName: "productsAnalysis",
-    },
-  ];
-
-  const handleBreadcrumbClick = (pageName: string) => {
+  const handleBreadcrumbClick = (pageName: Pages) => {
     setPage(pageName);
   };
 
@@ -57,7 +37,7 @@ const BreadCrumbs: React.FC<BreadCrumbsProps> = ({ page, setPage }) => {
           },
         }}
       >
-        {breadcrumbs.map((breadcrumb, index) => (
+        {breadcrumbsData.map((breadcrumb, index) => (
           <p
             key={index}
             className={`text-xs ${
