@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import listsApi from "../../../api/listsApi";
+import { Pages } from "../../../utils/enums/pages.enum";
 import BottomNavigationButton from "../../components/BottomNavigationButtion";
 import BreadCrumbs from "../../components/BreadCrumbs";
 import CustomDivider from "../../components/CustomDivider";
@@ -17,7 +17,7 @@ import TagFilters from "../../components/TagFilters";
 import ListBuilder from "../ListBuilder";
 import ProductsAnalysis from "../ProductsAnalysis";
 import ProductsType from "../ProductsType";
-import { Pages } from "../../../utils/enums/pages.enum";
+import useApi from "./useList";
 
 interface DefaultLayoutProps {}
 
@@ -25,11 +25,19 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
   const [page, setPage] = useState(Pages.LIST_BUILDER);
   const [vendorFilter, setVendorFilter] = useState<string | null>("all");
   const [productFilter, setProductFilter] = React.useState<string | null>(null);
-  const [lists, setLists] = useState([] as any);
-  const [selectValue, setSelectValue] = useState("0");
-  const [currentList, setCurrentList] = useState({} as any);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    lists,
+    loading,
+    error,
+    selectValue,
+    setSelectValue,
+    fetchLists,
+    createNewList,
+    currentList,
+    setCurrentList,
+    updateListName,
+    setError,
+  } = useApi();
 
   useLayoutEffect(() => {
     chrome.storage.local.get(["profit_sea_page"], (result) => {
@@ -38,32 +46,6 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
       }
     });
   }, []);
-
-  const fetchLists = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await listsApi.getLists();
-      setLists(res.result.results);
-      setLoading(false);
-    } catch (error) {
-      setError("Failed to fetch lists");
-      setLoading(false);
-    }
-  }, []);
-
-  const createNewList = async () => {
-    try {
-      setLoading(true);
-      const res = await listsApi.createList();
-      setLists([...lists, res.list]);
-      setCurrentList(res.list);
-      setSelectValue(res.list.id);
-      setLoading(false);
-    } catch (error) {
-      setError("Failed to Create New List");
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchLists();
@@ -106,20 +88,6 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
     },
     [lists, createNewList]
   );
-
-  const updateListName = async (name: string) => {
-    try {
-      setLoading(true);
-      await listsApi.updateListName(currentList.id, name as string);
-      await fetchLists();
-      setCurrentList({ ...currentList, name });
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      setError("Failed to Update the list name");
-      console.log(error);
-    }
-  };
 
   // Close the error manually
   const handleCloseError = () => {

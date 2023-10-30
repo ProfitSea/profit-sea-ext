@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 interface ListNameProps {
   currentList: any;
-  updateListName: (name: string) => Promise<void>;
+  updateListName: (id: string, name: string) => Promise<void>;
   loading: boolean;
 }
 
@@ -35,7 +35,7 @@ const ListName: React.FC<ListNameProps> = ({
       setEdit(false);
       return;
     }
-    updateListName(name.trim()); // Use trim to avoid white spaces
+    updateListName(currentList.id, name.trim()); // Use trim to avoid white spaces
   }, [name, updateListName]);
 
   const handleCancelEdit = useCallback(() => {
