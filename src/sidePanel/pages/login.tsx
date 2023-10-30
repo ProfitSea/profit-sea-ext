@@ -10,7 +10,7 @@ const Login = () => {
   const navigateToHome = () => {
     chrome.storage.local.get("profit_sea_token", (result) => {
       if (result.profit_sea_token) {
-        navigate("/home");
+        navigate("/app");
       } else {
         chrome.runtime.sendMessage({
           type: "open_api_key_verification_page",
@@ -20,11 +20,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    chrome.storage.local.get("profit_sea_token", (result) => {
-      if (result.profit_sea_token) {
-        navigate("/home");
-      }
-    });
+    navigateToHome();
   }, []);
 
   return (

@@ -1,12 +1,9 @@
 import { CircularProgress } from "@mui/material";
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import ProductsAnalysis from "./pages/ProductsAnalysis";
+import DefaultLayout from "./pages/Layout/defaultLayout";
 
 const Login = React.lazy(() => import("./pages/login"));
-const Home = React.lazy(() => import("./pages/Home"));
-const ListBuilder = React.lazy(() => import("./pages/ListBuilder"));
-const ProductsType = React.lazy(() => import("./pages/ProductsType"));
 const ProtectedRoute = React.lazy(() => import("./pages/ProtectedRoute"));
 
 const SidePanel = () => {
@@ -28,34 +25,10 @@ const SidePanel = () => {
       <MemoryRouter initialEntries={["/login"]}>
         <Routes>
           <Route
-            path="home"
+            path="app"
             element={
               <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="listbuilder"
-            element={
-              <ProtectedRoute>
-                <ListBuilder />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="productsType"
-            element={
-              <ProtectedRoute>
-                <ProductsType />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="productsAnalysis"
-            element={
-              <ProtectedRoute>
-                <ProductsAnalysis />
+                <DefaultLayout />
               </ProtectedRoute>
             }
           />

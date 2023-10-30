@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import CustomTag from "./CustomTag";
+import CustomTag from "../CustomTag";
 
 interface Props {
   tags: TagType[];

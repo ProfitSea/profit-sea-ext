@@ -1,8 +1,8 @@
 import axios from "axios";
 import { authRoutes } from "./authApi";
 
-const env = "dev";
-// const env = "prod";
+const env: string = "dev";
+// const env: string = "prod";
 
 export let baseDomain = "";
 export let webApp = "";
