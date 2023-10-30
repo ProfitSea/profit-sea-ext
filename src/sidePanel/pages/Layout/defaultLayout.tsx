@@ -5,24 +5,22 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useNavigate } from "react-router-dom";
 import listsApi from "../../../api/listsApi";
+import BottomNavigationButton from "../../components/BottomNavigationButtion";
 import BreadCrumbs from "../../components/BreadCrumbs";
-import CustomButton from "../../components/CustomButton";
 import CustomDivider from "../../components/CustomDivider";
+import ErrorNotification from "../../components/ErrorNotification";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import ListName from "../../components/ListName";
+import TagFilters from "../../components/TagFilters";
 import ListBuilder from "../ListBuilder";
 import ProductsAnalysis from "../ProductsAnalysis";
 import ProductsType from "../ProductsType";
-import TagFilters from "../../components/TagFilters";
-import ErrorNotification from "../../components/ErrorNotification";
 
 interface DefaultLayoutProps {}
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
-  const navigate = useNavigate();
   const [page, setPage] = useState("listbuilder");
   const [vendorFilter, setVendorFilter] = useState<string | null>("all");
   const [productFilter, setProductFilter] = React.useState<string | null>(null);
@@ -165,16 +163,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
         <CustomDivider orientation="horizontal" />
         {renderPages}
         <CustomDivider orientation="horizontal" />
-        <div className="h-[60px] px-[10px] flex items-center justify-center">
-          <CustomButton
-            title="Continue to Product Type"
-            bgColor="#FBBB00"
-            textColor="white"
-            onClick={() => {
-              navigate("/productsType");
-            }}
-          />
-        </div>
+        <BottomNavigationButton page={page} setPage={setPage} />
       </div>
       <Footer />
     </div>
