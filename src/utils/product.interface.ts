@@ -1,7 +1,6 @@
 interface Price {
   price: number;
   unit: string;
-  quantity: number | 0;
 }
 
 interface ProductInterface {

@@ -1,6 +1,7 @@
-import productsApi from "../../api/productsApi";
+import listsApi from "../../api/listsApi";
 import { createNotification } from "../../notification";
-import { refreshListBuilderProducts } from "../../utils/actions/messageToSidepanel";
+import ChromeLocalStorage from "../../utils/StorageFunctions/localStorage.function";
+import { refreshCurrentList } from "../../utils/actions/messageToSidepanel";
 import "../index.css";
 
 // Utility functions
@@ -14,7 +15,6 @@ const extractPrices = (card: Element) => {
     return {
       price: parseFloat(priceText.replace(/[^0-9\.]+/g, "")),
       unit: priceText.split(/\s+/).pop(),
-      quantity: 0,
     };
   });
 };
@@ -61,10 +61,18 @@ const createAddBtnDiv = (card: Element) => {
   div.onclick = async () => {
     try {
       const product = scrapProductDetails(card);
+      const { profitsea_current_list_id: listId } =
+        await ChromeLocalStorage.getCurrentListId();
+      if (!listId) {
+        createNotification(
+          "Product Uploading Failed",
+          "No List is selected. Please select a list from ProfitSea extension"
+        );
+      }
       if (!product) return;
-      await productsApi.addProduct(product);
+      await listsApi.addListItem(listId, { product });
       createNotification("Product Uploaded", "Product Uploaded successfully");
-      refreshListBuilderProducts();
+      refreshCurrentList(listId);
     } catch (err) {
       console.log(err);
       createNotification(

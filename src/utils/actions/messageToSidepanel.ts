@@ -1,5 +1,8 @@
-export const refreshListBuilderProducts = () => {
+import { MessagingActions } from "./messagingActions.enum";
+
+export const refreshCurrentList = (listId: string) => {
   chrome.runtime.sendMessage({
-    action: "refreshListBuilderProducts",
+    action: MessagingActions.REFRESH_CURRENT_LIST,
+    listId,
   });
 };
