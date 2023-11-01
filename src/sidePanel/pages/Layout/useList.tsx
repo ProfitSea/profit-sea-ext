@@ -38,6 +38,7 @@ const useApi = () => {
     try {
       setLoading(true);
       await listsApi.updateListName(id, name);
+      setCurrentList({ ...currentList, name });
       await fetchLists();
       setLoading(false);
     } catch (error) {
