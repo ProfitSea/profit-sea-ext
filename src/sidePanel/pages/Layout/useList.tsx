@@ -41,7 +41,13 @@ const useApi = () => {
       setLoading(true);
       await listsApi.updateListName(id, name);
       setCurrentList({ ...currentList, name });
-      await fetchLists();
+      const updatedLists = lists.map((list: any) => {
+        if (list.id === id) {
+          list.name = name;
+        }
+        return list;
+      });
+      setLists(updatedLists);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -53,7 +59,10 @@ const useApi = () => {
   const messageListener = async (request: any) => {
     if (request.action === MessagingActions.REFRESH_CURRENT_LIST) {
       try {
-        const { list } = await listsApi.getListById(request.listId);
+        const [{ list }] = await Promise.all([
+          listsApi.getListById(request.listId),
+          fetchLists(),
+        ]);
         setCurrentList(list);
       } catch (error) {
         console.log(error);
@@ -68,15 +77,14 @@ const useApi = () => {
     // Remove the listener when the component unmounts
     return () => {
       chrome.runtime.onMessage.removeListener(messageListener);
+      setCurrentList({} as any);
+      ChromeLocalStorage.setCurrentList(null);
     };
   }, []); // Empty dependency array ensures this runs only on mount and unmount
 
   useEffect(() => {
-    if (currentList.id) {
-      console.log("Current List is updated", currentList);
-
-      ChromeLocalStorage.setCurrentListId(currentList.id);
-    }
+    console.log("Current List is updated", currentList);
+    ChromeLocalStorage.setCurrentList(currentList);
   }, [currentList]);
 
   return {

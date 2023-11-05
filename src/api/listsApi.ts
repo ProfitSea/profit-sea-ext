@@ -23,13 +23,12 @@ class ListsApi {
 
   async updateListName(listId: string, name: string) {
     try {
-      const request = await API.patch(
+      await API.patch(
         `${listRoutes.updateListName}/${listId}`,
         {
           name,
         }
       );
-      return request.data;
     } catch (error) {
       console.log(error);
       throw error;

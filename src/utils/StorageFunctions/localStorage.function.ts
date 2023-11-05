@@ -1,18 +1,18 @@
 import { identifiers } from "../enums/identifier.enum";
 
-const setCurrentListId = (listId: string) => {
+const setCurrentList = (list: any) => {
   chrome.storage.local.set({
-    [identifiers.PROFITSEA_CURRENT_LIST_ID]: listId,
+    [identifiers.PROFITSEA_CURRENT_LIST]: list,
   });
 };
 
-const getCurrentListId = () => {
-  return chrome.storage.local.get(identifiers.PROFITSEA_CURRENT_LIST_ID);
+const getCurrentList = () => {
+  return chrome.storage.local.get(identifiers.PROFITSEA_CURRENT_LIST);
 };
 
 const ChromeLocalStorage = {
-  setCurrentListId,
-  getCurrentListId,
+  setCurrentList,
+  getCurrentList,
 };
 
 export default ChromeLocalStorage;

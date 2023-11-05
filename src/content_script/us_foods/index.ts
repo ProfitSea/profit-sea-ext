@@ -1,8 +1,5 @@
-import listsApi from "../../api/listsApi";
-import { createNotification } from "../../notification";
-import ChromeLocalStorage from "../../utils/StorageFunctions/localStorage.function";
-import { refreshCurrentList } from "../../utils/actions/messageToSidepanel";
 import "../index.css";
+import { addProductIntoList } from "../utils";
 
 // Utility functions
 const getText = (element: HTMLElement) =>
@@ -50,36 +47,29 @@ const createAddBtnDiv = (card: Element) => {
   const div = document.createElement("div");
   div.className =
     "mt-2 flex flex-row gap-[5px] items-center justify-center cursor-pointer";
-  const p = document.createElement("p");
-  const img = document.createElement("img");
-  img.src = chrome.runtime.getURL("assets/icons/add.png");
-  img.alt = "add";
-  p.textContent = "Add To ProfitSea";
-  p.className = "bg-transparent font-semibold your-button-class";
-  div.append(p, img);
+
+    const p = document.createElement("p");
+    const img = document.createElement("img");
+    img.src = chrome.runtime.getURL("assets/icons/add.png");
+    img.alt = "add";
+    p.textContent = "Add To ProfitSea";
+    p.className = "bg-transparent font-semibold your-button-class";
+    div.append(p, img);
+
+  const originalContent = div.cloneNode(true); // Save the initial div content
 
   div.onclick = async () => {
-    try {
-      const product = scrapProductDetails(card);
-      const { profitsea_current_list_id: listId } =
-        await ChromeLocalStorage.getCurrentListId();
-      if (!listId) {
-        createNotification(
-          "Product Uploading Failed",
-          "No List is selected. Please select a list from ProfitSea extension"
-        );
-      }
-      if (!product) return;
-      await listsApi.addListItem(listId, { product });
-      createNotification("Product Uploaded", "Product Uploaded successfully");
-      refreshCurrentList(listId);
-    } catch (err) {
-      console.log(err);
-      createNotification(
-        "Product Uploading Failed",
-        "Please contact ProfitSea Admin"
-      );
+    // Set div content to "Loading..."
+    while(div.firstChild) {
+      div.removeChild(div.firstChild);
     }
+    div.textContent = "Loading...";
+
+    const product = scrapProductDetails(card);
+    await addProductIntoList(product);
+
+    // Restore the original div content
+    div.replaceWith(originalContent);
   };
 
   return div;

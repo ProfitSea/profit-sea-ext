@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import ChromeLocalStorage from "../../../utils/StorageFunctions/localStorage.function";
 import { Pages } from "../../../utils/enums/pages.enum";
 import BottomNavigationButton from "../../components/BottomNavigationButtion";
 import BreadCrumbs from "../../components/BreadCrumbs";

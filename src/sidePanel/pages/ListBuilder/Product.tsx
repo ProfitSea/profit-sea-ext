@@ -29,14 +29,14 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
     if (timeoutId) clearTimeout(timeoutId);
 
     // Increment or decrement based on the boolean flag and index
-    const newQuantity = increment
-      ? prices[index].quantity + 1
-      : prices[index].quantity - 1;
-    setPrices((prevPrices) => {
-      const newPrices = [...prevPrices];
-      newPrices[index].quantity = newQuantity;
-      return newPrices;
-    });
+    // const newQuantity = increment
+    //   ? prices[index].quantity + 1
+    //   : prices[index].quantity - 1;
+    // setPrices((prevPrices) => {
+    //   const newPrices = [...prevPrices];
+    //   newPrices[index].quantity = newQuantity;
+    //   return newPrices;
+    // });
 
     const id = setTimeout(() => {
       updateProducts();
@@ -85,7 +85,7 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
                       </div>
                     </button>
                     <div className="w-[26px] h-[23px] left-[33px] top-0 absolute rounded-[5px] border border-slate-200" />
-                    <div className="w-5 left-[36px] top-[2.50px] absolute text-center text-black text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                    {/* <div className="w-5 left-[36px] top-[2.50px] absolute text-center text-black text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
                       {price.quantity}
                     </div>
                     {price.quantity !== 0 ? (
@@ -106,7 +106,7 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
                           <DeleteOutlined />
                         </div>
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </div>
               ))}

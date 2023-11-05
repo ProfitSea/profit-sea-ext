@@ -1,8 +1,4 @@
-import listsApi from "../../api/listsApi";
-import productsApi from "../../api/productsApi";
-import { createNotification } from "../../notification";
-import ChromeLocalStorage from "../../utils/StorageFunctions/localStorage.function";
-import { refreshCurrentList } from "../../utils/actions/messageToSidepanel";
+import { addProductIntoList } from "../utils";
 
 const addProfitSeaColumn = (dataHeader: Element) => {
   const newCol = document.createElement("div");
@@ -163,29 +159,8 @@ const initializeProductObserver = (productsContainer: any) => {
 
           if (!disable) {
             btnDiv.onclick = async () => {
-              try {
-                const product = scrapProductDetails(row);
-                const { listId } = await ChromeLocalStorage.getCurrentListId();
-                if (!listId) {
-                  createNotification(
-                    "Product Uploading Failed",
-                    "No List is selected. Please select a list from ProfitSea extension"
-                  );
-                }
-                if (!product) return;
-                await listsApi.addListItem(listId, { product });
-                createNotification(
-                  "Product Uploaded",
-                  "Product Uploaded successfully"
-                );
-                refreshCurrentList(listId);
-              } catch (err) {
-                console.log(err);
-                createNotification(
-                  "Product Uploading Failed",
-                  "Please contact ProfitSea Admin"
-                );
-              }
+              const product = scrapProductDetails(row);
+              await addProductIntoList(product);
             };
           }
 
