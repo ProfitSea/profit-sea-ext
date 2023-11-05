@@ -56,20 +56,9 @@ const createAddBtnDiv = (card: Element) => {
     p.className = "bg-transparent font-semibold your-button-class";
     div.append(p, img);
 
-  const originalContent = div.cloneNode(true); // Save the initial div content
-
   div.onclick = async () => {
-    // Set div content to "Loading..."
-    while(div.firstChild) {
-      div.removeChild(div.firstChild);
-    }
-    div.textContent = "Loading...";
-
     const product = scrapProductDetails(card);
     await addProductIntoList(product);
-
-    // Restore the original div content
-    div.replaceWith(originalContent);
   };
 
   return div;
