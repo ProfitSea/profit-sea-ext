@@ -5,7 +5,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import ChromeLocalStorage from "../../../utils/StorageFunctions/localStorage.function";
 import { Pages } from "../../../utils/enums/pages.enum";
 import BottomNavigationButton from "../../components/BottomNavigationButtion";
 import BreadCrumbs from "../../components/BreadCrumbs";
@@ -55,13 +54,25 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
   const renderPages = useMemo(() => {
     switch (page) {
       case Pages.LIST_BUILDER:
-        return <ListBuilder currentList={currentList} />;
+        return (
+          <ListBuilder
+            currentList={currentList}
+            vendorFilter={vendorFilter}
+            productFilter={productFilter}
+          />
+        );
       case Pages.PRODUCTS_ANALYSIS:
         return <ProductsAnalysis />;
       case Pages.PRODUCTS_TYPE:
         return <ProductsType />;
       default:
-        return <ListBuilder currentList={currentList} />;
+        return (
+          <ListBuilder
+            currentList={currentList}
+            vendorFilter={vendorFilter}
+            productFilter={productFilter}
+          />
+        );
     }
   }, [page, currentList]);
 
@@ -113,8 +124,8 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
       <Header
         lists={lists}
         selectValue={selectValue}
-        setSelectValue={handleUpdateSelectValue}
         loading={loading}
+        handleUpdateSelectValue={handleUpdateSelectValue}
       />
       <div className="flex-1 flex flex-col">
         <CustomDivider orientation="horizontal" />

@@ -4,16 +4,16 @@ import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   lists: any;
-  selectValue: any;
   loading: boolean;
-  setSelectValue: (value: string) => void;
+  selectValue: string;
+  handleUpdateSelectValue: (value: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
   lists,
-  selectValue,
   loading,
-  setSelectValue,
+  selectValue,
+  handleUpdateSelectValue,
 }) => {
   const navigate = useNavigate();
 
@@ -27,17 +27,17 @@ const Header: React.FC<HeaderProps> = ({
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
-        value={loading ? 0 : selectValue}
+        value={loading ? "0" : selectValue}
         onChange={(e: SelectChangeEvent) => {
-          setSelectValue(e.target.value as string);
+          handleUpdateSelectValue(e.target.value as string);
         }}
         sx={{
           height: "25px",
           fontSize: "11px",
-          width: "150px",        // Explicitly setting the width
-          whiteSpace: "nowrap",  // Ensure no wrap of text
-          overflow: "hidden",    // Hide overflowed text
-          textOverflow: "ellipsis" // Add ellipsis to overflowed text
+          width: "150px", // Explicitly setting the width
+          whiteSpace: "nowrap", // Ensure no wrap of text
+          overflow: "hidden", // Hide overflowed text
+          textOverflow: "ellipsis", // Add ellipsis to overflowed text
         }}
       >
         <MenuItem value={"0"}>

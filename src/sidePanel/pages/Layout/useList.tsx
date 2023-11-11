@@ -2,13 +2,26 @@ import { useCallback, useEffect, useState } from "react";
 import listsApi from "../../../api/listsApi";
 import ChromeLocalStorage from "../../../utils/StorageFunctions/localStorage.function";
 import { MessagingActions } from "../../../utils/actions/messagingActions.enum";
+import {
+  currentListSelector,
+  selectValueSelector,
+  setCurrentList as setReduxCurrentList,
+  setSelectValue as setReduxSelectValue,
+} from "../../redux/app/appSlice";
+import {
+  listsSelector,
+  setLists as setReduxLists,
+  updateListName as updateListNameRedux,
+} from "../../redux/lists/listsSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
 
 const useApi = () => {
-  const [lists, setLists] = useState([] as any);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentList, setCurrentList] = useState({} as any);
-  const [selectValue, setSelectValue] = useState("0");
+  const currentList = useAppSelector(currentListSelector);
+  const lists = useAppSelector(listsSelector);
+  const selectValue = useAppSelector(selectValueSelector);
+  const dispatch = useAppDispatch();
 
   const fetchLists = useCallback(async () => {
     try {
@@ -22,13 +35,25 @@ const useApi = () => {
     }
   }, []);
 
+  const setCurrentList = (list: any) => {
+    dispatch(setReduxCurrentList(list));
+  };
+
+  const setLists = (lists: any) => {
+    dispatch(setReduxLists(lists));
+  };
+
+  const setSelectValue = (value: string) => {
+    dispatch(setReduxSelectValue(value));
+  };
+
   const createNewList = async () => {
     try {
       setLoading(true);
       const res = await listsApi.createList();
       setLists([...lists, res.list]);
       setCurrentList(res.list);
-      setSelectValue(res.list.id);
+      setSelectValue(res.list.id as string);
       setLoading(false);
     } catch (error) {
       setError("Failed to Create New List");
@@ -41,13 +66,7 @@ const useApi = () => {
       setLoading(true);
       await listsApi.updateListName(id, name);
       setCurrentList({ ...currentList, name });
-      const updatedLists = lists.map((list: any) => {
-        if (list.id === id) {
-          list.name = name;
-        }
-        return list;
-      });
-      setLists(updatedLists);
+      dispatch(updateListNameRedux({ listId: id, name }));
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -83,7 +102,6 @@ const useApi = () => {
   }, []); // Empty dependency array ensures this runs only on mount and unmount
 
   useEffect(() => {
-    console.log("Current List is updated", currentList);
     ChromeLocalStorage.setCurrentList(currentList);
   }, [currentList]);
 

@@ -68,5 +68,15 @@ class ListsApi {
       throw error;
     }
   }
+
+  async getListItemsByListId(listId: string) {
+    try {
+      const request = await API.get(`${listRoutes.getListById}/${listId}`);
+      return request.data.list.listItems;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }
 export default new ListsApi();

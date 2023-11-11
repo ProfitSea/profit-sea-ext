@@ -1,24 +1,46 @@
 import { DeleteOutlined } from "@mui/icons-material";
 import React from "react";
 import productsApi from "../../../api/productsApi";
-import ProductInterface from "../../../utils/product.interface";
+import {
+  ListItemInterface,
+  ProductInterface,
+  SaleUnitInterface,
+  SaleUnitQuantityInterface,
+} from "../../../utils/types/product-response.type";
 
 interface ProductProps {
-  product: ProductInterface;
+  listItem: ListItemInterface;
   deleteProduct: (productNumber: ProductInterface["productNumber"]) => void;
 }
 
-const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
-  const [prices, setPrices] = React.useState(product.prices);
+const Product: React.FC<ProductProps> = ({ listItem, deleteProduct }) => {
+  const { product } = listItem;
+  const [saleUnitQuantites, setSaleUnitQuantites] = React.useState<
+    SaleUnitQuantityInterface[]
+  >(listItem.saleUnitQuantities);
   const [timeoutId, setTimeoutId] = React.useState<ReturnType<
     typeof setTimeout
   > | null>(null);
 
+  const getPriceBySaleUnitId = (saleUnitId: string) => {
+    const saleUnit = product.saleUnits.find(
+      (saleUnit: SaleUnitInterface) => saleUnit.id === saleUnitId
+    );
+    return saleUnit?.price?.price;
+  };
+
+  const getSaleUnitBySaleUnitId = (saleUnitId: string) => {
+    const saleUnit = product.saleUnits.find(
+      (saleUnit: SaleUnitInterface) => saleUnit.id === saleUnitId
+    );
+    return saleUnit?.unit;
+  };
+
   const updateProducts = async () => {
     try {
-      await productsApi.updateProduct(product.id!, {
-        prices,
-      });
+      // await productsApi.updateProduct(product.id!, {
+      //   prices,
+      // });
     } catch (error) {
       alert("Error updating product");
       console.log(error);
@@ -69,47 +91,54 @@ const Product: React.FC<ProductProps> = ({ product, deleteProduct }) => {
           </div>
           <div className="justify-center items-center gap-2.5 flex">
             <div className="max-h-[200px] flex-col justify-start items-center flex gap-3">
-              {product?.prices.map((price, index) => (
-                <div key={price.price + index}>
-                  <div className="w-[87px] h-[30px] text-center text-zinc-800 text-sm font-semibold font-['SF Pro Text'] leading-[21px]">
-                    {`${price?.price} ${price?.unit}`}
-                  </div>
-
-                  <div className="w-[90px] h-[23px] relative">
-                    <button
-                      onClick={() => handleUpdateQuantity(true, index)}
-                      className="w-[21px] h-[21px] left-0 top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
-                    >
-                      <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-                        +
+              {saleUnitQuantites.map(
+                (saleUnitQuantity: SaleUnitQuantityInterface, index) => {
+                  const { _id, quantity, saleUnit } = saleUnitQuantity;
+                  return (
+                    <div key={_id}>
+                      <div className="w-[87px] h-[30px] text-center text-zinc-800 text-sm font-semibold font-['SF Pro Text'] leading-[21px]">
+                        {`${getPriceBySaleUnitId(
+                          saleUnit as string
+                        )} ${getSaleUnitBySaleUnitId(saleUnit as string)}`}
                       </div>
-                    </button>
-                    <div className="w-[26px] h-[23px] left-[33px] top-0 absolute rounded-[5px] border border-slate-200" />
-                    {/* <div className="w-5 left-[36px] top-[2.50px] absolute text-center text-black text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-                      {price.quantity}
+
+                      <div className="w-[90px] h-[23px] relative">
+                        <button
+                          onClick={() => handleUpdateQuantity(true, index)}
+                          className="w-[21px] h-[21px] left-0 top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
+                        >
+                          <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                            +
+                          </div>
+                        </button>
+                        <div className="w-[26px] h-[23px] left-[33px] top-0 absolute rounded-[5px] border border-slate-200" />
+                        <div className="w-5 left-[36px] top-[2.50px] absolute text-center text-black text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                          {quantity}
+                        </div>
+                        {quantity !== 0 ? (
+                          <button
+                            onClick={() => handleUpdateQuantity(false, index)}
+                            className="w-[21px] h-[21px] left-[69px] top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
+                          >
+                            <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                              -
+                            </div>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => deleteProduct(listItem.id!)}
+                            className="w-[21px] h-[21px] left-[69px] top-[1px] absolute justify-center items-center gap-2.5 inline-flex"
+                          >
+                            <div className="text-stone-800 text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
+                              <DeleteOutlined />
+                            </div>
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    {price.quantity !== 0 ? (
-                      <button
-                        onClick={() => handleUpdateQuantity(false, index)}
-                        className="w-[21px] h-[21px] left-[69px] top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
-                      >
-                        <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-                          -
-                        </div>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => deleteProduct(product.id!)}
-                        className="w-[21px] h-[21px] left-[69px] top-[1px] absolute justify-center items-center gap-2.5 inline-flex"
-                      >
-                        <div className="text-stone-800 text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-                          <DeleteOutlined />
-                        </div>
-                      </button>
-                    )} */}
-                  </div>
-                </div>
-              ))}
+                  );
+                }
+              )}
             </div>
           </div>
         </div>
