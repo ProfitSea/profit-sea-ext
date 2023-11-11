@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import Tags from "./Tags";
-import { vendorsTagsData } from "../../../utils/data/vendorTags.data";
 import { productTagsData } from "../../../utils/data/productTags.data";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { updateVendorTags, vendorTagsSelector } from "../../redux/app/appSlice";
 
 interface TagFiltersProps {
-  setVendorFilter: any;
+  setVendorFilter: (value: string) => void;
   setProductFilter: any;
 }
 
@@ -12,7 +13,11 @@ const TagFilters: React.FC<TagFiltersProps> = ({
   setVendorFilter,
   setProductFilter,
 }) => {
-  const [vendorTags, setVendorTags] = useState(vendorsTagsData);
+  const dispatch = useAppDispatch();
+  const vendorTags = useAppSelector(vendorTagsSelector);
+  const setVendorTags = (value: TagType[]) => {
+    dispatch(updateVendorTags(value));
+  };
   const [productTags, setProductTags] = useState(productTagsData);
 
   return (

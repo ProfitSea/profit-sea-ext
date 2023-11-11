@@ -1,10 +1,10 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import CustomTag from "../CustomTag";
 
 interface Props {
   tags: TagType[];
   setTags: any;
-  setFilter: Dispatch<SetStateAction<string | null>>;
+  setFilter: (value: string) => void;
 }
 
 const Tags: React.FC<Props> = ({ tags, setTags, setFilter }) => {
@@ -21,7 +21,7 @@ const Tags: React.FC<Props> = ({ tags, setTags, setFilter }) => {
           onActive={(id: number) => {
             let updatedTags = tags.map((tag: TagType) => {
               if (tag.id === id) {
-                setFilter(tag.filterValue);
+                setFilter(tag.filterValue as string);
                 return {
                   ...tag,
                   active: true,

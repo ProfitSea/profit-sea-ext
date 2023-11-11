@@ -28,7 +28,6 @@ const Product: React.FC<ProductProps> = ({ listItem, deleteProduct }) => {
     );
     return saleUnit?.price?.price;
   };
-
   const getSaleUnitBySaleUnitId = (saleUnitId: string) => {
     const saleUnit = product.saleUnits.find(
       (saleUnit: SaleUnitInterface) => saleUnit.id === saleUnitId
@@ -91,7 +90,7 @@ const Product: React.FC<ProductProps> = ({ listItem, deleteProduct }) => {
           </div>
           <div className="justify-center items-center gap-2.5 flex">
             <div className="max-h-[200px] flex-col justify-start items-center flex gap-3">
-              {saleUnitQuantites.map(
+              {listItem.saleUnitQuantities.map(
                 (saleUnitQuantity: SaleUnitQuantityInterface, index) => {
                   const { _id, quantity, saleUnit } = saleUnitQuantity;
                   return (

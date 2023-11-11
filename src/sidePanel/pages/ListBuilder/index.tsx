@@ -1,74 +1,96 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Home from "../Home";
 import listsApi from "../../../api/listsApi";
 import Product from "./Product";
 import CustomDivider from "../../components/CustomDivider";
 import { ListItemInterface } from "../../../utils/types/product-response.type";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import {
+  setVendorTagsCount,
+  vendorFilterSelector,
+} from "../../redux/app/appSlice";
 
 interface ListBuilderProps {
   currentList: any;
-  vendorFilter: string | null;
-  productFilter: string | null;
 }
 
-const ListBuilder: React.FC<ListBuilderProps> = ({
-  currentList,
-  vendorFilter,
-  productFilter,
-}) => {
+const ListBuilder: React.FC<ListBuilderProps> = ({ currentList }) => {
+  const dispatch = useAppDispatch();
   const [listItems, setListItems] = useState<ListItemInterface[]>([]);
   const [loading, setLoading] = useState<Boolean>(false);
-  const [filteredListItems, setFilteredListItems] = useState<ListItemInterface[]>([]);
+
+  const vendorFilter = useAppSelector(vendorFilterSelector);
+
+  const updateTagsCount = useCallback(() => {
+    const tags = {
+      "US Foods": 0,
+      Sysco: 0,
+      all: listItems.length, // Set the count for "All Vendors" to the total length of listItems
+      ...listItems.reduce((acc: any, item: ListItemInterface) => {
+        const vendorName = item.product.vendor;
+        acc[vendorName] = (acc[vendorName] || 0) + 1;
+        return acc;
+      }, {}),
+    };
+    return tags;
+  }, [listItems]);
 
   useEffect(() => {
-    if (listItems.length > 0) {
-      const filteredListItems = listItems.filter(({ product }: any) => {
-        if (vendorFilter === "all") {
-          return true;
-        } else {
-          return product.vendor === vendorFilter;
-        }
-      });
-      setFilteredListItems(filteredListItems);
-    }
+    const tagsCount = updateTagsCount();
+    Object.entries(tagsCount).forEach(([vendorName, count]) => {
+      dispatch(setVendorTagsCount({ vendorName, count: count as number }));
+    });
+  }, [listItems, updateTagsCount, dispatch]);
+
+  // Memoized filtered list items
+  const filteredListItems = useMemo(() => {
+    return listItems.filter(
+      (item) => vendorFilter === "all" || item.product.vendor === vendorFilter
+    );
   }, [listItems, vendorFilter]);
 
-  const fetchListItems = async (listId: string) => {
+  const fetchListItems = useCallback(async (listId: string) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const listItemsData = await listsApi.getListItemsByListId(listId);
       setListItems(listItemsData);
     } catch (err: any) {
-      console.log(err.message);
+      console.error(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (currentList.itemsCount > 0) {
       fetchListItems(currentList.id);
+    } else {
+      setListItems([]);
     }
-  }, [currentList]);
+  }, [currentList, fetchListItems]);
 
-  if (currentList.itemsCount > 0)
-    return (
-      <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
-        {loading ? (
-          <p className="flex flex-1 justify-center items-center">Loading...</p>
-        ) : (
-          filteredListItems.map((item, index) => (
-            <div key={index}>
-              <Product listItem={item} deleteProduct={() => {}} />
-              <CustomDivider orientation="horizontal" />
-            </div>
-          ))
-        )}
-      </div>
-    );
-  else {
+  if (currentList.itemsCount === 0) {
     return <Home />;
   }
+
+  return (
+    <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
+      {loading ? (
+        <p className="flex flex-1 justify-center items-center">Loading...</p>
+      ) : filteredListItems.length > 0 ? (
+        filteredListItems.map((item, index) => (
+          <div key={index}>
+            <Product listItem={item} deleteProduct={() => {}} />
+            <CustomDivider orientation="horizontal" />
+          </div>
+        ))
+      ) : (
+        <p className="flex flex-1 justify-center items-center">
+          No products with this filter
+        </p>
+      )}
+    </div>
+  );
 };
 
 export default ListBuilder;

@@ -2,7 +2,6 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useState,
 } from "react";
 import { Pages } from "../../../utils/enums/pages.enum";
@@ -14,16 +13,17 @@ import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import ListName from "../../components/ListName";
 import TagFilters from "../../components/TagFilters";
-import ListBuilder from "../ListBuilder";
-import ProductsAnalysis from "../ProductsAnalysis";
-import ProductsType from "../ProductsType";
 import useApi from "./useList";
+import { CircularProgress } from "@mui/material";
+
+const ListBuilder = React.lazy(() => import("../ListBuilder"));
+const ProductsAnalysis = React.lazy(() => import("../ProductsAnalysis"));
+const ProductsType = React.lazy(() => import("../ProductsType"));
 
 interface DefaultLayoutProps {}
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
   const [page, setPage] = useState(Pages.LIST_BUILDER);
-  const [vendorFilter, setVendorFilter] = useState<string | null>("all");
   const [productFilter, setProductFilter] = React.useState<string | null>(null);
   const {
     lists,
@@ -37,6 +37,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
     setCurrentList,
     updateListName,
     setError,
+    setVendorFilter,
   } = useApi();
 
   useLayoutEffect(() => {
@@ -51,28 +52,16 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
     fetchLists();
   }, [fetchLists]);
 
-  const renderPages = useMemo(() => {
+  const renderPageContent = useCallback(() => {
     switch (page) {
       case Pages.LIST_BUILDER:
-        return (
-          <ListBuilder
-            currentList={currentList}
-            vendorFilter={vendorFilter}
-            productFilter={productFilter}
-          />
-        );
+        return <ListBuilder currentList={currentList} />;
       case Pages.PRODUCTS_ANALYSIS:
         return <ProductsAnalysis />;
       case Pages.PRODUCTS_TYPE:
         return <ProductsType />;
       default:
-        return (
-          <ListBuilder
-            currentList={currentList}
-            vendorFilter={vendorFilter}
-            productFilter={productFilter}
-          />
-        );
+        return <ListBuilder currentList={currentList} />;
     }
   }, [page, currentList]);
 
@@ -101,6 +90,11 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
     [lists, createNewList]
   );
 
+  const handleSelectValueChange = useCallback(handleUpdateSelectValue, [
+    lists,
+    createNewList,
+  ]);
+
   // Close the error manually
   const handleCloseError = () => {
     setError(null);
@@ -119,35 +113,43 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
   }, [error]);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <ErrorNotification error={error} handleCloseError={handleCloseError} />
-      <Header
-        lists={lists}
-        selectValue={selectValue}
-        loading={loading}
-        handleUpdateSelectValue={handleUpdateSelectValue}
-      />
-      <div className="flex-1 flex flex-col">
-        <CustomDivider orientation="horizontal" />
-        <ListName
-          currentList={currentList}
-          updateListName={updateListName}
+    <React.Suspense
+      fallback={
+        <div className="h-[100vh] bg-black flex justify-center items-center">
+          <CircularProgress />
+        </div>
+      }
+    >
+      <div className="flex flex-col min-h-screen">
+        <ErrorNotification error={error} handleCloseError={handleCloseError} />
+        <Header
+          lists={lists}
+          selectValue={selectValue}
           loading={loading}
+          handleUpdateSelectValue={handleSelectValueChange}
         />
-        <CustomDivider orientation="horizontal" />
-        <BreadCrumbs page={page} setPage={setPage} />
-        <CustomDivider orientation="horizontal" />
-        <TagFilters
-          setVendorFilter={setVendorFilter}
-          setProductFilter={setProductFilter}
-        />
-        <CustomDivider orientation="horizontal" />
-        {renderPages}
-        <CustomDivider orientation="horizontal" />
-        <BottomNavigationButton page={page} setPage={setPage} />
+        <div className="flex-1 flex flex-col">
+          <CustomDivider orientation="horizontal" />
+          <ListName
+            currentList={currentList}
+            updateListName={updateListName}
+            loading={loading}
+          />
+          <CustomDivider orientation="horizontal" />
+          <BreadCrumbs page={page} setPage={setPage} />
+          <CustomDivider orientation="horizontal" />
+          <TagFilters
+            setVendorFilter={setVendorFilter}
+            setProductFilter={setProductFilter}
+          />
+          <CustomDivider orientation="horizontal" />
+          {renderPageContent()}
+          <CustomDivider orientation="horizontal" />
+          <BottomNavigationButton page={page} setPage={setPage} />
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </React.Suspense>
   );
 };
 

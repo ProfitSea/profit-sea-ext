@@ -4,9 +4,11 @@ import ChromeLocalStorage from "../../../utils/StorageFunctions/localStorage.fun
 import { MessagingActions } from "../../../utils/actions/messagingActions.enum";
 import {
   currentListSelector,
+  resetVendorTagsCount,
   selectValueSelector,
   setCurrentList as setReduxCurrentList,
   setSelectValue as setReduxSelectValue,
+  setVendorFilter as setVendorFilterRedux,
 } from "../../redux/app/appSlice";
 import {
   listsSelector,
@@ -37,6 +39,10 @@ const useApi = () => {
 
   const setCurrentList = (list: any) => {
     dispatch(setReduxCurrentList(list));
+  };
+
+  const setVendorFilter = (value: string) => {
+    dispatch(setVendorFilterRedux(value));
   };
 
   const setLists = (lists: any) => {
@@ -103,6 +109,8 @@ const useApi = () => {
 
   useEffect(() => {
     ChromeLocalStorage.setCurrentList(currentList);
+    // reset vendorTags count
+    dispatch(resetVendorTagsCount());
   }, [currentList]);
 
   return {
@@ -117,6 +125,7 @@ const useApi = () => {
     fetchLists,
     createNewList,
     updateListName,
+    setVendorFilter,
   };
 };
 
