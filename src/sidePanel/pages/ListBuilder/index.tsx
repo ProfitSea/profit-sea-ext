@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Home from "../Home";
 import listsApi from "../../../api/listsApi";
-import Product from "./Product";
 import CustomDivider from "../../components/CustomDivider";
 import { ListItemInterface } from "../../../utils/types/product-response.type";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -9,6 +8,7 @@ import {
   setVendorTagsCount,
   vendorFilterSelector,
 } from "../../redux/app/appSlice";
+import Product from "../../components/Product";
 
 interface ListBuilderProps {
   currentList: any;
@@ -36,6 +36,7 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList }) => {
   }, [listItems]);
 
   useEffect(() => {
+    console.log("ListItems", listItems);
     const tagsCount = updateTagsCount();
     Object.entries(tagsCount).forEach(([vendorName, count]) => {
       dispatch(setVendorTagsCount({ vendorName, count: count as number }));
@@ -73,6 +74,32 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList }) => {
     return <Home />;
   }
 
+  const updateListItemQuantityInState = useCallback(({
+    saleUnitId,
+    quantity,
+    listItemId,
+  }: {
+    saleUnitId: string;
+    quantity: number;
+    listItemId: string;
+  }) => {
+    setListItems((prevListItems) =>
+      prevListItems.map((item) => {
+        if (item.id === listItemId) {
+          const updatedSaleUnitQuantities = item.saleUnitQuantities.map((unit) => {
+            if (unit.saleUnit === saleUnitId) {
+              return { ...unit, quantity };
+            }
+            return unit;
+          });
+  
+          return { ...item, saleUnitQuantities: updatedSaleUnitQuantities };
+        }
+        return item;
+      })
+    );
+  }, []);
+
   return (
     <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
       {loading ? (
@@ -80,7 +107,11 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList }) => {
       ) : filteredListItems.length > 0 ? (
         filteredListItems.map((item, index) => (
           <div key={index}>
-            <Product listItem={item} deleteProduct={() => {}} />
+            <Product
+              listItem={item}
+              deleteProduct={() => {}}
+              updateListItemQuantityInState={updateListItemQuantityInState}
+            />
             <CustomDivider orientation="horizontal" />
           </div>
         ))

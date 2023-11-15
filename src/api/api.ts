@@ -1,5 +1,5 @@
 import axios from "axios";
-import { authRoutes } from "./authApi";
+import authApi, { authRoutes } from "./authApi";
 
 const env: string = "dev";
 // const env: string = "prod";
@@ -94,9 +94,11 @@ instance.interceptors.response.use(
           // Re-send the original request
           return instance(originalRequest);
         } else {
+          authApi.logout();
           return Promise.reject(error); // If any other status code, reject
         }
       } catch (err) {
+        authApi.logout();
         return Promise.reject(err); // If any error occurred during the token refresh process, reject
       }
     }

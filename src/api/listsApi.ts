@@ -8,6 +8,7 @@ const listRoutes = {
   update: "v1/lists",
   addListItem: "v1/lists/list-item",
   getListById: "v1/lists",
+  updateListItemQuantity: "v1/lists/list-item/quantity"
 };
 
 class ListsApi {
@@ -23,12 +24,9 @@ class ListsApi {
 
   async updateListName(listId: string, name: string) {
     try {
-      await API.patch(
-        `${listRoutes.updateListName}/${listId}`,
-        {
-          name,
-        }
-      );
+      await API.patch(`${listRoutes.updateListName}/${listId}`, {
+        name,
+      });
     } catch (error) {
       console.log(error);
       throw error;
@@ -73,6 +71,19 @@ class ListsApi {
     try {
       const request = await API.get(`${listRoutes.getListById}/${listId}`);
       return request.data.list.listItems;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async updateListItemQuantity(payload: {
+    listItemId: string;
+    saleUnitId: string;
+    quantity: number;
+  }) {
+    try {
+      await API.patch(`${listRoutes.updateListItemQuantity}`, payload);
     } catch (error) {
       console.log(error);
       throw error;

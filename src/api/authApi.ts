@@ -1,4 +1,5 @@
 import API, { toQueryString } from "./api";
+import { redirect } from "react-router-dom";
 
 export const authRoutes = {
   me: "v1/auth/me",
@@ -26,6 +27,12 @@ class AuthApi {
       console.log(error);
       throw error;
     }
+  }
+
+  async logout() {
+    chrome.storage.local.remove("profit_sea_token");
+    console.log("logout");
+    redirect("/login");
   }
 }
 export default new AuthApi();
