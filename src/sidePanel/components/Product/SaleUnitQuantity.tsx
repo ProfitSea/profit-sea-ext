@@ -65,7 +65,7 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
   const deleteListItem = async () => {
     try {
       setLoading(true);
-      await listsApi.deleteListItem(currentList.id, { listItemId });
+      await listsApi.deleteListItem(currentList.id, listItemId);
       removeListItemFromState(listItemId);
       dispatch(updateListItemCount({ listId: currentList.id }));
     } catch (error) {
