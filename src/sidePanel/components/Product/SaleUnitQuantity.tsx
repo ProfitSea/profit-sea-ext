@@ -10,6 +10,7 @@ import { debounce } from "../../../utils/functions/debounce.function";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { currentListSelector } from "../../redux/app/appSlice";
 import { updateListItemCount } from "../../redux/lists/listsSlice";
+import useApi from "../../pages/Layout/useList";
 
 interface SaleUnitQuantityProps {
   saleUnitQuantity: SaleUnitQuantityInterface;
@@ -33,6 +34,7 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
   updateListItemQuantityInState,
 }) => {
   const [quantity, setQuantity] = useState(saleUnitQuantity.quantity);
+  const {setError} = useApi();
   const [loading, setLoading] = useState(false);
   const { _id } = saleUnitQuantity;
   const currentList = useAppSelector(currentListSelector);
@@ -54,6 +56,7 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
       updateListItemQuantityInState(payload);
     } catch (error) {
       console.log(error);
+      setError("Failed to update list item quantity");
     } finally {
       setLoading(false);
     }
@@ -67,6 +70,7 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
       dispatch(updateListItemCount({ listId: currentList.id }));
     } catch (error) {
       console.log(error);
+      setError("Failed to delete list item");
     } finally {
       setLoading(false);
     }
