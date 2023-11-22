@@ -3,7 +3,7 @@ import API, { toQueryString } from "./api";
 
 const listRoutes = {
   create: "v1/lists",
-  updateListName: "v1/lists/name",
+  updateListName: "v1/lists",
   get: "v1/lists",
   update: "v1/lists",
   addListItem: "v1/lists/list-item",
@@ -25,7 +25,7 @@ class ListsApi {
 
   async updateListName(listId: string, name: string) {
     try {
-      await API.patch(`${listRoutes.updateListName}/${listId}`, {
+      await API.patch(`${listRoutes.updateListName}/${listId}/name`, {
         name,
       });
     } catch (error) {
