@@ -13,15 +13,14 @@ import { updateListItemCount } from "../../redux/lists/listsSlice";
 
 interface SaleUnitQuantityProps {
   saleUnitQuantity: SaleUnitQuantityInterface;
-  product: ProductInterface;
   removeListItemFromState: (listItemId: string) => void;
   listItemId: string;
   updateListItemQuantityInState: ({
-    saleUnitId,
+    saleUnitQuantityId,
     quantity,
     listItemId,
   }: {
-    saleUnitId: string;
+    saleUnitQuantityId: string;
     quantity: number;
     listItemId: string;
   }) => void;
@@ -29,20 +28,12 @@ interface SaleUnitQuantityProps {
 
 const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
   saleUnitQuantity,
-  product,
   listItemId,
   removeListItemFromState,
   updateListItemQuantityInState,
 }) => {
   const [quantity, setQuantity] = useState(saleUnitQuantity.quantity);
-  const saleUnitId = saleUnitQuantity.saleUnit as string;
   const [loading, setLoading] = useState(false);
-  const saleUnit = useMemo(
-    () => product.saleUnits.find((unit) => unit.id === saleUnitId),
-    [product.saleUnits, saleUnitId]
-  );
-  const price = saleUnit?.price?.price;
-  const unit = saleUnit?.unit;
   const { _id } = saleUnitQuantity;
   const currentList = useAppSelector(currentListSelector);
   const dispatch = useAppDispatch();
@@ -51,11 +42,15 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
     try {
       setLoading(true);
       const payload = {
-        saleUnitId: saleUnitId as string,
+        saleUnitQuantityId: _id as string,
         quantity: newQuantity as number,
         listItemId: listItemId as string,
       };
-      await listsApi.updateListItemQuantity(payload);
+      await listsApi.updateListItemQuantity({
+        saleUnitId: saleUnitQuantity.saleUnit.id,
+        listItemId,
+        quantity: newQuantity,
+      });
       updateListItemQuantityInState(payload);
     } catch (error) {
       console.log(error);
@@ -111,7 +106,7 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
   return (
     <div key={_id}>
       <div className="w-[87px] h-[30px] text-center text-zinc-800 text-sm font-semibold font-['SF Pro Text'] leading-[21px]">
-        {`${price} ${unit}`}
+        {`${saleUnitQuantity.price.price} ${saleUnitQuantity.saleUnit.unit}`}
       </div>
 
       <div className="w-[90px] h-[23px] relative">

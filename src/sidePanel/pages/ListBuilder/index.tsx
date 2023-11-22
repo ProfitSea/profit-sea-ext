@@ -71,11 +71,11 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList }) => {
 
   const updateListItemQuantityInState = useCallback(
     ({
-      saleUnitId,
+      saleUnitQuantityId,
       quantity,
       listItemId,
     }: {
-      saleUnitId: string;
+      saleUnitQuantityId: string;
       quantity: number;
       listItemId: string;
     }) => {
@@ -84,7 +84,7 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList }) => {
           if (item.id === listItemId) {
             const updatedSaleUnitQuantities = item.saleUnitQuantities.map(
               (unit) => {
-                if (unit.saleUnit === saleUnitId) {
+                if (unit._id === saleUnitQuantityId) {
                   return { ...unit, quantity };
                 }
                 return unit;

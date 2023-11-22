@@ -11,11 +11,11 @@ interface ProductProps {
   listItem: ListItemInterface;
   removeListItemFromState: (listItemId: string) => void;
   updateListItemQuantityInState: ({
-    saleUnitId,
+    saleUnitQuantityId,
     quantity,
     listItemId,
   }: {
-    saleUnitId: string;
+    saleUnitQuantityId: string;
     quantity: number;
     listItemId: string;
   }) => void;
@@ -48,7 +48,6 @@ const Product: React.FC<ProductProps> = ({
                     <SaleUnitQuantity
                       saleUnitQuantity={saleUnitQuantity}
                       listItemId={listItem.id}
-                      product={product}
                       removeListItemFromState={removeListItemFromState}
                       updateListItemQuantityInState={
                         updateListItemQuantityInState

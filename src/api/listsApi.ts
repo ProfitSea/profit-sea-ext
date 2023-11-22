@@ -9,7 +9,7 @@ const listRoutes = {
   addListItem: "v1/lists/list-item",
   deleteListItem: "v1/lists/list-item",
   getListById: "v1/lists",
-  updateListItemQuantity: "v1/lists/list-item/quantity",
+  updateListItemQuantity: "v1/list-items/quantity",
 };
 
 class ListsApi {

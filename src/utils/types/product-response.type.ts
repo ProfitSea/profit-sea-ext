@@ -1,26 +1,27 @@
 export interface PriceInterface {
   active: boolean;
-  product: string;
   productSaleUnit: string;
   price: number;
+  listItem: string;
+  user: string;
   id: string;
 }
 
 export interface SaleUnitInterface {
   unit: string;
   product: string;
-  price: PriceInterface;
   id: string;
 }
 
 export interface SaleUnitQuantityInterface {
   quantity: number;
   _id: string;
-  saleUnit: string;
+  saleUnit: SaleUnitInterface;
+  price: PriceInterface;
 }
 
 export interface ProductInterface {
-  saleUnits: SaleUnitInterface[];
+  saleUnits: string[]; // This seems to be an array of string IDs now
   vendor: string;
   imgSrc: string;
   brand: string;
@@ -35,6 +36,7 @@ export interface ListItemInterface {
   list: string;
   product: ProductInterface;
   saleUnitQuantities: SaleUnitQuantityInterface[];
+  vendor: string; // This field seems new
   id: string;
 }
 
