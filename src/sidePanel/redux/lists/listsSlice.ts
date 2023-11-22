@@ -34,6 +34,18 @@ const listsSlice = createSlice({
       const listIndex = state.lists.findIndex((list) => list.id === listId);
       state.lists[listIndex].name = name;
     },
+    updateListItemCount(
+      state,
+      action: PayloadAction<{
+        listId: string;
+      }>
+    ) {
+      const { listId } = action.payload;
+      const listIndex = state.lists.findIndex((list) => list.id === listId);
+      if (listIndex !== -1)
+        state.lists[listIndex].itemsCount =
+          state.lists[listIndex].itemsCount - 1;
+    },
   },
 });
 
@@ -55,6 +67,7 @@ export const listsErrorSelector = createSelector(
   selectListsDomain,
   (listsState) => listsState.error
 );
-export const { setLists, setLoading, updateListName, setError } = listsSlice.actions;
+export const { setLists, setLoading, updateListName, setError, updateListItemCount } =
+  listsSlice.actions;
 
 export default listsSlice.reducer;

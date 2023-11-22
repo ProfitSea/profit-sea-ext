@@ -7,8 +7,9 @@ const listRoutes = {
   get: "v1/lists",
   update: "v1/lists",
   addListItem: "v1/lists/list-item",
+  deleteListItem: "v1/lists/list-item",
   getListById: "v1/lists",
-  updateListItemQuantity: "v1/lists/list-item/quantity"
+  updateListItemQuantity: "v1/lists/list-item/quantity",
 };
 
 class ListsApi {
@@ -51,6 +52,18 @@ class ListsApi {
         payload
       );
       return request.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async deleteListItem(listId: string, payload: { listItemId: string }) {
+    try {
+      await API.patch(
+        `${listRoutes.deleteListItem}/${listId}`,
+        payload
+      );
     } catch (error) {
       console.log(error);
       throw error;

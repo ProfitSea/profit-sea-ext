@@ -1,7 +1,6 @@
 import React from "react";
 import {
   ListItemInterface,
-  ProductInterface,
   SaleUnitQuantityInterface,
 } from "../../../utils/types/product-response.type";
 const ProductImage = React.lazy(() => import("./ProductImage"));
@@ -10,7 +9,7 @@ const SaleUnitQuantity = React.lazy(() => import("./SaleUnitQuantity"));
 
 interface ProductProps {
   listItem: ListItemInterface;
-  deleteProduct: (productNumber: ProductInterface["productNumber"]) => void;
+  removeListItemFromState: (listItemId: string) => void;
   updateListItemQuantityInState: ({
     saleUnitId,
     quantity,
@@ -24,7 +23,7 @@ interface ProductProps {
 
 const Product: React.FC<ProductProps> = ({
   listItem,
-  deleteProduct,
+  removeListItemFromState,
   updateListItemQuantityInState,
 }) => {
   const { product } = listItem;
@@ -50,7 +49,7 @@ const Product: React.FC<ProductProps> = ({
                       saleUnitQuantity={saleUnitQuantity}
                       listItemId={listItem.id}
                       product={product}
-                      deleteProduct={deleteProduct}
+                      removeListItemFromState={removeListItemFromState}
                       updateListItemQuantityInState={
                         updateListItemQuantityInState
                       }

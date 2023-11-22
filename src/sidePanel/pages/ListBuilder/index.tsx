@@ -21,6 +21,26 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList }) => {
 
   const vendorFilter = useAppSelector(vendorFilterSelector);
 
+  const fetchListItems = useCallback(async (listId: string) => {
+    setLoading(true);
+    try {
+      const listItemsData = await listsApi.getListItemsByListId(listId);
+      setListItems(listItemsData);
+    } catch (err: any) {
+      console.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentList && currentList.itemsCount > 0) {
+      fetchListItems(currentList.id);
+    } else {
+      setListItems([]);
+    }
+  }, [currentList, fetchListItems]);
+
   const updateTagsCount = useCallback(() => {
     const tags = {
       "US Foods": 0,
@@ -36,7 +56,6 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList }) => {
   }, [listItems]);
 
   useEffect(() => {
-    console.log("ListItems", listItems);
     const tagsCount = updateTagsCount();
     Object.entries(tagsCount).forEach(([vendorName, count]) => {
       dispatch(setVendorTagsCount({ vendorName, count: count as number }));
@@ -50,77 +69,72 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList }) => {
     );
   }, [listItems, vendorFilter]);
 
-  const fetchListItems = useCallback(async (listId: string) => {
-    setLoading(true);
-    try {
-      const listItemsData = await listsApi.getListItemsByListId(listId);
-      setListItems(listItemsData);
-    } catch (err: any) {
-      console.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const updateListItemQuantityInState = useCallback(
+    ({
+      saleUnitId,
+      quantity,
+      listItemId,
+    }: {
+      saleUnitId: string;
+      quantity: number;
+      listItemId: string;
+    }) => {
+      setListItems((prevListItems) =>
+        prevListItems.map((item) => {
+          if (item.id === listItemId) {
+            const updatedSaleUnitQuantities = item.saleUnitQuantities.map(
+              (unit) => {
+                if (unit.saleUnit === saleUnitId) {
+                  return { ...unit, quantity };
+                }
+                return unit;
+              }
+            );
 
-  useEffect(() => {
-    if (currentList.itemsCount > 0) {
-      fetchListItems(currentList.id);
-    } else {
-      setListItems([]);
-    }
-  }, [currentList, fetchListItems]);
+            return { ...item, saleUnitQuantities: updatedSaleUnitQuantities };
+          }
+          return item;
+        })
+      );
+    },
+    []
+  );
 
-  if (currentList.itemsCount === 0) {
-    return <Home />;
-  }
-
-  const updateListItemQuantityInState = useCallback(({
-    saleUnitId,
-    quantity,
-    listItemId,
-  }: {
-    saleUnitId: string;
-    quantity: number;
-    listItemId: string;
-  }) => {
+  const removeListItemFromState = useCallback((listItemId: string) => {
     setListItems((prevListItems) =>
-      prevListItems.map((item) => {
-        if (item.id === listItemId) {
-          const updatedSaleUnitQuantities = item.saleUnitQuantities.map((unit) => {
-            if (unit.saleUnit === saleUnitId) {
-              return { ...unit, quantity };
-            }
-            return unit;
-          });
-  
-          return { ...item, saleUnitQuantities: updatedSaleUnitQuantities };
-        }
-        return item;
-      })
+      prevListItems.filter((item) => item.id !== listItemId)
     );
   }, []);
 
   return (
-    <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
-      {loading ? (
-        <p className="flex flex-1 justify-center items-center">Loading...</p>
-      ) : filteredListItems.length > 0 ? (
-        filteredListItems.map((item, index) => (
-          <div key={index}>
-            <Product
-              listItem={item}
-              deleteProduct={() => {}}
-              updateListItemQuantityInState={updateListItemQuantityInState}
-            />
-            <CustomDivider orientation="horizontal" />
-          </div>
-        ))
+    <>
+      {currentList.itemsCount === 0 ? (
+        <Home />
       ) : (
-        <p className="flex flex-1 justify-center items-center">
-          No products with this filter
-        </p>
+        <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
+          {loading ? (
+            <p className="flex flex-1 justify-center items-center">
+              Loading...
+            </p>
+          ) : filteredListItems.length > 0 ? (
+            filteredListItems.map((item, index) => (
+              <div key={index}>
+                <Product
+                  listItem={item}
+                  removeListItemFromState={removeListItemFromState}
+                  updateListItemQuantityInState={updateListItemQuantityInState}
+                />
+                <CustomDivider orientation="horizontal" />
+              </div>
+            ))
+          ) : (
+            <p className="flex flex-1 justify-center items-center">
+              No products with this filter
+            </p>
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

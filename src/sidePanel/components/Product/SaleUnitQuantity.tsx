@@ -7,11 +7,14 @@ import {
 } from "../../../utils/types/product-response.type";
 import listsApi from "../../../api/listsApi";
 import { debounce } from "../../../utils/functions/debounce.function";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { currentListSelector } from "../../redux/app/appSlice";
+import { updateListItemCount } from "../../redux/lists/listsSlice";
 
 interface SaleUnitQuantityProps {
   saleUnitQuantity: SaleUnitQuantityInterface;
   product: ProductInterface;
-  deleteProduct: (productId: string) => void;
+  removeListItemFromState: (listItemId: string) => void;
   listItemId: string;
   updateListItemQuantityInState: ({
     saleUnitId,
@@ -28,7 +31,7 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
   saleUnitQuantity,
   product,
   listItemId,
-  deleteProduct,
+  removeListItemFromState,
   updateListItemQuantityInState,
 }) => {
   const [quantity, setQuantity] = useState(saleUnitQuantity.quantity);
@@ -41,6 +44,8 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
   const price = saleUnit?.price?.price;
   const unit = saleUnit?.unit;
   const { _id } = saleUnitQuantity;
+  const currentList = useAppSelector(currentListSelector);
+  const dispatch = useAppDispatch();
 
   const updateListItemQuantity = async (newQuantity: number) => {
     try {
@@ -52,6 +57,19 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
       };
       await listsApi.updateListItemQuantity(payload);
       updateListItemQuantityInState(payload);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteListItem = async () => {
+    try {
+      setLoading(true);
+      await listsApi.deleteListItem(currentList.id, { listItemId });
+      removeListItemFromState(listItemId);
+      dispatch(updateListItemCount({ listId: currentList.id }));
     } catch (error) {
       console.log(error);
     } finally {
@@ -123,7 +141,7 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
         ) : (
           <button
             disabled={loading}
-            onClick={() => deleteProduct("123")}
+            onClick={deleteListItem}
             className="w-[21px] h-[21px] left-[69px] top-[1px] absolute justify-center items-center gap-2.5 inline-flex"
           >
             <div className="text-stone-800 text-xs font-semibold font-['SF Pro Text'] leading-[18px]">

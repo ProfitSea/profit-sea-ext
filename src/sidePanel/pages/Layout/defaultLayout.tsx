@@ -16,7 +16,7 @@ import TagFilters from "../../components/TagFilters";
 import useApi from "./useList";
 import { CircularProgress } from "@mui/material";
 
-const ListBuilder = React.lazy(() => import("../ListBuilder"));
+import ListBuilder from "../ListBuilder";
 const ProductsAnalysis = React.lazy(() => import("../ProductsAnalysis"));
 const ProductsType = React.lazy(() => import("../ProductsType"));
 
@@ -97,20 +97,8 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
 
   // Close the error manually
   const handleCloseError = () => {
-    setError(null);
+    setError("");
   };
-
-  // Automatically close the error after 5 seconds
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => {
-        setError(null);
-      }, 5000); // 5 seconds
-
-      // Clear the timeout if the component is unmounted before the time completes
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
 
   return (
     <React.Suspense

@@ -4,11 +4,13 @@ import ChromeLocalStorage from "../../../utils/StorageFunctions/localStorage.fun
 import { MessagingActions } from "../../../utils/actions/messagingActions.enum";
 import {
   currentListSelector,
+  errorSelector,
   resetVendorTagsCount,
   selectValueSelector,
   setCurrentList as setReduxCurrentList,
   setSelectValue as setReduxSelectValue,
   setVendorFilter as setVendorFilterRedux,
+  setError as setErrorRedux,
 } from "../../redux/app/appSlice";
 import {
   listsSelector,
@@ -19,11 +21,13 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 
 const useApi = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [shouldCreateNewList, setShouldCreateNewList] = useState(false);
+
   const currentList = useAppSelector(currentListSelector);
   const lists = useAppSelector(listsSelector);
   const selectValue = useAppSelector(selectValueSelector);
   const dispatch = useAppDispatch();
+  const error = useAppSelector(errorSelector);
 
   const fetchLists = useCallback(async () => {
     try {
@@ -41,6 +45,10 @@ const useApi = () => {
     dispatch(setReduxCurrentList(list));
   };
 
+  const setError = (error: string) => {
+    dispatch(setErrorRedux(error));
+  };
+
   const setVendorFilter = (value: string) => {
     dispatch(setVendorFilterRedux(value));
   };
@@ -53,18 +61,29 @@ const useApi = () => {
     dispatch(setReduxSelectValue(value));
   };
 
-  const createNewList = async () => {
-    try {
-      setLoading(true);
-      const res = await listsApi.createList();
-      setLists([...lists, res.list]);
-      setCurrentList(res.list);
-      setSelectValue(res.list.id as string);
-      setLoading(false);
-    } catch (error) {
-      setError("Failed to Create New List");
-      setLoading(false);
+  useEffect(() => {
+    if (shouldCreateNewList) {
+      const createList = async () => {
+        try {
+          setLoading(true);
+          const res = await listsApi.createList();
+          setLists([...lists, res.list]);
+          setCurrentList(res.list);
+          setSelectValue(res.list.id as string);
+        } catch (error) {
+          setError("Failed to Create New List");
+        } finally {
+          setLoading(false);
+          setShouldCreateNewList(false);
+        }
+      };
+
+      createList();
     }
+  }, [shouldCreateNewList]);
+
+  const createNewList = () => {
+    setShouldCreateNewList(true);
   };
 
   const updateListName = async (id: string, name: string) => {

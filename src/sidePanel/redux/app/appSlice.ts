@@ -7,6 +7,7 @@ interface AppState {
   selectValue: string;
   vendorFilter: string;
   vendorTags: TagType[];
+  error: string;
 }
 
 const initialState: AppState = {
@@ -14,6 +15,7 @@ const initialState: AppState = {
   selectValue: "0",
   vendorFilter: "all",
   vendorTags: vendorsTagsData,
+  error: "",
 };
 
 const appSlice = createSlice({
@@ -34,6 +36,9 @@ const appSlice = createSlice({
     },
     setVendorFilter(state, action: PayloadAction<string>) {
       state.vendorFilter = action.payload;
+    },
+    setError(state, action: PayloadAction<string>) {
+      state.error = action.payload;
     },
     setVendorTagsCount(
       state,
@@ -80,6 +85,11 @@ export const vendorTagsSelector = createSelector(
   (currentListState) => currentListState.vendorTags
 );
 
+export const errorSelector = createSelector(
+  selectAppDomain,
+  (currentListState) => currentListState.error
+);
+
 export const {
   setCurrentList,
   resetCurrentList,
@@ -89,6 +99,7 @@ export const {
   setVendorTagsCount,
   updateVendorTags,
   resetVendorTagsCount,
+  setError,
 } = appSlice.actions;
 
 export default appSlice.reducer;
