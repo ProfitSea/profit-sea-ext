@@ -6,7 +6,7 @@ const listRoutes = {
   updateListName: "v1/lists",
   get: "v1/lists",
   update: "v1/lists",
-  addListItem: "v1/lists/list-item",
+  addListItem: "v1/lists",
   deleteListItem: "v1/lists",
   getListById: "v1/lists",
   updateListItemQuantity: "v1/list-items/quantity",
@@ -48,7 +48,7 @@ class ListsApi {
   async addListItem(listId: string, payload: { product: ProductInterface }) {
     try {
       const request = await API.post(
-        `${listRoutes.addListItem}/${listId}`,
+        `${listRoutes.addListItem}/${listId}/list-item`,
         payload
       );
       return request.data;
