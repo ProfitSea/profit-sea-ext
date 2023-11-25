@@ -16,7 +16,7 @@ import TagFilters from "../../components/TagFilters";
 import useApi from "./useList";
 import { CircularProgress } from "@mui/material";
 
-import ListBuilder from "../ListBuilder";
+const ListBuilder = React.lazy(() => import("../ListBuilder"));
 const ProductsAnalysis = React.lazy(() => import("../ProductsAnalysis"));
 const ProductsType = React.lazy(() => import("../ProductsType"));
 
@@ -55,13 +55,13 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
   const renderPageContent = useCallback(() => {
     switch (page) {
       case Pages.LIST_BUILDER:
-        return <ListBuilder currentList={currentList} />;
+        return <ListBuilder currentList={currentList} setError={setError} />;
       case Pages.PRODUCTS_ANALYSIS:
         return <ProductsAnalysis />;
       case Pages.PRODUCTS_TYPE:
         return <ProductsType />;
       default:
-        return <ListBuilder currentList={currentList} />;
+        return <ListBuilder currentList={currentList} setError={setError} />;
     }
   }, [page, currentList]);
 

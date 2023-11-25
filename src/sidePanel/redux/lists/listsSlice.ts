@@ -4,13 +4,11 @@ import { RootState } from "../store";
 interface ListsState {
   lists: any[];
   loading: boolean;
-  error: string | null;
 }
 
 const initialState: ListsState = {
   lists: [],
   loading: false,
-  error: null,
 };
 
 const listsSlice = createSlice({
@@ -22,9 +20,6 @@ const listsSlice = createSlice({
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
-    },
-    setError(state, action: PayloadAction<string | null>) {
-      state.error = action.payload;
     },
     updateListName(
       state,
@@ -63,11 +58,7 @@ export const listsLoadingSelector = createSelector(
   (listsState) => listsState.loading
 );
 
-export const listsErrorSelector = createSelector(
-  selectListsDomain,
-  (listsState) => listsState.error
-);
-export const { setLists, setLoading, updateListName, setError, updateListItemCount } =
+export const { setLists, setLoading, updateListName, updateListItemCount } =
   listsSlice.actions;
 
 export default listsSlice.reducer;

@@ -9,17 +9,16 @@ import {
   vendorFilterSelector,
 } from "../../redux/app/appSlice";
 import Product from "../../components/Product";
-import useApi from "../Layout/useList";
 
 interface ListBuilderProps {
   currentList: any;
+  setError: (error: string) => void;
 }
 
-const ListBuilder: React.FC<ListBuilderProps> = ({ currentList }) => {
+const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
   const dispatch = useAppDispatch();
   const [listItems, setListItems] = useState<ListItemInterface[]>([]);
   const [loading, setLoading] = useState<Boolean>(false);
-  const { setError } = useApi();
 
   const vendorFilter = useAppSelector(vendorFilterSelector);
 

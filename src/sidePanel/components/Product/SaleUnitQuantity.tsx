@@ -1,16 +1,12 @@
 // SaleUnitQuantity.tsx
 import { DeleteOutlined } from "@mui/icons-material";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  ProductInterface,
-  SaleUnitQuantityInterface,
-} from "../../../utils/types/product-response.type";
+import React, { useCallback, useEffect, useState } from "react";
 import listsApi from "../../../api/listsApi";
 import { debounce } from "../../../utils/functions/debounce.function";
-import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { currentListSelector } from "../../redux/app/appSlice";
+import { SaleUnitQuantityInterface } from "../../../utils/types/product-response.type";
+import { currentListSelector, setError } from "../../redux/app/appSlice";
 import { updateListItemCount } from "../../redux/lists/listsSlice";
-import useApi from "../../pages/Layout/useList";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
 
 interface SaleUnitQuantityProps {
   saleUnitQuantity: SaleUnitQuantityInterface;
@@ -34,7 +30,6 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
   updateListItemQuantityInState,
 }) => {
   const [quantity, setQuantity] = useState(saleUnitQuantity.quantity);
-  const {setError} = useApi();
   const [loading, setLoading] = useState(false);
   const { _id } = saleUnitQuantity;
   const currentList = useAppSelector(currentListSelector);
@@ -56,7 +51,7 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
       updateListItemQuantityInState(payload);
     } catch (error) {
       console.log(error);
-      setError("Failed to update list item quantity");
+      dispatch(setError("Failed to Update the quantity"));
     } finally {
       setLoading(false);
     }
@@ -69,8 +64,8 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
       removeListItemFromState(listItemId);
       dispatch(updateListItemCount({ listId: currentList.id }));
     } catch (error) {
+      dispatch(setError("Failed to delete the item"));
       console.log(error);
-      setError("Failed to delete list item");
     } finally {
       setLoading(false);
     }
@@ -83,6 +78,7 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
 
   const updateQuantity = useCallback(
     (newQuantity: number) => {
+      if (newQuantity === 0) setLoading(true);
       // Update quantity in state
       setQuantity(newQuantity);
       // Debounce API call or update logic
