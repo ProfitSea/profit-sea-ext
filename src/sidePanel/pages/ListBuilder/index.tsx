@@ -8,7 +8,9 @@ import {
   setVendorTagsCount,
   vendorFilterSelector,
 } from "../../redux/app/appSlice";
+import { setListItems as setListItemsInRedux } from "../../redux/lists/listsSlice";
 import Product from "../../components/Product";
+import { listItemsSelector } from "../../redux/lists/listsSlice";
 
 interface ListBuilderProps {
   currentList: any;
@@ -17,10 +19,14 @@ interface ListBuilderProps {
 
 const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
   const dispatch = useAppDispatch();
-  const [listItems, setListItems] = useState<ListItemInterface[]>([]);
+  // const [listItems, setListItems] = useState<ListItemInterface[]>([]);
   const [loading, setLoading] = useState<Boolean>(false);
 
   const vendorFilter = useAppSelector(vendorFilterSelector);
+  const listItems = useAppSelector(listItemsSelector);
+  const setListItems = (listItems: ListItemInterface[]) => {
+    dispatch(setListItemsInRedux(listItems));
+  };
 
   const fetchListItems = useCallback(async (listId: string) => {
     setLoading(true);
@@ -71,43 +77,6 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
     );
   }, [listItems, vendorFilter]);
 
-  const updateListItemQuantityInState = useCallback(
-    ({
-      saleUnitQuantityId,
-      quantity,
-      listItemId,
-    }: {
-      saleUnitQuantityId: string;
-      quantity: number;
-      listItemId: string;
-    }) => {
-      setListItems((prevListItems) =>
-        prevListItems.map((item) => {
-          if (item.id === listItemId) {
-            const updatedSaleUnitQuantities = item.saleUnitQuantities.map(
-              (unit) => {
-                if (unit._id === saleUnitQuantityId) {
-                  return { ...unit, quantity };
-                }
-                return unit;
-              }
-            );
-
-            return { ...item, saleUnitQuantities: updatedSaleUnitQuantities };
-          }
-          return item;
-        })
-      );
-    },
-    []
-  );
-
-  const removeListItemFromState = useCallback((listItemId: string) => {
-    setListItems((prevListItems) =>
-      prevListItems.filter((item) => item.id !== listItemId)
-    );
-  }, []);
-
   return (
     <>
       {currentList.itemsCount === 0 ? (
@@ -121,11 +90,7 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
           ) : filteredListItems.length > 0 ? (
             filteredListItems.map((item, index) => (
               <div key={index}>
-                <Product
-                  listItem={item}
-                  removeListItemFromState={removeListItemFromState}
-                  updateListItemQuantityInState={updateListItemQuantityInState}
-                />
+                <Product listItem={item} />
                 <CustomDivider orientation="horizontal" />
               </div>
             ))

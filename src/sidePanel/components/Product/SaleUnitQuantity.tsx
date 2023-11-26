@@ -4,31 +4,22 @@ import listsApi from "../../../api/listsApi";
 import { debounce } from "../../../utils/functions/debounce.function";
 import { SaleUnitQuantityInterface } from "../../../utils/types/product-response.type";
 import { currentListSelector, setError } from "../../redux/app/appSlice";
-import { updateListItemCount } from "../../redux/lists/listsSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import UpdateQuantityButton from "./UpdateQuantityButton";
 import DeleteProductListItem from "./DeleteProduct";
+import {
+  removeListItem,
+  updateListItemQuantity as updateQuantityInRedux,
+} from "../../redux/lists/listsSlice";
 
 interface SaleUnitQuantityProps {
   saleUnitQuantity: SaleUnitQuantityInterface;
-  removeListItemFromState: (listItemId: string) => void;
   listItemId: string;
-  updateListItemQuantityInState: ({
-    saleUnitQuantityId,
-    quantity,
-    listItemId,
-  }: {
-    saleUnitQuantityId: string;
-    quantity: number;
-    listItemId: string;
-  }) => void;
 }
 
 const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
   saleUnitQuantity,
   listItemId,
-  removeListItemFromState,
-  updateListItemQuantityInState,
 }) => {
   const [quantity, setQuantity] = useState(saleUnitQuantity.quantity);
   const [loading, setLoading] = useState(false);
@@ -39,17 +30,18 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
   const updateListItemQuantity = async (newQuantity: number) => {
     try {
       setLoading(true);
-      const payload = {
-        saleUnitQuantityId: _id as string,
-        quantity: newQuantity as number,
-        listItemId: listItemId as string,
-      };
       await listsApi.updateListItemQuantity({
         saleUnitId: saleUnitQuantity.saleUnit.id,
         listItemId,
         quantity: newQuantity,
       });
-      updateListItemQuantityInState(payload);
+      dispatch(
+        updateQuantityInRedux({
+          saleUnitQuantityId: _id as string,
+          quantity: newQuantity as number,
+          listItemId: listItemId as string,
+        })
+      );
     } catch (error) {
       console.log(error);
       dispatch(setError("Failed to Update the quantity"));
@@ -62,8 +54,7 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
     try {
       setLoading(true);
       await listsApi.deleteListItem(currentList.id, listItemId);
-      removeListItemFromState(listItemId);
-      dispatch(updateListItemCount({ listId: currentList.id }));
+      dispatch(removeListItem({ listId: currentList.id, listItemId }));
     } catch (error) {
       dispatch(setError("Failed to delete the item"));
       console.log(error);

@@ -9,23 +9,9 @@ const SaleUnitQuantity = React.lazy(() => import("./SaleUnitQuantity"));
 
 interface ProductProps {
   listItem: ListItemInterface;
-  removeListItemFromState: (listItemId: string) => void;
-  updateListItemQuantityInState: ({
-    saleUnitQuantityId,
-    quantity,
-    listItemId,
-  }: {
-    saleUnitQuantityId: string;
-    quantity: number;
-    listItemId: string;
-  }) => void;
 }
 
-const Product: React.FC<ProductProps> = ({
-  listItem,
-  removeListItemFromState,
-  updateListItemQuantityInState,
-}) => {
+const Product: React.FC<ProductProps> = ({ listItem }) => {
   const { product } = listItem;
 
   return (
@@ -48,10 +34,6 @@ const Product: React.FC<ProductProps> = ({
                     <SaleUnitQuantity
                       saleUnitQuantity={saleUnitQuantity}
                       listItemId={listItem.id}
-                      removeListItemFromState={removeListItemFromState}
-                      updateListItemQuantityInState={
-                        updateListItemQuantityInState
-                      }
                     />
                   </div>
                 )
