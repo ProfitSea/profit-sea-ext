@@ -1,5 +1,4 @@
 // SaleUnitQuantity.tsx
-import { DeleteOutlined } from "@mui/icons-material";
 import React, { useCallback, useEffect, useState } from "react";
 import listsApi from "../../../api/listsApi";
 import { debounce } from "../../../utils/functions/debounce.function";
@@ -7,6 +6,8 @@ import { SaleUnitQuantityInterface } from "../../../utils/types/product-response
 import { currentListSelector, setError } from "../../redux/app/appSlice";
 import { updateListItemCount } from "../../redux/lists/listsSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
+import UpdateQuantityButton from "./UpdateQuantityButton";
+import DeleteProductListItem from "./DeleteProduct";
 
 interface SaleUnitQuantityProps {
   saleUnitQuantity: SaleUnitQuantityInterface;
@@ -110,39 +111,26 @@ const SaleUnitQuantity: React.FC<SaleUnitQuantityProps> = ({
       </div>
 
       <div className="w-[90px] h-[23px] relative">
-        <button
-          disabled={loading}
-          onClick={incrementQuantity}
-          className="w-[21px] h-[21px] left-0 top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
-        >
-          <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-            +
-          </div>
-        </button>
+        <UpdateQuantityButton
+          loading={loading}
+          updateQuantity={incrementQuantity}
+          updateTitle="+"
+        />
         <div className="w-[26px] h-[23px] left-[33px] top-0 absolute rounded-[5px] border border-slate-200" />
         <div className="w-5 left-[36px] top-[2.50px] absolute text-center text-black text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
           {quantity}
         </div>
         {quantity !== 0 ? (
-          <button
-            disabled={loading}
-            onClick={decrementQuantity}
-            className="w-[21px] h-[21px] left-[69px] top-[1px] absolute bg-stone-800 rounded-xl justify-center items-center gap-2.5 inline-flex"
-          >
-            <div className="text-white text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-              -
-            </div>
-          </button>
+          <UpdateQuantityButton
+            loading={loading}
+            updateQuantity={decrementQuantity}
+            updateTitle="-"
+          />
         ) : (
-          <button
-            disabled={loading}
-            onClick={deleteListItem}
-            className="w-[21px] h-[21px] left-[69px] top-[1px] absolute justify-center items-center gap-2.5 inline-flex"
-          >
-            <div className="text-stone-800 text-xs font-semibold font-['SF Pro Text'] leading-[18px]">
-              <DeleteOutlined />
-            </div>
-          </button>
+          <DeleteProductListItem
+            loading={loading}
+            deleteListItem={deleteListItem}
+          />
         )}
       </div>
     </div>
