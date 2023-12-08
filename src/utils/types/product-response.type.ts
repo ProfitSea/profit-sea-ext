@@ -37,6 +37,7 @@ export interface ListItemInterface {
   product: ProductInterface;
   saleUnitQuantities: SaleUnitQuantityInterface[];
   vendor: string; // This field seems new
+  totalPrice: Number; // This field seems new
   id: string;
 }
 

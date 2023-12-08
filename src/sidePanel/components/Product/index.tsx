@@ -38,6 +38,14 @@ const Product: React.FC<ProductProps> = ({ listItem }) => {
                   </div>
                 )
               )}
+              <div className="justify-center items-center flex-row gap-[5px] flex">
+                <div className="text-[#1C1C1C] text-[14px] font-bold">
+                  {`${listItem.totalPrice}`}
+                </div>
+                <div className="text-[#1C1C1C] text-[14px] font-bold">
+                  Total
+                </div>
+              </div>
             </div>
           </div>
         </div>

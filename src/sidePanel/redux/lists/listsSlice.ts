@@ -28,7 +28,10 @@ const listsSlice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    updateListName(state, action: PayloadAction<{ listId: string; name: string }>) {
+    updateListName(
+      state,
+      action: PayloadAction<{ listId: string; name: string }>
+    ) {
       const { listId, name } = action.payload;
       const list = state.lists.find((list) => list.id === listId);
       if (list) {
@@ -63,15 +66,23 @@ const listsSlice = createSlice({
         (listItem: ListItemInterface) => listItem.id === listItemId
       );
       if (listItemIndex !== -1) {
-        const saleUnitQuantityIndex = state.listItems[
-          listItemIndex
-        ].saleUnitQuantities.findIndex(
+        const listItem = state.listItems[listItemIndex];
+        const saleUnitQuantityIndex = listItem.saleUnitQuantities.findIndex(
           (saleUnitQuantity) => saleUnitQuantity._id === saleUnitQuantityId
         );
-        if (saleUnitQuantityIndex !== -1)
-          state.listItems[listItemIndex].saleUnitQuantities[
-            saleUnitQuantityIndex
-          ].quantity = quantity;
+        if (saleUnitQuantityIndex !== -1) {
+          listItem.saleUnitQuantities[saleUnitQuantityIndex].quantity =
+            quantity;
+
+          // Calculate the new total price
+          let newTotalPrice = 0;
+          listItem.saleUnitQuantities.forEach((suq) => {
+            newTotalPrice += suq.quantity * (suq.price.price || 0);
+          });
+
+          // Update the total price
+          listItem.totalPrice = Math.round(newTotalPrice * 100) / 100;
+        }
       }
     },
   },
