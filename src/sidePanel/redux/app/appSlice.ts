@@ -1,9 +1,10 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { vendorsTagsData } from "../../../utils/data/vendorTags.data";
+import { ListInterface } from "../../../utils/types/product-response.type";
 
 interface AppState {
-  currentList: any;
+  currentList: ListInterface;
   selectValue: string;
   vendorFilter: string;
   vendorTags: TagType[];
@@ -11,7 +12,7 @@ interface AppState {
 }
 
 const initialState: AppState = {
-  currentList: {},
+  currentList: {} as ListInterface,
   selectValue: "0",
   vendorFilter: "all",
   vendorTags: vendorsTagsData,
@@ -26,7 +27,7 @@ const appSlice = createSlice({
       state.currentList = action.payload;
     },
     resetCurrentList(state) {
-      state.currentList = {};
+      state.currentList = {} as ListInterface;
     },
     setSelectValue(state, action: PayloadAction<string>) {
       state.selectValue = action.payload;

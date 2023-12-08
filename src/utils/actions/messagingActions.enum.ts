@@ -1,3 +1,4 @@
 export enum MessagingActions {
   REFRESH_CURRENT_LIST = "REFRESH_CURRENT_LIST",
+  ADD_LIST_ITEM = "ADD_LIST_ITEM",
 }

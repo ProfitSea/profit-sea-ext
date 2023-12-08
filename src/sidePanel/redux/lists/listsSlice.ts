@@ -19,7 +19,6 @@ const listsSlice = createSlice({
   initialState,
   reducers: {
     setLists(state, action: PayloadAction<any[]>) {
-      debugger;
       state.lists = action.payload;
     },
     setListItems(state, action: PayloadAction<any[]>) {
@@ -85,6 +84,22 @@ const listsSlice = createSlice({
         }
       }
     },
+    pushListItem(
+      state,
+      action: PayloadAction<{
+        listId: string;
+        listItem: ListItemInterface;
+      }>
+    ) {
+      const { listId, listItem } = action.payload;
+      const listIndex = state.lists.findIndex((list) => list.id === listId);
+      if (listIndex !== -1) {
+        state.lists[listIndex].itemsCount =
+          state.lists[listIndex].itemsCount + 1;
+        state.lists[listIndex].listItems.push(listItem.id);
+        state.listItems.unshift(listItem);
+      }
+    },
   },
 });
 
@@ -114,6 +129,7 @@ export const {
   updateListName,
   removeListItem,
   updateListItemQuantity,
+  pushListItem,
 } = listsSlice.actions;
 
 export default listsSlice.reducer;

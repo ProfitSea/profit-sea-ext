@@ -1,23 +1,22 @@
 import listsApi from "../../api/listsApi";
 import { createNotification } from "../../notification";
 import ChromeLocalStorage from "../../utils/StorageFunctions/localStorage.function";
-import { refreshCurrentList } from "../../utils/actions/messageToSidepanel";
+import { addListItem } from "../../utils/actions/messageToSidepanel";
 import ProductInterface from "../../utils/product.interface";
 
 export const addProductIntoList = async (product: ProductInterface) => {
+  const { profitsea_current_list: list } =
+    await ChromeLocalStorage.getCurrentList();
+  if (!list.id) {
+    return createNotification(
+      "Product Uploading Failed",
+      "No List is selected. Please select a list from ProfitSea extension"
+    );
+  }
   try {
-    const { profitsea_current_list: list } =
-      await ChromeLocalStorage.getCurrentList();
-    if (!list.id) {
-      return createNotification(
-        "Product Uploading Failed",
-        "No List is selected. Please select a list from ProfitSea extension"
-      );
-    }
     if (!product) return;
-    await listsApi.addListItem(list.id, { product });
-    createNotification("Product Uploaded", "Product Uploaded successfully");
-    refreshCurrentList(list.id);
+    const { listItem } = await listsApi.addListItem(list.id, { product });
+    addListItem(list.id, listItem);
   } catch (err) {
     console.log(err);
     createNotification(

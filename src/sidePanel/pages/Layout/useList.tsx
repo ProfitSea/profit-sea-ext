@@ -14,6 +14,7 @@ import {
 } from "../../redux/app/appSlice";
 import {
   listsSelector,
+  pushListItem,
   setLists as setReduxLists,
   updateListName as updateListNameRedux,
 } from "../../redux/lists/listsSlice";
@@ -109,6 +110,14 @@ const useApi = () => {
         ]);
         setCurrentList(list);
       } catch (error) {
+        console.log(error);
+      }
+    } else if (request.action === MessagingActions.ADD_LIST_ITEM) {
+      try {
+        const { listId, listItem } = request;
+        dispatch(pushListItem({ listId, listItem: listItem }));
+      } catch (error) {
+        setError("Failed to add product in the List");
         console.log(error);
       }
     }
