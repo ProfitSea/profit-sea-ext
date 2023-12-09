@@ -1,5 +1,5 @@
 // import ProductInterface from "../product.interface";
-import { ListItemInterface } from "../types/product-response.type";
+import { ListInterface, ListItemInterface } from "../types/product-response.type";
 import { MessagingActions } from "./messagingActions.enum";
 
 export const refreshCurrentList = (listId: string) => {
@@ -16,3 +16,14 @@ export const addListItem = (listId: string, listItem: ListItemInterface) => {
     listId,
   });
 };
+
+export const addListAndListItem = (
+  list: ListInterface,
+  listItem: ListItemInterface
+) => {
+  chrome.runtime.sendMessage({
+    action: MessagingActions.ADD_LIST_AND_LIST_ITEM,
+    listItem,
+    list,
+  });
+}

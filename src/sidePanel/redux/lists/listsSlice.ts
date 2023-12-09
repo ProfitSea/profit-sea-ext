@@ -1,5 +1,8 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ListItemInterface } from "../../../utils/types/product-response.type";
+import {
+  ListInterface,
+  ListItemInterface,
+} from "../../../utils/types/product-response.type";
 import { RootState } from "../store";
 
 interface ListsState {
@@ -100,6 +103,17 @@ const listsSlice = createSlice({
         state.listItems.unshift(listItem);
       }
     },
+    addListAndListItem(
+      state,
+      action: PayloadAction<{
+        list: ListInterface;
+        listItem: ListItemInterface;
+      }>
+    ) {
+      const { list, listItem } = action.payload;
+      state.lists.unshift(list);
+      state.listItems = [listItem];
+    },
   },
 });
 
@@ -130,6 +144,7 @@ export const {
   removeListItem,
   updateListItemQuantity,
   pushListItem,
+  addListAndListItem,
 } = listsSlice.actions;
 
 export default listsSlice.reducer;

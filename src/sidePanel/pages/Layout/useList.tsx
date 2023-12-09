@@ -13,6 +13,7 @@ import {
   setError as setErrorRedux,
 } from "../../redux/app/appSlice";
 import {
+  addListAndListItem,
   listsSelector,
   pushListItem,
   setLists as setReduxLists,
@@ -116,6 +117,17 @@ const useApi = () => {
       try {
         const { listId, listItem } = request;
         dispatch(pushListItem({ listId, listItem: listItem }));
+      } catch (error) {
+        setError("Failed to add product in the List");
+        console.log(error);
+      }
+    } else if (request.action === MessagingActions.ADD_LIST_AND_LIST_ITEM) {
+      try {
+        const { list, listItem } = request;
+        const newList = { ...list, itemsCount: 1, items: [listItem.id] };
+        setCurrentList(newList);
+        setSelectValue(list.id as string);
+        dispatch(addListAndListItem({ list: newList, listItem: listItem }));
       } catch (error) {
         setError("Failed to add product in the List");
         console.log(error);
