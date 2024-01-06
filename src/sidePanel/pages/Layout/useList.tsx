@@ -102,7 +102,13 @@ const useApi = () => {
     }
   };
 
-  const messageListener = async (request: any) => {
+  const messageListener = async (
+    request: any,
+    sender: any,
+    sendResponse: any
+  ) => {
+    if (!request.action) return;
+
     if (request.action === MessagingActions.REFRESH_CURRENT_LIST) {
       try {
         const [{ list }] = await Promise.all([
