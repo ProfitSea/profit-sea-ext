@@ -88,8 +88,8 @@ const createAddOrUpdateBtnDiv = (
     div.onclick = async () => {
       const product = scrapProductDetails(card);
       await addProductIntoList(product);
-      p.textContent = "Added"; // Update text after click
-      div.classList.add("opacity-50", "cursor-not-allowed"); // Disable after adding
+      // p.textContent = "Added"; // Update text after click
+      // div.classList.add("opacity-50", "cursor-not-allowed"); // Disable after adding
     };
     div.append(p);
   } else {
@@ -98,8 +98,8 @@ const createAddOrUpdateBtnDiv = (
     div.onclick = async () => {
       const product = scrapProductDetails(card);
       await addProductIntoList(product);
-      p.textContent = "Added"; // Update text after click
-      div.classList.add("opacity-50", "cursor-not-allowed"); // Disable after adding
+      // p.textContent = "Added"; // Update text after click
+      // div.classList.add("opacity-50", "cursor-not-allowed"); // Disable after adding
     };
     // Append elements to div
     div.append(p, img);
@@ -123,54 +123,47 @@ const observeBody = new MutationObserver((mutations) => {
 });
 
 const observeProducts = (container: Element) => {
-  let debounceTimer: any;
-  const processedCards = new Set(); // Set to keep track of processed cards
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach(async (mutation) => {
+      if (mutation.type === "childList") {
+        const cards = Array.from(container.querySelectorAll(".card-outline"));
 
-  const observer = new MutationObserver(async (mutations) => {
-    if (debounceTimer) clearTimeout(debounceTimer);
+        for (const card of cards) {
+          // Using the product number as a unique key to manage state
+          const productNumber = getProductNumberFromCard(card);
+          if (!productNumber || productNumber.length <= 3) continue;
 
-    debounceTimer = setTimeout(async () => {
-      // Debounce the mutations handling
-      for (const mutation of mutations) {
-        if (mutation.type === "childList") {
-          const newCards = Array.from(
-            container.querySelectorAll(".card-outline")
-          );
+          // Skip processing if this card is already being processed
+          if (card.getAttribute("data-product-number") === productNumber)
+            continue;
 
-          for (const card of newCards) {
+          // Mark the card with its product number
+          card.setAttribute("data-product-number", productNumber);
+
+          // Avoid fetching the state again if it's already being fetched
+          if (card.getAttribute("data-fetching-state") === "true") continue;
+          card.setAttribute("data-fetching-state", "true");
+
+          // Fetch the state for this card
+          const response = await findListItem(productNumber.replace(/\D/g, ""));
+          card.removeAttribute("data-fetching-state");
+
+          // After the state is fetched, check if the card is still in the DOM
+          if (
+            container.contains(card) &&
+            card.getAttribute("data-product-number") === productNumber
+          ) {
             const target = card.querySelector(".order-price-column");
-            if (
-              target &&
-              !card.hasAttribute("data-processed") &&
-              !processedCards.has(card)
-            ) {
-              card.setAttribute("data-processed", "true");
-
-              const productNumber = getProductNumberFromCard(card);
-              // Check if card is already processed
-              if (productNumber && productNumber.length <= 3) {
-                continue; // Skip if already processed or if productNumber is not valid
+            if (target) {
+              const existingButton = target.querySelector(".your-button-class");
+              if (existingButton) {
+                // Update the existing button if necessary
+                updateButton(existingButton, response);
+              } else {
+                // Or append a new button if one does not exist
+                const div = createAddOrUpdateBtnDiv(card, response);
+                target.appendChild(div);
               }
-
-              let response: {
-                found: boolean;
-                message?: string;
-                isLoggedOut?: boolean;
-              } = {
-                found: false,
-                message: "Product not found in any list",
-                isLoggedOut: false,
-              };
-
-              // Now check for product in backend and log it
-              const numbersOnly = productNumber.replace(/\D/g, "");
-              response = await findListItem(numbersOnly);
-
-              // Mark this card as processed
-              processedCards.add(card);
-
-              const div = createAddOrUpdateBtnDiv(card, response);
-              target.appendChild(div);
             }
           }
         }
@@ -178,8 +171,57 @@ const observeProducts = (container: Element) => {
     });
   });
 
-  observer.observe(container, { childList: true});
+  observer.observe(container, { childList: true, subtree: true });
 };
+
+function updateButton(
+  button: Element,
+  response: {
+    found: boolean;
+    message?: string;
+    isLoggedOut?: boolean;
+  }
+) {
+  // Assume button is the <div> containing <p> and possibly <img>
+  const p = button.querySelector("p") || document.createElement("p");
+  const img = button.querySelector("img") || document.createElement("img");
+
+  // Reset event handlers by cloning the button
+  const newButton = button.cloneNode(false) as HTMLElement;
+  button?.parentNode?.replaceChild(newButton, button);
+
+  // Update the button's state based on the response
+  if (response.isLoggedOut) {
+    p.textContent = "Login";
+    newButton.onclick = async () => {
+      chrome.runtime.sendMessage({
+        action: MessagingActions.OPEN_API_KEY_VERIFICATOIN_PAGE,
+      });
+    };
+    newButton.append(p);
+  } else if (response.found) {
+    p.textContent = "Update";
+    newButton.onclick = async () => {
+      // Assuming scrapProductDetails and addProductIntoList are defined elsewhere
+      const product = scrapProductDetails(newButton);
+      await addProductIntoList(product);
+    };
+    newButton.append(p);
+  } else {
+    p.textContent = "Add";
+
+    img.src = chrome.runtime.getURL("assets/icons/add.png");
+    img.alt = "Add";
+
+    newButton.onclick = async () => {
+      const product = scrapProductDetails(newButton);
+      await addProductIntoList(product);
+    };
+    newButton.append(p, img);
+  }
+}
+
+// Your existing utility functions...
 
 chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   if (request.action === "usfoods_historyUpdated") {
