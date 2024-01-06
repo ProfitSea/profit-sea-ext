@@ -39,7 +39,7 @@ export const findListItem = async (productNumber: string) => {
   })) as {
     success: boolean;
     data: {
-      success: boolean;
+      found: boolean;
       message?: string;
       isLoggedOut?: boolean;
     };
@@ -47,6 +47,6 @@ export const findListItem = async (productNumber: string) => {
   if (res) {
     return res.data;
   } else {
-    return { success: false, message: "Product not found in any list" };
+    return { found: false, message: "Product not found in any list" };
   }
 };

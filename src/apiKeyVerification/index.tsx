@@ -6,6 +6,7 @@ import authApi from "../api/authApi";
 import CustomInput from "../sidePanel/components/CustomInput";
 import Logo from "../sidePanel/components/Logo";
 import "../sidePanel/index.css";
+import { MessagingActions } from "../utils/actions/messagingActions.enum";
 
 const ApiKeyVerification = () => {
   const [apiKey, setApiKey] = useState("");
@@ -27,8 +28,13 @@ const ApiKeyVerification = () => {
       });
       setLoggedIn(true);
 
+      // to sidepanel
       chrome.runtime.sendMessage({
-        type: "refresh_side_panel_after_login",
+        type: MessagingActions.REFRESH_SIDEPANEL_AFTER_LOGIN,
+      });
+      // to background
+      chrome.runtime.sendMessage({
+        action: MessagingActions.REFRESH_VENDORS_WEBPAGES,
       });
     } catch (err: any) {
       setError(err?.response?.data?.message || "An error occurred.");

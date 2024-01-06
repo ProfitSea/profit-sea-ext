@@ -55,7 +55,7 @@ const getProductNumberFromCard = (card: Element) => {
 const createAddOrUpdateBtnDiv = (
   card: Element,
   response: {
-    success: boolean;
+    found: boolean;
     message?: string;
     isLoggedOut?: boolean;
   }
@@ -70,7 +70,7 @@ const createAddOrUpdateBtnDiv = (
   img.alt = "Add";
   p.className = "bg-transparent font-semibold your-button-class";
   div.className =
-    "p-2 mt-2 flex flex-row gap-[5px] items-center justify-center border-[1.5px] border-[#FBBB00] rounded cursor-pointer";
+    "your-button-class p-2 mt-2 flex flex-row gap-[5px] items-center justify-center border-[1.5px] border-[#FBBB00] rounded cursor-pointer";
 
   // Set the button's state based on the response
   if (response.isLoggedOut) {
@@ -82,7 +82,7 @@ const createAddOrUpdateBtnDiv = (
       });
     };
     div.append(p);
-  } else if (response.success) {
+  } else if (response.found) {
     // If the operation was successful, show as Added/Updated and disable
     p.textContent = "Update";
     div.onclick = async () => {
@@ -131,58 +131,58 @@ const observeProducts = (container: Element) => {
 
     debounceTimer = setTimeout(async () => {
       // Debounce the mutations handling
-    for (const mutation of mutations) {
-      if (mutation.type === "childList") {
-        const newCards = Array.from(
-          container.querySelectorAll(".card-outline")
-        );
+      for (const mutation of mutations) {
+        if (mutation.type === "childList") {
+          const newCards = Array.from(
+            container.querySelectorAll(".card-outline")
+          );
 
-        for (const card of newCards) {
-          const target = card.querySelector(".order-price-column");
-          if (target && !target.querySelector(".your-button-class")) {
-            const productNumber = getProductNumberFromCard(card);
-            // Check if card is already processed
+          for (const card of newCards) {
+            const target = card.querySelector(".order-price-column");
             if (
-              processedCards.has(card) ||
-              productNumber &&
-              productNumber.length <= 3
+              target &&
+              !card.hasAttribute("data-processed") &&
+              !processedCards.has(card)
             ) {
-              continue; // Skip if already processed or if productNumber is not valid
+              card.setAttribute("data-processed", "true");
+
+              const productNumber = getProductNumberFromCard(card);
+              // Check if card is already processed
+              if (productNumber && productNumber.length <= 3) {
+                continue; // Skip if already processed or if productNumber is not valid
+              }
+
+              let response: {
+                found: boolean;
+                message?: string;
+                isLoggedOut?: boolean;
+              } = {
+                found: false,
+                message: "Product not found in any list",
+                isLoggedOut: false,
+              };
+
+              // Now check for product in backend and log it
+              const numbersOnly = productNumber.replace(/\D/g, "");
+              response = await findListItem(numbersOnly);
+
+              // Mark this card as processed
+              processedCards.add(card);
+
+              const div = createAddOrUpdateBtnDiv(card, response);
+              target.appendChild(div);
             }
-
-            let response: {
-              success: boolean;
-              message?: string;
-              isLoggedOut?: boolean;
-            } = {
-              success: false,
-              message: "Product not found in any list",
-              isLoggedOut: false,
-            };
-
-            // Now check for product in backend and log it
-            const numbersOnly = productNumber.replace(/\D/g, "");
-            response = await findListItem(numbersOnly);
-
-            // Mark this card as processed
-            processedCards.add(card);
-            const div = document.createElement("div");
-            div.className =
-              "mt-2 flex flex-row gap-[3px] items-center justify-center";
-            div.append(createAddOrUpdateBtnDiv(card, response));
-            target.appendChild(div);
           }
         }
       }
-    }
-    }, 500); // Set the debounce time (e.g., 500 milliseconds)
+    });
   });
 
-  observer.observe(container, { childList: true, subtree: true });
+  observer.observe(container, { childList: true});
 };
 
 chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   if (request.action === "usfoods_historyUpdated") {
-    observeBody.observe(document.body, { childList: true, subtree: true });
+    observeBody.observe(document.body, { childList: true });
   }
 });

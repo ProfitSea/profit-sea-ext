@@ -1,6 +1,7 @@
 import listsApi from "../../api/listsApi";
 import { MessagingActions } from "../../utils/actions/messagingActions.enum";
 import { wrapResponse } from "../../utils/functions/wrapResponse.function";
+import { refreshVendorsWebPages } from "../onInstalledListener";
 
 export const initilaizeOnMessageListener = () => {
   chrome.runtime.onMessage.addListener(function (
@@ -27,6 +28,8 @@ export const initilaizeOnMessageListener = () => {
         sendResponse
       );
       return true;
+    } else if (message.action === MessagingActions.REFRESH_VENDORS_WEBPAGES) {
+      refreshVendorsWebPages();
     }
   });
 };
