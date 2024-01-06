@@ -1,6 +1,8 @@
+import { MessagingActions } from "../utils/actions/messagingActions.enum";
+
 export const createNotification = (title: string, message: string) => {
   chrome.runtime.sendMessage({
-    type: "createNotification",
+    action: MessagingActions.CREATE_NOTIFICATION,
     data: {
       title,
       message,

@@ -3,6 +3,7 @@ import Logo from "../components/Logo";
 import { Button, Divider } from "@mui/material";
 import SocialButton from "../components/SocialButton";
 import { useNavigate } from "react-router-dom";
+import { MessagingActions } from "../../utils/actions/messagingActions.enum";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Login = () => {
         navigate("/app");
       } else {
         chrome.runtime.sendMessage({
-          type: "open_api_key_verification_page",
+          action: MessagingActions.OPEN_API_KEY_VERIFICATOIN_PAGE,
         });
       }
     });

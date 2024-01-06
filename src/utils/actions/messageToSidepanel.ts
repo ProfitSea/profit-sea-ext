@@ -1,5 +1,9 @@
 // import ProductInterface from "../product.interface";
-import { ListInterface, ListItemInterface } from "../types/product-response.type";
+import { getFromBackgroundPage } from "../functions/getFromBackgroundPage.function";
+import {
+  ListInterface,
+  ListItemInterface,
+} from "../types/product-response.type";
 import { MessagingActions } from "./messagingActions.enum";
 
 export const refreshCurrentList = (listId: string) => {
@@ -26,4 +30,14 @@ export const addListAndListItem = (
     listItem,
     list,
   });
-}
+};
+
+export const findListItem = async (productNumber: string) => {
+  const res = await getFromBackgroundPage({
+    action: MessagingActions.CHECK_EXISTED_LIST_ITEM,
+    data: { productNumber },
+  });
+  console.log("getFromBackgroundPage", res);
+  return res;
+};
+
