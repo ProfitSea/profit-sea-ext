@@ -33,11 +33,20 @@ export const addListAndListItem = (
 };
 
 export const findListItem = async (productNumber: string) => {
-  const res = await getFromBackgroundPage({
+  const res = (await getFromBackgroundPage({
     action: MessagingActions.CHECK_EXISTING_LIST_ITEM,
     data: { productNumber },
-  });
-  console.log("getFromBackgroundPage", res);
-  return res;
+  })) as {
+    success: boolean;
+    data: {
+      success: boolean;
+      message?: string;
+      isLoggedOut?: boolean;
+    };
+  };
+  if (res) {
+    return res.data;
+  } else {
+    return { success: false, message: "Product not found in any list" };
+  }
 };
-

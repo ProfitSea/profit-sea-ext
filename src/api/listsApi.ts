@@ -130,10 +130,23 @@ class ListsApi {
         }
       );
       const response = await request.json();
-      if (response.listItem) {
-        return true;
+      if (response.code === 401) {
+        return {
+          found: false,
+          message: "Sorry, Please login again",
+          isLoggedOut: true,
+        };
       }
-      return false;
+      if (response.listItem) {
+        return {
+          found: true,
+          message: "Product found in list",
+        };
+      }
+      return {
+        found: false,
+        message: "Product not found in any list",
+      };
     } catch (error) {
       console.log(error);
       return false;

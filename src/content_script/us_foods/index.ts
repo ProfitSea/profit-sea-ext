@@ -1,4 +1,5 @@
 import { findListItem } from "../../utils/actions/messageToSidepanel";
+import { MessagingActions } from "../../utils/actions/messagingActions.enum";
 import "../index.css";
 import { addProductIntoList } from "../utils";
 
@@ -51,41 +52,58 @@ const getProductNumberFromCard = (card: Element) => {
   return productNumber || "0";
 };
 
-const createAddBtnDiv = (card: Element) => {
+const createAddOrUpdateBtnDiv = (
+  card: Element,
+  response: {
+    success: boolean;
+    message?: string;
+    isLoggedOut?: boolean;
+  }
+) => {
+  // Create elements
   const div = document.createElement("div");
-  div.className =
-    "p-1 mt-2 flex flex-row gap-[5px] items-center justify-center cursor-pointer border-[1.5px] border-[#FBBB00] rounded";
-
   const p = document.createElement("p");
   const img = document.createElement("img");
+
+  // Set common attributes and styles
   img.src = chrome.runtime.getURL("assets/icons/add.png");
-  img.alt = "add";
-  p.textContent = "Add";
+  img.alt = "Add";
   p.className = "bg-transparent font-semibold your-button-class";
-  div.append(p, img);
-
-  div.onclick = async () => {
-    const product = scrapProductDetails(card);
-    await addProductIntoList(product);
-  };
-
-  return div;
-};
-
-const createUpdateBtnDiv = (card: Element) => {
-  const div = document.createElement("div");
   div.className =
-    "p-1 mt-2 flex flex-row gap-[5px] items-center justify-center cursor-pointer border-[1.5px] border-[#FBBB00] rounded";
+    "p-2 mt-2 flex flex-row gap-[5px] items-center justify-center border-[1.5px] border-[#FBBB00] rounded cursor-pointer";
 
-  const p = document.createElement("p");
-  p.textContent = "Update";
-  p.className = "bg-transparent font-semibold your-button-class";
-  div.append(p);
-
-  div.onclick = async () => {
-    const product = scrapProductDetails(card);
-    await addProductIntoList(product);
-  };
+  // Set the button's state based on the response
+  if (response.isLoggedOut) {
+    // If the user is logged out, show Login button
+    p.textContent = "Login";
+    div.onclick = async () => {
+      chrome.runtime.sendMessage({
+        action: MessagingActions.OPEN_API_KEY_VERIFICATOIN_PAGE,
+      });
+    };
+    div.append(p);
+  } else if (response.success) {
+    // If the operation was successful, show as Added/Updated and disable
+    p.textContent = "Update";
+    div.onclick = async () => {
+      const product = scrapProductDetails(card);
+      await addProductIntoList(product);
+      p.textContent = "Added"; // Update text after click
+      div.classList.add("opacity-50", "cursor-not-allowed"); // Disable after adding
+    };
+    div.append(p);
+  } else {
+    // Default state, allow adding/updating
+    p.textContent = "Add";
+    div.onclick = async () => {
+      const product = scrapProductDetails(card);
+      await addProductIntoList(product);
+      p.textContent = "Added"; // Update text after click
+      div.classList.add("opacity-50", "cursor-not-allowed"); // Disable after adding
+    };
+    // Append elements to div
+    div.append(p, img);
+  }
 
   return div;
 };
@@ -108,48 +126,55 @@ const observeProducts = (container: Element) => {
   let debounceTimer: any;
   const processedCards = new Set(); // Set to keep track of processed cards
 
-  const observer = new MutationObserver((mutations) => {
+  const observer = new MutationObserver(async (mutations) => {
     if (debounceTimer) clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(async () => {
       // Debounce the mutations handling
-      for (const mutation of mutations) {
-        if (mutation.type === "childList") {
-          const newCards = Array.from(
-            container.querySelectorAll(".card-outline")
-          );
+    for (const mutation of mutations) {
+      if (mutation.type === "childList") {
+        const newCards = Array.from(
+          container.querySelectorAll(".card-outline")
+        );
 
-          for (const card of newCards) {
-            const target = card.querySelector(".order-price-column");
-            if (target && !target.querySelector(".your-button-class")) {
-              const div = document.createElement("div");
-              div.className =
-                "mt-2 flex flex-row gap-[3px] items-center justify-center";
-              div.append(createAddBtnDiv(card));
-              div.append(createUpdateBtnDiv(card));
-              target.appendChild(div);
-              const productNumber = getProductNumberFromCard(card);
-
-              // Check if card is already processed
-              if (
-                processedCards.has(card) ||
-                (productNumber && productNumber.length <= 3)
-              ) {
-                continue; // Skip if already processed or if productNumber is not valid
-              }
-              // Now check for product in backend and log it
-              if (productNumber && productNumber.length > 3) {
-                const numbersOnly = productNumber.replace(/\D/g, '');
-                const product = await findListItem(numbersOnly);
-                console.log(numbersOnly, " ", product);
-              }
-
-              // Mark this card as processed
-              processedCards.add(card);
+        for (const card of newCards) {
+          const target = card.querySelector(".order-price-column");
+          if (target && !target.querySelector(".your-button-class")) {
+            const productNumber = getProductNumberFromCard(card);
+            // Check if card is already processed
+            if (
+              processedCards.has(card) ||
+              productNumber &&
+              productNumber.length <= 3
+            ) {
+              continue; // Skip if already processed or if productNumber is not valid
             }
+
+            let response: {
+              success: boolean;
+              message?: string;
+              isLoggedOut?: boolean;
+            } = {
+              success: false,
+              message: "Product not found in any list",
+              isLoggedOut: false,
+            };
+
+            // Now check for product in backend and log it
+            const numbersOnly = productNumber.replace(/\D/g, "");
+            response = await findListItem(numbersOnly);
+
+            // Mark this card as processed
+            processedCards.add(card);
+            const div = document.createElement("div");
+            div.className =
+              "mt-2 flex flex-row gap-[3px] items-center justify-center";
+            div.append(createAddOrUpdateBtnDiv(card, response));
+            target.appendChild(div);
           }
         }
       }
+    }
     }, 500); // Set the debounce time (e.g., 500 milliseconds)
   });
 
