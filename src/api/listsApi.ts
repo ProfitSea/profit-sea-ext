@@ -1,5 +1,5 @@
 import ProductInterface from "../utils/product.interface";
-import API, { toQueryString } from "./api";
+import API, { appName, toQueryString } from "./api";
 
 const listRoutes = {
   create: "v1/lists",
@@ -10,6 +10,7 @@ const listRoutes = {
   deleteListItem: "v1/lists",
   getListById: "v1/lists",
   updateListItemQuantity: "v1/list-items/quantity",
+  getListItem: "v1/list-items",
 };
 
 class ListsApi {
@@ -61,7 +62,7 @@ class ListsApi {
   async deleteListItem(listId: string, listItemId: string) {
     try {
       await API.delete(
-        `${listRoutes.deleteListItem}/${listId}/list-item/${listItemId}`,
+        `${listRoutes.deleteListItem}/${listId}/list-item/${listItemId}`
       );
     } catch (error) {
       console.log(error);
@@ -99,6 +100,43 @@ class ListsApi {
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  }
+
+  // async getListItemByProductNumber(productNumber: string) {
+  //   try {
+  //     const queryString = toQueryString({ productNumber });
+  //     console.log("Query String", queryString);
+  //     const request = await API.get(`${listRoutes.getListItem}?${queryString}`);
+  //     console.log("Request", request);
+  //     return request.data;
+  //   } catch (error) {
+  //     console.log(error);
+  //     return false;
+  //   }
+  // }
+
+  async getListItemByProductNumber(productNumber: string) {
+    try {
+      const queryString = toQueryString({ productNumber });
+      const apiToken = await chrome.storage.local.get(`${appName}_token`);
+      const request = await fetch(
+        `${API.defaults.baseURL}/${listRoutes.getListItem}?${queryString}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${apiToken.profit_sea_token}`,
+          },
+        }
+      );
+      const response = await request.json();
+      if (response.listItem) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   }
 }
