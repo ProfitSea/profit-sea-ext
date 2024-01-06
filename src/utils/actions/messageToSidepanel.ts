@@ -34,7 +34,7 @@ export const addListAndListItem = (
 
 export const findListItem = async (productNumber: string) => {
   const res = await getFromBackgroundPage({
-    action: MessagingActions.CHECK_EXISTED_LIST_ITEM,
+    action: MessagingActions.CHECK_EXISTING_LIST_ITEM,
     data: { productNumber },
   });
   console.log("getFromBackgroundPage", res);

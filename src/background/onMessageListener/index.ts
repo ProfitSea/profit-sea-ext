@@ -17,7 +17,7 @@ export const initilaizeOnMessageListener = () => {
         message.action === MessagingActions.OPEN_API_KEY_VERIFICATOIN_PAGE
       ) {
         chrome.tabs.create({ url: "apiKeyVerification.html" });
-      } else if (message.action === MessagingActions.CHECK_EXISTED_LIST_ITEM) {
+      } else if (message.action === MessagingActions.CHECK_EXISTING_LIST_ITEM) {
         const { productNumber } = message.data;
         // return wrapResponse(
         //   listsApi.getListItemByProductNumber(productNumber),
