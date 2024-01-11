@@ -7,6 +7,8 @@ import CustomInput from "../sidePanel/components/CustomInput";
 import Logo from "../sidePanel/components/Logo";
 import "../sidePanel/index.css";
 import { MessagingActions } from "../utils/actions/messagingActions.enum";
+import ChromeLocalStorage from "../utils/StorageFunctions/localStorage.function";
+import { identifiers } from "../utils/enums/identifier.enum";
 
 const ApiKeyVerification = () => {
   const [apiKey, setApiKey] = useState("");
@@ -22,9 +24,10 @@ const ApiKeyVerification = () => {
     try {
       const { tokens }: any = await authApi.verifyApiKey({ email, apiKey });
 
-      chrome.storage.local.set({ profit_sea_token: tokens.access.token });
-      chrome.storage.local.set({
-        profit_sea_refresh_token: tokens.refresh.token,
+      // Update tokens in storage
+      ChromeLocalStorage.setAuthTokens({
+        [identifiers.PROFITSEA_ACCESS_TOKEN]: tokens.access.token,
+        [identifiers.PROFITSEA_REFRESH_TOKEN]: tokens.refresh.token,
       });
       setLoggedIn(true);
 
