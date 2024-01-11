@@ -1,5 +1,6 @@
 import { findListItem } from "../../utils/actions/messageToSidepanel";
 import { MessagingActions } from "../../utils/actions/messagingActions.enum";
+import { FindListItemResponseType } from "../../utils/types/FindListItemByProductNumber.type";
 import "../index.css";
 import { addProductIntoList } from "../utils";
 
@@ -54,11 +55,7 @@ const getProductNumberFromCard = (card: Element) => {
 
 const createAddOrUpdateBtnDiv = (
   card: Element,
-  response: {
-    found: boolean;
-    message?: string;
-    isLoggedOut?: boolean;
-  }
+  response: FindListItemResponseType
 ) => {
   // Create elements
   const div = document.createElement("div");
@@ -82,15 +79,10 @@ const createAddOrUpdateBtnDiv = (
       });
     };
     div.append(p);
-  } else if (response.found) {
+  } else if (response.found && response.listItemId) {
     // If the operation was successful, show as Added/Updated and disable
     p.textContent = "Update";
-    div.onclick = async () => {
-      const product = scrapProductDetails(card);
-      await addProductIntoList(product);
-      // p.textContent = "Added"; // Update text after click
-      // div.classList.add("opacity-50", "cursor-not-allowed"); // Disable after adding
-    };
+    div.onclick = async () => {};
     div.append(p);
   } else {
     // Default state, allow adding/updating
@@ -98,8 +90,6 @@ const createAddOrUpdateBtnDiv = (
     div.onclick = async () => {
       const product = scrapProductDetails(card);
       await addProductIntoList(product);
-      // p.textContent = "Added"; // Update text after click
-      // div.classList.add("opacity-50", "cursor-not-allowed"); // Disable after adding
     };
     // Append elements to div
     div.append(p, img);
@@ -174,14 +164,7 @@ const observeProducts = (container: Element) => {
   observer.observe(container, { childList: true, subtree: true });
 };
 
-function updateButton(
-  button: Element,
-  response: {
-    found: boolean;
-    message?: string;
-    isLoggedOut?: boolean;
-  }
-) {
+function updateButton(button: Element, response: FindListItemResponseType) {
   // Assume button is the <div> containing <p> and possibly <img>
   const p = button.querySelector("p") || document.createElement("p");
   const img = button.querySelector("img") || document.createElement("img");
@@ -199,7 +182,7 @@ function updateButton(
       });
     };
     newButton.append(p);
-  } else if (response.found) {
+  } else if (response.found && response.listItemId) {
     p.textContent = "Update";
     newButton.onclick = async () => {
       // Assuming scrapProductDetails and addProductIntoList are defined elsewhere

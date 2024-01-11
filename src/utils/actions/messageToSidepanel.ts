@@ -1,5 +1,6 @@
 // import ProductInterface from "../product.interface";
 import { getFromBackgroundPage } from "../functions/getFromBackgroundPage.function";
+import { FindListItemResponseType } from "../types/FindListItemByProductNumber.type";
 import {
   ListInterface,
   ListItemInterface,
@@ -32,21 +33,23 @@ export const addListAndListItem = (
   });
 };
 
-export const findListItem = async (productNumber: string) => {
+export const findListItem = async (
+  productNumber: string
+): Promise<FindListItemResponseType> => {
   const res = (await getFromBackgroundPage({
     action: MessagingActions.CHECK_EXISTING_LIST_ITEM,
     data: { productNumber },
   })) as {
     success: boolean;
-    data: {
-      found: boolean;
-      message?: string;
-      isLoggedOut?: boolean;
-    };
+    data: FindListItemResponseType;
   };
   if (res) {
     return res.data;
   } else {
-    return { found: false, message: "Product not found in any list" };
+    return {
+      found: false,
+      message: "Error occured, Please contact admin",
+      error: true,
+    };
   }
 };
