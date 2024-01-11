@@ -7,10 +7,10 @@ import {
   errorSelector,
   resetVendorTagsCount,
   selectValueSelector,
+  setError as setErrorRedux,
   setCurrentList as setReduxCurrentList,
   setSelectValue as setReduxSelectValue,
   setVendorFilter as setVendorFilterRedux,
-  setError as setErrorRedux,
 } from "../../redux/app/appSlice";
 import {
   addListAndListItem,
@@ -44,6 +44,17 @@ const useApi = () => {
   }, []);
 
   const setCurrentList = (list: any) => {
+    if (list.id) {
+      chrome.runtime.sendMessage({
+        action: MessagingActions.REFRESH_VENDORS_WEBPAGES,
+      });
+    } else if (currentList.id) {
+      if (!list.id) {
+        chrome.runtime.sendMessage({
+          action: MessagingActions.REFRESH_VENDORS_WEBPAGES,
+        });
+      }
+    }
     dispatch(setReduxCurrentList(list));
   };
 
@@ -154,7 +165,7 @@ const useApi = () => {
   }, []); // Empty dependency array ensures this runs only on mount and unmount
 
   useEffect(() => {
-    ChromeLocalStorage.setCurrentList(currentList);
+        ChromeLocalStorage.setCurrentList(currentList);
     // reset vendorTags count
     dispatch(resetVendorTagsCount());
   }, [currentList]);
