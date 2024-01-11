@@ -5,7 +5,10 @@ import { refreshVendorsWebPages } from "../onInstalledListener";
 
 export const initilaizeOnMessageListener = () => {
   chrome.runtime.onMessage.addListener(function (
-    message,
+    message: {
+      action: MessagingActions;
+      data: any;
+    },
     sender: any,
     sendResponse
   ) {
