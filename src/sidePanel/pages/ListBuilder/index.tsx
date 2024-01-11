@@ -1,8 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Home from "../Home";
 import listsApi from "../../../api/listsApi";
 import CustomDivider from "../../components/CustomDivider";
-import { ListItemInterface } from "../../../utils/types/product-response.type";
+import {
+  ListInterface,
+  ListItemInterface,
+} from "../../../utils/types/product-response.type";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import {
   setVendorTagsCount,
@@ -27,6 +36,7 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
   const setListItems = (listItems: ListItemInterface[]) => {
     dispatch(setListItemsInRedux(listItems));
   };
+  const prevListRef = useRef<ListInterface>();
 
   const fetchListItems = useCallback(async (listId: string) => {
     setLoading(true);
@@ -42,11 +52,21 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
   }, []);
 
   useEffect(() => {
-    if (currentList && currentList.itemsCount > 0) {
-      fetchListItems(currentList.id);
-    } else {
-      setListItems([]);
+    if (!currentList.id) return;
+    
+    const prevList = prevListRef.current;
+
+    if (prevList?.id) {
+      if (prevList.id !== currentList.id) {
+        fetchListItems(currentList.id);
+      }
     }
+    if (!prevList?.id && currentList.id) {
+      fetchListItems(currentList.id);
+    }
+
+    // Update the ref to the current value
+    prevListRef.current = currentList;
   }, [currentList, fetchListItems]);
 
   const updateTagsCount = useCallback(() => {
