@@ -1,4 +1,6 @@
+import ChromeLocalStorage from "../utils/StorageFunctions/localStorage.function";
 import ProductInterface from "../utils/product.interface";
+import { FindListItemResponseType } from "../utils/types/FindListItemByProductNumber.type";
 import API, { appName, toQueryString } from "./api";
 
 const listRoutes = {
@@ -103,23 +105,17 @@ class ListsApi {
     }
   }
 
-  // async getListItemByProductNumber(productNumber: string) {
-  //   try {
-  //     const queryString = toQueryString({ productNumber });
-  //     console.log("Query String", queryString);
-  //     const request = await API.get(`${listRoutes.getListItem}?${queryString}`);
-  //     console.log("Request", request);
-  //     return request.data;
-  //   } catch (error) {
-  //     console.log(error);
-  //     return false;
-  //   }
-  // }
-
-  async getListItemByProductNumber(productNumber: string) {
+  async getListItemByProductNumber(
+    productNumber: string
+  ): Promise<FindListItemResponseType> {
+    // fetch because axios is not working in background script
     try {
       const queryString = toQueryString({ productNumber });
-      const apiToken = await chrome.storage.local.get(`${appName}_token`);
+      const [apiToken, { profitsea_current_list: currentList }] =
+        await Promise.all([
+          chrome.storage.local.get(`${appName}_token`),
+          ChromeLocalStorage.getCurrentList(),
+        ]);
       const request = await fetch(
         `${API.defaults.baseURL}/${listRoutes.getListItem}?${queryString}`,
         {
@@ -137,20 +133,48 @@ class ListsApi {
           isLoggedOut: true,
         };
       }
-      if (response.listItem) {
-        return {
-          found: true,
-          message: "Product found in list",
-        };
-      }
-      return {
-        found: false,
-        message: "Product not found in any list",
-      };
+
+      return this.findListItemInAPIAndInCurrentList(
+        response.listItems,
+        currentList
+      );
     } catch (error) {
       console.log(error);
-      return false;
+      return {
+        found: false,
+        error: true,
+        message: "Request Failed, Please contact Admin",
+        isLoggedOut: false,
+      };
     }
   }
+
+  private findListItemInAPIAndInCurrentList = async (
+    listItems: string[],
+    currentList: any
+  ) => {
+    const response = {
+      isLoggedOut: false,
+      found: listItems?.length > 0,
+      listItemId: undefined,
+    } as FindListItemResponseType;
+    try {
+      if (currentList?.listItems?.length > 0 && listItems?.length > 0) {
+        listItems.find((listItem: string) => {
+          const foundItem = currentList.listItems.find(
+            (item: string) => item === listItem
+          );
+
+          if (foundItem) {
+            response.listItemId = foundItem;
+          }
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    return response;
+  };
 }
 export default new ListsApi();
