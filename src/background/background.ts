@@ -1,10 +1,23 @@
-import { initilaizeOnInstalledListener } from "./onInstalledListener";
+import ChromeLocalStorage from "../utils/StorageFunctions/localStorage.function";
+import {
+  initilaizeOnInstalledListener,
+  refreshVendorsWebPages,
+} from "./onInstalledListener";
 import { initilaizeOnMessageListener } from "./onMessageListener";
 
 const initilaizeSidePanelListener = () => {
   chrome.sidePanel
     .setPanelBehavior({ openPanelOnActionClick: true })
     .catch((error) => console.log(error));
+
+  chrome.runtime.onConnect.addListener((port) => {
+    if (port.name === "mySidepanel") {
+      port.onDisconnect.addListener(() => {
+        ChromeLocalStorage.setCurrentList({});
+        refreshVendorsWebPages();
+      });
+    }
+  });
 };
 const initilaizeOnUpdatedListener = () => {
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {

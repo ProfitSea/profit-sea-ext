@@ -15,6 +15,8 @@ const SidePanel = () => {
     }
   });
 
+  chrome.runtime.connect({ name: "mySidepanel" });
+
   return (
     <React.Suspense
       fallback={
