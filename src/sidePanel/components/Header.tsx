@@ -2,6 +2,7 @@ import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { MessagingActions } from "../../utils/actions/messagingActions.enum";
+import ChromeLocalStorage from "../../utils/StorageFunctions/localStorage.function";
 
 interface HeaderProps {
   lists: any;
@@ -19,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate();
 
   const logout = async () => {
-    chrome.storage.local.remove("profit_sea_token");
+    ChromeLocalStorage.resetChromeLocalStorageOnLogout();
     navigate("/login");
     // to background
     chrome.runtime.sendMessage({

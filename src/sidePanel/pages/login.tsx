@@ -4,12 +4,13 @@ import { Button, Divider } from "@mui/material";
 import SocialButton from "../components/SocialButton";
 import { useNavigate } from "react-router-dom";
 import { MessagingActions } from "../../utils/actions/messagingActions.enum";
+import { identifiers } from "../../utils/enums/identifier.enum";
 
 const Login = () => {
   const navigate = useNavigate();
 
   const navigateToHome = () => {
-    chrome.storage.local.get("profit_sea_token", (result) => {
+    chrome.storage.local.get(identifiers.PROFITSEA_ACCESS_TOKEN, (result) => {
       if (result.profit_sea_token) {
         navigate("/app");
       } else {

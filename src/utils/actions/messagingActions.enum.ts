@@ -7,4 +7,4 @@ export enum MessagingActions {
   CHECK_EXISTING_LIST_ITEM = "CHECK_EXISTING_LIST_ITEM",
   REFRESH_VENDORS_WEBPAGES = "refresh_vendors_webpages",
   REFRESH_SIDEPANEL_AFTER_LOGIN = "refresh_side_panel_after_login",
-}
+  }

@@ -17,10 +17,31 @@ const setAuthTokens = (obj: {
   chrome.storage.local.set(obj);
 };
 
+const getAccessToken = () => {
+  return chrome.storage.local.get(identifiers.PROFITSEA_ACCESS_TOKEN);
+};
+
+const getRefreshToken = () => {
+  return chrome.storage.local.get(identifiers.PROFITSEA_REFRESH_TOKEN);
+};
+
+const removeAuthTokens = () => {
+  chrome.storage.local.remove(identifiers.PROFITSEA_ACCESS_TOKEN);
+  chrome.storage.local.remove(identifiers.PROFITSEA_REFRESH_TOKEN);
+};
+
+const resetChromeLocalStorageOnLogout = () => {
+  chrome.storage.local.clear();
+};
+
 const ChromeLocalStorage = {
   setCurrentList,
   getCurrentList,
   setAuthTokens,
+  getAccessToken,
+  getRefreshToken,
+  removeAuthTokens,
+  resetChromeLocalStorageOnLogout,
 };
 
 export default ChromeLocalStorage;

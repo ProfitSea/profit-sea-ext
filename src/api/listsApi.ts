@@ -113,7 +113,7 @@ class ListsApi {
       const queryString = toQueryString({ productNumber });
       const [apiToken, { profitsea_current_list: currentList }] =
         await Promise.all([
-          chrome.storage.local.get(`${appName}_token`),
+          ChromeLocalStorage.getAccessToken(),
           ChromeLocalStorage.getCurrentList(),
         ]);
       const request = await fetch(

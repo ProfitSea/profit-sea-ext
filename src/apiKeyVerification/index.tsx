@@ -47,7 +47,7 @@ const ApiKeyVerification = () => {
   }, [apiKey, email]);
 
   useLayoutEffect(() => {
-    chrome.storage.local.get("profit_sea_token", (result) => {
+    chrome.storage.local.get(identifiers.PROFITSEA_ACCESS_TOKEN, (result) => {
       if (result.profit_sea_token) {
         setLoggedIn(true);
       }
