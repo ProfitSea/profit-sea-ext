@@ -141,7 +141,7 @@ const useApi = () => {
     } else if (request.action === MessagingActions.ADD_LIST_AND_LIST_ITEM) {
       try {
         const { list, listItem } = request;
-        const newList = { ...list, itemsCount: 1, items: [listItem.id] };
+        const newList = { ...list, itemsCount: 1, listItems: [listItem.id] };
         setCurrentList(newList);
         setSelectValue(list.id as string);
         dispatch(addListAndListItem({ list: newList, listItem: listItem }));
@@ -165,7 +165,6 @@ const useApi = () => {
   }, []); // Empty dependency array ensures this runs only on mount and unmount
 
   useEffect(() => {
-        ChromeLocalStorage.setCurrentList(currentList);
     // reset vendorTags count
     dispatch(resetVendorTagsCount());
   }, [currentList]);

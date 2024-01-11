@@ -2,6 +2,7 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { vendorsTagsData } from "../../../utils/data/vendorTags.data";
 import { ListInterface } from "../../../utils/types/product-response.type";
+import ChromeLocalStorage from "../../../utils/StorageFunctions/localStorage.function";
 
 interface AppState {
   currentList: ListInterface;
@@ -24,6 +25,7 @@ const appSlice = createSlice({
   initialState,
   reducers: {
     setCurrentList(state, action: PayloadAction<any>) {
+      ChromeLocalStorage.setCurrentList(action.payload);
       state.currentList = action.payload;
     },
     resetCurrentList(state) {
