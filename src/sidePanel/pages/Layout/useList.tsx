@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import listsApi from "../../../api/listsApi";
 import ChromeLocalStorage from "../../../utils/StorageFunctions/localStorage.function";
 import { MessagingActions } from "../../../utils/actions/messagingActions.enum";
@@ -13,13 +13,15 @@ import {
   setVendorFilter as setVendorFilterRedux,
 } from "../../redux/app/appSlice";
 import {
-  addListAndListItem,
+  addListAndListItem as addListAndListItemInRedux,
   listsSelector,
   pushListItem,
   setLists as setReduxLists,
   updateListName as updateListNameRedux,
 } from "../../redux/lists/listsSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { refreshVendorsWebpages } from "../../../utils/actions/messageToBackground";
+import { ListInterface } from "../../../utils/types/product-response.type";
 
 const useApi = () => {
   const [loading, setLoading] = useState(false);
@@ -30,6 +32,18 @@ const useApi = () => {
   const selectValue = useAppSelector(selectValueSelector);
   const dispatch = useAppDispatch();
   const error = useAppSelector(errorSelector);
+  const currentListRef = useRef<ListInterface>();
+  const errorRef = useRef<string>();
+
+  // Whenever `currentList` or `error` changes, update the refs
+  useEffect(() => {
+    if (currentList) {
+      currentListRef.current = currentList;
+    }
+    if (error) {
+      errorRef.current = error;
+    }
+  }, [currentList, error]);
 
   const fetchLists = useCallback(async () => {
     try {
@@ -44,16 +58,15 @@ const useApi = () => {
   }, []);
 
   const setCurrentList = (list: any) => {
-    if (list.id) {
-      chrome.runtime.sendMessage({
-        action: MessagingActions.REFRESH_VENDORS_WEBPAGES,
-      });
-    } else if (currentList.id) {
+    const currentList = currentListRef.current;
+    if (currentList?.id) {
       if (!list.id) {
-        chrome.runtime.sendMessage({
-          action: MessagingActions.REFRESH_VENDORS_WEBPAGES,
-        });
+        refreshVendorsWebpages();
+      } else if (list.id && list.id !== currentList.id) {
+        refreshVendorsWebpages();
       }
+    } else if (list.id) {
+      refreshVendorsWebpages();
     }
     dispatch(setReduxCurrentList(list));
   };
@@ -113,57 +126,74 @@ const useApi = () => {
     }
   };
 
-  const messageListener = async (
-    request: any,
-    sender: any,
-    sendResponse: any
-  ) => {
+  const refreshCurrentList = async (listId: string) => {
+    try {
+      const [{ list }] = await Promise.all([
+        listsApi.getListById(listId),
+        fetchLists(),
+      ]);
+      setCurrentList(list);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addListItem = async (request: any) => {
+    try {
+      const { list, listItem } = request;
+      setCurrentList({
+        ...list,
+        itemsCount: list.itemsCount + 1,
+        listItems: [...list.listItems, listItem.id],
+      });
+      dispatch(pushListItem({ listId: list.id, listItem: listItem }));
+    } catch (error) {
+            setError("Failed to add product in the List");
+      console.log(error);
+    }
+  };
+
+  const addListAndListItem = async (request: any) => {
+    try {
+      const { list, listItem } = request;
+      const newList = { ...list, itemsCount: 1, listItems: [listItem.id] };
+      setCurrentList(newList);
+      setSelectValue(list.id as string);
+      dispatch(
+        addListAndListItemInRedux({ list: newList, listItem: listItem })
+      );
+    } catch (error) {
+      setError("Failed to add product in the List");
+      console.log(error);
+    }
+  };
+
+  const messageListener = (request: any, sender: any, sendResponse: any) => {
     if (!request.action) return;
 
     if (request.action === MessagingActions.REFRESH_CURRENT_LIST) {
-      try {
-        const [{ list }] = await Promise.all([
-          listsApi.getListById(request.listId),
-          fetchLists(),
-        ]);
-        setCurrentList(list);
-      } catch (error) {
-        console.log(error);
-      }
+      refreshCurrentList(request.listId);
     } else if (request.action === MessagingActions.ADD_LIST_ITEM) {
-      try {
-        const { listId, listItem } = request;
-        dispatch(pushListItem({ listId, listItem: listItem }));
-      } catch (error) {
-        setError("Failed to add product in the List");
-        console.log(error);
-      }
+      addListItem(request);
     } else if (request.action === MessagingActions.ADD_LIST_AND_LIST_ITEM) {
-      try {
-        const { list, listItem } = request;
-        const newList = { ...list, itemsCount: 1, listItems: [listItem.id] };
-        setCurrentList(newList);
-        setSelectValue(list.id as string);
-        dispatch(addListAndListItem({ list: newList, listItem: listItem }));
-      } catch (error) {
-        setError("Failed to add product in the List");
-        console.log(error);
-      }
+      addListAndListItem(request);
     }
   };
 
   useEffect(() => {
+    const listener = (request: any, sender: any, sendResponse: any) => {
+      // Call messageListener with the current values from the refs
+      messageListener(request, sender, sendResponse);
+    };
+
     // Add the listener when the component mounts
-    chrome.runtime.onMessage.addListener(messageListener);
+    chrome.runtime.onMessage.addListener(listener);
 
     // Remove the listener when the component unmounts
     return () => {
-      chrome.runtime.onMessage.removeListener(messageListener);
-      setCurrentList({} as any);
-      ChromeLocalStorage.setCurrentList(null);
+      chrome.runtime.onMessage.removeListener(listener);
     };
-  }, []); // Empty dependency array ensures this runs only on mount and unmount
-
+  }, []);
   useEffect(() => {
     // reset vendorTags count
     dispatch(resetVendorTagsCount());

@@ -14,11 +14,11 @@ export const refreshCurrentList = (listId: string) => {
   });
 };
 
-export const addListItem = (listId: string, listItem: ListItemInterface) => {
+export const addListItem = (list: ListInterface, listItem: ListItemInterface) => {
   chrome.runtime.sendMessage({
     action: MessagingActions.ADD_LIST_ITEM,
     listItem,
-    listId,
+    list,
   });
 };
 

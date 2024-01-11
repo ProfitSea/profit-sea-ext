@@ -16,7 +16,7 @@ export const addProductIntoList = async (product: ProductInterface) => {
   try {
     if (!product) return;
     const { listItem } = await listsApi.addListItem(list.id, { product });
-    addListItem(list.id, listItem);
+    addListItem(list, listItem);
   } catch (err) {
     console.log(err);
     createNotification(
