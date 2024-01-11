@@ -53,6 +53,17 @@ const getProductNumberFromCard = (card: Element) => {
   return productNumber || "0";
 };
 
+const loginButtonOnClick = async () => {
+  chrome.runtime.sendMessage({
+    action: MessagingActions.OPEN_API_KEY_VERIFICATOIN_PAGE,
+  });
+};
+
+const AddBtnOnClick = async (card: Element) => {
+  const product = scrapProductDetails(card);
+  await addProductIntoList(product);
+};
+
 const createAddOrUpdateBtnDiv = (
   card: Element,
   response: FindListItemResponseType
@@ -73,11 +84,7 @@ const createAddOrUpdateBtnDiv = (
   if (response.isLoggedOut) {
     // If the user is logged out, show Login button
     p.textContent = "Login";
-    div.onclick = async () => {
-      chrome.runtime.sendMessage({
-        action: MessagingActions.OPEN_API_KEY_VERIFICATOIN_PAGE,
-      });
-    };
+    div.onclick = loginButtonOnClick;
     div.append(p);
   } else if (response.found && response.listItemId) {
     // If the operation was successful, show as Added/Updated and disable
@@ -87,10 +94,7 @@ const createAddOrUpdateBtnDiv = (
   } else {
     // Default state, allow adding/updating
     p.textContent = "Add";
-    div.onclick = async () => {
-      const product = scrapProductDetails(card);
-      await addProductIntoList(product);
-    };
+    div.onclick = () => AddBtnOnClick(card);
     // Append elements to div
     div.append(p, img);
   }
@@ -148,7 +152,7 @@ const observeProducts = (container: Element) => {
               const existingButton = target.querySelector(".your-button-class");
               if (existingButton) {
                 // Update the existing button if necessary
-                updateButton(existingButton, response);
+                updateButton(existingButton, response, card);
               } else {
                 // Or append a new button if one does not exist
                 const div = createAddOrUpdateBtnDiv(card, response);
@@ -164,48 +168,40 @@ const observeProducts = (container: Element) => {
   observer.observe(container, { childList: true, subtree: true });
 };
 
-function updateButton(button: Element, response: FindListItemResponseType) {
+function updateButton(
+  div: Element,
+  response: FindListItemResponseType,
+  card: Element
+) {
   // Assume button is the <div> containing <p> and possibly <img>
-  const p = button.querySelector("p") || document.createElement("p");
-  const img = button.querySelector("img") || document.createElement("img");
+  const p = div.querySelector("p") || document.createElement("p");
+  const img = div.querySelector("img") || document.createElement("img");
 
   // Reset event handlers by cloning the button
-  const newButton = button.cloneNode(false) as HTMLElement;
-  button?.parentNode?.replaceChild(newButton, button);
+  const newDiv = div.cloneNode(false) as HTMLElement;
+  div?.parentNode?.replaceChild(newDiv, div);
 
-  // Update the button's state based on the response
+  // Set the button's state based on the response
   if (response.isLoggedOut) {
+    // If the user is logged out, show Login button
     p.textContent = "Login";
-    newButton.onclick = async () => {
-      chrome.runtime.sendMessage({
-        action: MessagingActions.OPEN_API_KEY_VERIFICATOIN_PAGE,
-      });
-    };
-    newButton.append(p);
+    newDiv.onclick = loginButtonOnClick;
+    newDiv.append(p);
   } else if (response.found && response.listItemId) {
+    // If the operation was successful, show as Added/Updated and disable
     p.textContent = "Update";
-    newButton.onclick = async () => {
-      // Assuming scrapProductDetails and addProductIntoList are defined elsewhere
-      const product = scrapProductDetails(newButton);
-      await addProductIntoList(product);
-    };
-    newButton.append(p);
+    newDiv.onclick = async () => {};
+    newDiv.append(p);
   } else {
+    // Default state, allow adding/updating
     p.textContent = "Add";
-
-    img.src = chrome.runtime.getURL("assets/icons/add.png");
-    img.alt = "Add";
-
-    newButton.onclick = async () => {
-      const product = scrapProductDetails(newButton);
-      await addProductIntoList(product);
-    };
-    newButton.append(p, img);
+    newDiv.onclick = () => AddBtnOnClick(card);
+    // Append elements to div
+    newDiv.append(p, img);
   }
 }
 
 // Your existing utility functions...
-
 chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   if (request.action === "usfoods_historyUpdated") {
     observeBody.observe(document.body, { childList: true });
