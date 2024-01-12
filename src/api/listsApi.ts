@@ -116,6 +116,14 @@ class ListsApi {
           ChromeLocalStorage.getAccessToken(),
           ChromeLocalStorage.getCurrentList(),
         ]);
+
+      if (!apiToken?.profit_sea_token) {
+        return {
+          found: false,
+          message: "Sorry, Please login again",
+          isLoggedOut: true,
+        };
+      }
       const request = await fetch(
         `${API.defaults.baseURL}/${listRoutes.getListItem}?${queryString}`,
         {
@@ -146,6 +154,20 @@ class ListsApi {
         message: "Request Failed, Please contact Admin",
         isLoggedOut: false,
       };
+    }
+  }
+
+  async updatePricesByProductNumber(
+    productNumber: ProductInterface["productNumber"],
+    prices: ProductInterface["prices"]
+  ) {
+    try {
+      const queryString = toQueryString({ productNumber });
+      const response = await API.patch(`${listRoutes.getListItem}?${queryString}`, {prices});
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
   }
 
