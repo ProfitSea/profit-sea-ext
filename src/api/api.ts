@@ -1,5 +1,7 @@
 import axios from "axios";
 import authApi, { authRoutes } from "./authApi";
+import ChromeLocalStorage from "../utils/StorageFunctions/localStorage.function";
+import { identifiers } from "../utils/enums/identifier.enum";
 
 // const env: string = "dev";
 const env: string = "prod";
@@ -33,7 +35,7 @@ instance.defaults.timeout = 5000;
 
 instance.interceptors.request.use(
   async (config) => {
-    const apiToken = await chrome.storage.local.get(`${appName}_token`);
+    const apiToken = await ChromeLocalStorage.getAccessToken();
     if (apiToken)
       config.headers["Authorization"] = "bearer " + apiToken.profit_sea_token;
     // config.headers["Authorization"] = "bearer " + apiToken;
@@ -50,7 +52,7 @@ instance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-
+    debugger;
     // If it's a 401 and not the refresh token endpoint and the request hasn't been retried yet
     if (
       error.response.status === 401 &&
@@ -82,9 +84,9 @@ instance.interceptors.response.use(
           let { access, refresh } = res.data;
 
           // Update tokens in storage
-          await chrome.storage.local.set({
-            [accessToken]: access.token,
-            [refreshToken]: refresh.token,
+          ChromeLocalStorage.setAuthTokens({
+            [identifiers.PROFITSEA_ACCESS_TOKEN]: access.token,
+            [identifiers.PROFITSEA_REFRESH_TOKEN]: refresh.token,
           });
           // Update the token in Axios headers
           instance.defaults.headers["Authorization"] = "Bearer " + access.token;
