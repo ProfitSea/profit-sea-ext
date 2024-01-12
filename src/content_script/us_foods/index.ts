@@ -1,8 +1,12 @@
 import { findListItem } from "../../utils/actions/messageToSidepanel";
-import { MessagingActions } from "../../utils/actions/messagingActions.enum";
+import ProductInterface from "../../utils/product.interface";
 import { FindListItemResponseType } from "../../utils/types/FindListItemByProductNumber.type";
 import "../index.css";
-import { addProductIntoList } from "../utils";
+import {
+  addProductIntoList,
+  loginButtonOnClick,
+  updateProductPrices,
+} from "../utils";
 
 // Utility functions
 const getText = (element: HTMLElement) =>
@@ -50,18 +54,45 @@ const getProductNumberFromCard = (card: Element) => {
   const productNumber = getText(
     card.querySelector('[data-cy*="product-number-"]') as HTMLElement
   );
-  return productNumber || "0";
-};
+  if (!productNumber) return null;
 
-const loginButtonOnClick = async () => {
-  chrome.runtime.sendMessage({
-    action: MessagingActions.OPEN_API_KEY_VERIFICATOIN_PAGE,
-  });
+  return productNumber.replace(/\D/g, "");
 };
 
 const AddBtnOnClick = async (card: Element) => {
   const product = scrapProductDetails(card);
   await addProductIntoList(product);
+};
+
+const updateBtnOnClick = async (card: Element) => {
+  const productNumber = getProductNumberFromCard(card);
+  if (!productNumber) {
+    alert(`Error scraping productNumber from webpage`);
+    console.log(`Error: One of the prices is invalid or missing a unit.`);
+    return;
+  }
+  const prices = extractPrices(card);
+
+  let updatedPrices: ProductInterface["prices"] = [];
+
+  for (const price of prices) {
+    if (
+      price.price === undefined ||
+      isNaN(price.price) ||
+      price.unit === undefined ||
+      price.unit === ""
+    ) {
+      alert(`Error scraping details from webpage`);
+      console.log(`Error: One of the prices is invalid or missing a unit.`);
+      return;
+    }
+    updatedPrices.push({
+      price: price.price,
+      unit: price.unit,
+    });
+  }
+
+  await updateProductPrices(productNumber!, updatedPrices);
 };
 
 const createAddOrUpdateBtnDiv = (
@@ -89,7 +120,7 @@ const createAddOrUpdateBtnDiv = (
   } else if (response.found && response.listItemId) {
     // If the operation was successful, show as Added/Updated and disable
     p.textContent = "Update";
-    div.onclick = async () => {};
+    div.onclick = () => updateBtnOnClick(card);
     div.append(p);
   } else {
     // Default state, allow adding/updating
@@ -139,7 +170,7 @@ const observeProducts = (container: Element) => {
           card.setAttribute("data-fetching-state", "true");
 
           // Fetch the state for this card
-          const response = await findListItem(productNumber.replace(/\D/g, ""));
+          const response = await findListItem(productNumber);
           card.removeAttribute("data-fetching-state");
 
           // After the state is fetched, check if the card is still in the DOM
@@ -190,7 +221,7 @@ function updateButton(
   } else if (response.found && response.listItemId) {
     // If the operation was successful, show as Added/Updated and disable
     p.textContent = "Update";
-    newDiv.onclick = async () => {};
+    newDiv.onclick = () => updateBtnOnClick(card);
     newDiv.append(p);
   } else {
     // Default state, allow adding/updating

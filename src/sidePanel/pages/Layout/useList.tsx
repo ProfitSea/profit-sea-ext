@@ -128,6 +128,7 @@ const useApi = () => {
 
   const refreshCurrentList = async (listId: string) => {
     try {
+      setCurrentList({});
       const [{ list }] = await Promise.all([
         listsApi.getListById(listId),
         fetchLists(),
@@ -148,7 +149,7 @@ const useApi = () => {
       });
       dispatch(pushListItem({ listId: list.id, listItem: listItem }));
     } catch (error) {
-            setError("Failed to add product in the List");
+      setError("Failed to add product in the List");
       console.log(error);
     }
   };
