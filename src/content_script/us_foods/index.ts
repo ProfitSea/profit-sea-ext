@@ -13,7 +13,7 @@ const getText = (element: HTMLElement) =>
   element ? element.innerText.trim() : null;
 
 const extractPrices = (card: Element) => {
-  const prices = card.querySelectorAll(".price-text");
+  const prices = card.querySelectorAll("span.price-text");
   return Array.from(prices).map((priceElement) => {
     const priceText = priceElement.textContent?.trim() || "";
     return {
@@ -38,7 +38,6 @@ const scrapProductDetails: any = (card: Element) => {
     card.querySelector('[data-cy*="product-packsize-"]') as HTMLElement
   );
   const prices = extractPrices(card);
-
   return {
     vendor: "US Foods",
     imgSrc: imgSrc ? imgSrc : null,
