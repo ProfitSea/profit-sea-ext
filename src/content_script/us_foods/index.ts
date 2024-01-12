@@ -248,6 +248,8 @@ function updateButton(
   // Reset event handlers by cloning the button
   const newDiv = div.cloneNode(false) as HTMLElement;
   div?.parentNode?.replaceChild(newDiv, div);
+  newDiv.className =
+    "your-button-class p-2 mt-2 flex flex-row gap-[5px] items-center justify-center border-[1.5px] border-[#FBBB00] rounded cursor-pointer";
 
   // Set the button's state based on the response
   if (response.isLoggedOut) {

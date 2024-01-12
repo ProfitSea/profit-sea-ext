@@ -4,7 +4,6 @@ import ChromeLocalStorage from "../../utils/StorageFunctions/localStorage.functi
 import {
   addListAndListItem,
   addListItem,
-  refreshCurrentList,
 } from "../../utils/actions/messageToSidepanel";
 import { MessagingActions } from "../../utils/actions/messagingActions.enum";
 import ProductInterface from "../../utils/product.interface";
@@ -45,7 +44,7 @@ export const updateProductPrices = async (
       const listItemInCurrentList = response.listItems.find(
         (listItem: ListItemInterface) => listItem.list === list.id
       );
-      if(listItemInCurrentList) {
+      if (listItemInCurrentList) {
         updateListItemInListItems(listItemInCurrentList);
       }
     }
@@ -126,4 +125,4 @@ const updateListItemInListItems = (listItem: ListItemInterface) => {
     action: MessagingActions.UPDATE_LIST_ITEM_IN_LIST_ITEMS,
     listItem,
   });
-};  
+};

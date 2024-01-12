@@ -163,7 +163,10 @@ class ListsApi {
   ) {
     try {
       const queryString = toQueryString({ productNumber });
-      const response = await API.patch(`${listRoutes.getListItem}?${queryString}`, {prices});
+      const response = await API.patch(
+        `${listRoutes.getListItem}?${queryString}`,
+        { prices }
+      );
       return response.data;
     } catch (error) {
       console.log(error);
