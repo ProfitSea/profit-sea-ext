@@ -13,11 +13,15 @@ const initilaizeSidePanelListener = () => {
   chrome.runtime.onConnect.addListener((port) => {
     if (port.name === "mySidepanel") {
       port.onDisconnect.addListener(() => {
-        ChromeLocalStorage.setCurrentList({});
-        refreshVendorsWebPages();
+        emptyCurrentList();
       });
     }
   });
+};
+
+const emptyCurrentList = async () => {
+  await ChromeLocalStorage.setCurrentList({});
+  refreshVendorsWebPages();
 };
 const initilaizeOnUpdatedListener = () => {
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
