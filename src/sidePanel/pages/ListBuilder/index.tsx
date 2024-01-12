@@ -57,7 +57,9 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
     const prevList = prevListRef.current;
 
     if (prevList?.id) {
-      if (prevList.id !== currentList.id) {
+      if (!currentList.id) {
+        setListItems([]);
+      } else if (prevList.id !== currentList.id) {
         fetchListItems(currentList.id);
       }
     }
