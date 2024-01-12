@@ -20,6 +20,7 @@ import {
 import { setListItems as setListItemsInRedux } from "../../redux/lists/listsSlice";
 import Product from "../../components/Product";
 import { listItemsSelector } from "../../redux/lists/listsSlice";
+import { MessagingActions } from "../../../utils/actions/messagingActions.enum";
 
 interface ListBuilderProps {
   currentList: any;
@@ -53,7 +54,7 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
 
   useEffect(() => {
     if (!currentList.id) return;
-    
+
     const prevList = prevListRef.current;
 
     if (prevList?.id) {
@@ -90,6 +91,23 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
     Object.entries(tagsCount).forEach(([vendorName, count]) => {
       dispatch(setVendorTagsCount({ vendorName, count: count as number }));
     });
+    if (listItems?.length > 0) {
+      chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (
+          message.action === MessagingActions.UPDATE_LIST_ITEM_IN_LIST_ITEMS
+        ) {
+          const updatedListItems = listItems.map(
+            (listItem: ListItemInterface) => {
+              if (listItem.id === message.listItem.id) {
+                return message.listItem;
+              }
+              return listItem;
+            }
+          );
+          setListItems(updatedListItems);
+        }
+      });
+    }
   }, [listItems, updateTagsCount, dispatch]);
 
   // Memoized filtered list items

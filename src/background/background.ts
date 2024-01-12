@@ -19,7 +19,7 @@ const initilaizeSidePanelListener = () => {
   });
 };
 
-const emptyCurrentList = async () => {
+export const emptyCurrentList = async () => {
   await ChromeLocalStorage.setCurrentList({});
   refreshVendorsWebPages();
 };

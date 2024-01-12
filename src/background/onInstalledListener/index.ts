@@ -1,9 +1,11 @@
+import { emptyCurrentList } from "../background";
+
 export const initilaizeOnInstalledListener = () => {
   chrome.runtime.onInstalled.addListener((details) => {
     // Check the reason for installation
     if (details.reason === "install" || details.reason === "update") {
       // Query for the tabs you want to refresh, e.g., tabs with URL containing 'example.com'
-      refreshVendorsWebPages();
+      emptyCurrentList();
     }
   });
 };

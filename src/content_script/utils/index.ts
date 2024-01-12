@@ -8,6 +8,7 @@ import {
 } from "../../utils/actions/messageToSidepanel";
 import { MessagingActions } from "../../utils/actions/messagingActions.enum";
 import ProductInterface from "../../utils/product.interface";
+import { ListItemInterface } from "../../utils/types/product-response.type";
 
 export const addProductIntoList = async (product: ProductInterface) => {
   const { profitsea_current_list: list } =
@@ -41,7 +42,12 @@ export const updateProductPrices = async (
       ChromeLocalStorage.getCurrentList(),
     ]);
     if (response?.listItems?.length > 0) {
-      refreshCurrentList(list.id);
+      const listItemInCurrentList = response.listItems.find(
+        (listItem: ListItemInterface) => listItem.list === list.id
+      );
+      if(listItemInCurrentList) {
+        updateListItemInListItems(listItemInCurrentList);
+      }
     }
   } catch (err) {
     console.log(err);
@@ -114,3 +120,10 @@ export const validateProductDetails = (
   // If all checks pass, return null indicating no error
   return null;
 };
+
+const updateListItemInListItems = (listItem: ListItemInterface) => {
+  chrome.runtime.sendMessage({
+    action: MessagingActions.UPDATE_LIST_ITEM_IN_LIST_ITEMS,
+    listItem,
+  });
+};  

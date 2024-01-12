@@ -59,40 +59,78 @@ const getProductNumberFromCard = (card: Element) => {
   return productNumber.replace(/\D/g, "");
 };
 
+const disableButton = (button: Element) => {
+  button.classList.add("pointer-events-none", "opacity-50", "cursor-wait");
+};
+
+const enableButton = (button: Element) => {
+  button.classList.remove("pointer-events-none", "opacity-50", "cursor-wait");
+};
+
 const AddBtnOnClick = async (card: Element) => {
-  const product = scrapProductDetails(card);
-  await addProductIntoList(product);
+  const button = card.querySelector(".your-button-class") as HTMLDivElement;
+  disableButton(button!);
+
+  try {
+    const product = scrapProductDetails(card);
+    await addProductIntoList(product);
+    button!.querySelector("p")!.textContent = "Added";
+    button!.onclick = null;
+    enableButton(button!);
+    button!.classList.remove("cursor-pointer");
+    button!.classList.add("cursor-not-allowed", "opacity-50");
+  } catch (error) {
+    enableButton(button!);
+    console.error("Error adding product:", error);
+    alert("Failed to add product.");
+  }
 };
 
 const updateBtnOnClick = async (card: Element) => {
-  const productNumber = getProductNumberFromCard(card);
-  if (!productNumber) {
-    alert(`Error scraping productNumber from webpage`);
-    console.log(`Error: One of the prices is invalid or missing a unit.`);
-    return;
-  }
-  const prices = extractPrices(card);
+  const button = card.querySelector(".your-button-class") as HTMLDivElement;
+  disableButton(button!);
 
-  let updatedPrices: ProductInterface["prices"] = [];
-
-  for (const price of prices) {
-    if (
-      price.price === undefined ||
-      isNaN(price.price) ||
-      price.unit === undefined ||
-      price.unit === ""
-    ) {
-      alert(`Error scraping details from webpage`);
+  try {
+    const productNumber = getProductNumberFromCard(card);
+    if (!productNumber) {
+      alert(`Error scraping productNumber from webpage`);
       console.log(`Error: One of the prices is invalid or missing a unit.`);
       return;
     }
-    updatedPrices.push({
-      price: price.price,
-      unit: price.unit,
-    });
-  }
+    const prices = extractPrices(card);
 
-  await updateProductPrices(productNumber!, updatedPrices);
+    let updatedPrices: ProductInterface["prices"] = [];
+
+    for (const price of prices) {
+      if (
+        price.price === undefined ||
+        isNaN(price.price) ||
+        price.unit === undefined ||
+        price.unit === ""
+      ) {
+        alert(`Error scraping details from webpage`);
+        console.log(`Error: One of the prices is invalid or missing a unit.`);
+        return;
+      }
+      updatedPrices.push({
+        price: price.price,
+        unit: price.unit,
+      });
+    }
+
+    await updateProductPrices(productNumber!, updatedPrices);
+    button.querySelector("p")!.textContent = "Updated";
+    button.onclick = null;
+    enableButton(button!);
+
+    button!.classList.remove("cursor-pointer");
+
+    button!.classList.add("cursor-not-allowed", "opacity-50");
+  } catch (error) {
+    enableButton(button!);
+    console.error("Error adding product:", error);
+    alert("Failed to add product.");
+  }
 };
 
 const createAddOrUpdateBtnDiv = (
