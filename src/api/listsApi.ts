@@ -124,6 +124,15 @@ class ListsApi {
           isLoggedOut: true,
         };
       }
+      
+      if (!currentList?.listItems?.length)
+        return {
+          found: false,
+          message: "No list items found",
+          isLoggedOut: false,
+          error: false,
+        };
+
       const request = await fetch(
         `${API.defaults.baseURL}/${listRoutes.getListItem}?${queryString}`,
         {

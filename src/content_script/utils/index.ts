@@ -126,3 +126,15 @@ const updateListItemInListItems = (listItem: ListItemInterface) => {
     listItem,
   });
 };
+
+// Extracted utility functions for reusability and clarity
+export const getText = (element: HTMLElement | null): string | null =>
+  element ? element.innerText.trim() : null;
+
+export const parsePriceAndUnit = (priceElement: HTMLElement | null): { price: number; unit: string } | null => {
+  if (!priceElement) return null;
+
+  const [priceStr, unit] = priceElement.innerText.split(" ");
+  const price = parseFloat(priceStr.replace("$", ""));
+  return { price, unit };
+};
