@@ -64,8 +64,8 @@ const Header: React.FC<HeaderProps> = ({
           ))
         )}
       </Select>
-      <img src="/assets/icons/map.png" className="w-[22px]" alt="map" />
-      <img src="/assets/icons/anchor.png" className="w-[22px]" alt="anchor" />
+      <img src="/assets/icons/map.svg" className="w-[22px]" alt="map" />
+      <img src="/assets/icons/anchor.svg" className="w-[22px]" alt="anchor" />
       <button onClick={logout}>Logout</button>
     </div>
   );

@@ -28,14 +28,14 @@ const Product = () => {
           </div>
           <div className="w-[35px] h-[35px] relative">
             <img
-              src="/assets/icons/map.png"
+              src="/assets/icons/map.svg"
               className="w-[35px] h-[35px] left-0 top-0 absolute rounded-full"
               alt="map"
             />
           </div>
           <div className="w-[35px] h-[35px] relative">
             <img
-              src="/assets/icons/anchor.png"
+              src="/assets/icons/anchor.svg"
               className="w-[35px] h-[35px] left-0 top-0 absolute rounded-full"
               alt="map"
             />
