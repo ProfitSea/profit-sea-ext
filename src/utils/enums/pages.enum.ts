@@ -34,6 +34,10 @@ export const breadcrumbsData = [
     pageName: Pages.PRODUCTS_TYPE,
   },
   {
+    label: "Compare",
+    pageName: Pages.PRODUCTS_TYPE,
+  },
+  {
     label: "Product Analysis",
     pageName: Pages.PRODUCTS_ANALYSIS,
   },

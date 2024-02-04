@@ -23,7 +23,7 @@ const ProductType: React.FC<ProductTypeProps> = ({ listItem }) => {
             productNumber={product.productNumber}
             packSize={product.packSize}
           />
-          <AnchorAndMapButtons />
+          <AnchorAndMapButtons listItem={listItem} />
         </div>
       </div>
     </div>

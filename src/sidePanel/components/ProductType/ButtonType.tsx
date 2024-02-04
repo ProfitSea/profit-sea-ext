@@ -5,6 +5,7 @@ interface ButtonTypeProps {
   altText: string;
   onClick: () => void;
   loading: boolean;
+  tip?: string;
 }
 
 const ButtonType: React.FC<ButtonTypeProps> = ({
@@ -12,11 +13,14 @@ const ButtonType: React.FC<ButtonTypeProps> = ({
   altText,
   onClick,
   loading,
+  tip,
 }) => {
   return (
     <button
       onClick={onClick}
-      className={`w-[30px] cursor-pointer ${loading && "cursor-progress"}`}
+      className={`w-[30px] ${loading ? "cursor-progress" : "cursor-pointer"}`}
+      disabled={loading}
+      title={tip}
     >
       <img src={imgSrc} alt={altText} />
     </button>

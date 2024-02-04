@@ -34,6 +34,7 @@ export interface ProductInterface {
 export interface ListItemInterface {
   user: string;
   list: string;
+  isAnchored: boolean;
   product: ProductInterface;
   saleUnitQuantities: SaleUnitQuantityInterface[];
   vendor: string; // This field seems new

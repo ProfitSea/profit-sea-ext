@@ -1,52 +1,34 @@
 // AnchorAndMapButtons.tsx
 import React, { useState } from "react";
+import listsItemsApi from "../../../api/listsItemsApi";
+import { ListItemInterface } from "../../../utils/types/product-response.type";
+import { setError } from "../../redux/app/appSlice";
+import { useAppDispatch } from "../../redux/store";
 import ButtonType from "./ButtonType";
 
-interface AnchorAndMapButtonsProps {}
+interface AnchorAndMapButtonsProps {
+  listItem: ListItemInterface;
+}
 
-const AnchorAndMapButtons: React.FC<AnchorAndMapButtonsProps> = ({}) => {
+const AnchorAndMapButtons: React.FC<AnchorAndMapButtonsProps> = ({
+  listItem,
+}) => {
   const [loading, setLoading] = useState(false);
-  // const currentList = useAppSelector(currentListSelector);
-  // const dispatch = useAppDispatch();
+  const [isAnchored, setIsAnchored] = useState(listItem.isAnchored || false);
+  const dispatch = useAppDispatch();
 
-  // const updateListItemQuantity = async (newQuantity: number) => {
-  //   try {
-  //     setLoading(true);
-  //     await listsApi.updateListItemQuantity({
-  //       saleUnitId: AnchorAndMapButtons.saleUnit.id,
-  //       listItemId,
-  //       quantity: newQuantity,
-  //     });
-  //     dispatch(
-  //       updateQuantityInRedux({
-  //         AnchorAndMapButtonsId: _id as string,
-  //         quantity: newQuantity as number,
-  //         listItemId: listItemId as string,
-  //       })
-  //     );
-  //   } catch (error) {
-  //     console.log(error);
-  //     dispatch(setError("Failed to Update the quantity"));
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const debouncedUpdateListItemQuantity = useCallback(
-  //   debounce(updateListItemQuantity, 500),
-  //   []
-  // );
-
-  // const updateQuantity = useCallback(
-  //   (newQuantity: number) => {
-  //     if (newQuantity === 0) setLoading(true);
-  //     if (newQuantity > 99) newQuantity = 99;
-  //     // Update quantity in state
-  //     // Debounce API call or update logic
-  //     debouncedUpdateListItemQuantity(newQuantity);
-  //   },
-  //   [debouncedUpdateListItemQuantity]
-  // );
+  const toggleProductAnchor = async () => {
+    try {
+      setLoading(true);
+      await listsItemsApi.toggleListItemAnchor(listItem.id as string);
+      setIsAnchored(!isAnchored);
+    } catch (error) {
+      console.log(error);
+      dispatch(setError("Failed to Mark the product as Anchored"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="justify-center items-center gap-2.5 flex">
@@ -58,9 +40,14 @@ const AnchorAndMapButtons: React.FC<AnchorAndMapButtonsProps> = ({}) => {
           loading={loading}
         /> */}
         <ButtonType
-          imgSrc="/assets/icons/anchor.svg"
+          imgSrc={
+            isAnchored
+              ? "/assets/icons/anchored.svg"
+              : "/assets/icons/anchor.svg"
+          }
+          tip={isAnchored ? "Remove Anchor" : "Mark as Anchor"}
           altText="anchor"
-          onClick={() => {}}
+          onClick={toggleProductAnchor}
           loading={loading}
         />
       </div>
