@@ -2,6 +2,7 @@ import ProductInterface from "../../utils/product.interface";
 import { FindListItemResponseType } from "../../utils/types/FindListItemByProductNumber.type";
 import {
   addProductIntoList,
+  disableButtonWithCustomText,
   getText,
   loginButtonOnClick,
   parsePriceAndUnit,
@@ -92,7 +93,8 @@ export const extractPrices = (
   return prices;
 };
 
-export const disableButton = (button: Element): void => {
+const disableButton = (button: Element) => {
+  button.classList.remove("pointer-cursor");
   button.classList.add("pointer-events-none", "opacity-50", "cursor-wait");
 };
 
@@ -119,11 +121,7 @@ export const AddBtnOnClick = async (card: Element) => {
   try {
     const product = scrapProductDetails(card);
     await addProductIntoList(product);
-    button!.querySelector("p")!.textContent = "Added";
-    button!.onclick = null;
-    enableButton(button!);
-    button!.classList.remove("cursor-pointer");
-    button!.classList.add("cursor-not-allowed", "opacity-50");
+    disableButtonWithCustomText(button!, "Added To ProfitSea");
   } catch (error) {
     enableButton(button!);
     console.error("Error adding product:", error);
@@ -163,13 +161,7 @@ export const updateBtnOnClick = async (card: Element) => {
     }
 
     await updateProductPrices(productNumber!, updatedPrices);
-    button.querySelector("p")!.textContent = "Updated";
-    button.onclick = null;
-    enableButton(button!);
-
-    button!.classList.remove("cursor-pointer");
-
-    button!.classList.add("cursor-not-allowed", "opacity-50");
+    disableButtonWithCustomText(button!, "Product Updated");
   } catch (error) {
     enableButton(button!);
     console.error("Error adding product:", error);
@@ -185,17 +177,17 @@ export const createAddOrUpdateBtnDiv = (
   // Create elements
   const divOuter = document.createElement("div");
   const div = document.createElement("div");
-  const p = document.createElement("p");
+  const p = document.createElement("div");
   const img = document.createElement("img");
 
   // Set common attributes and styles
   img.src = chrome.runtime.getURL("assets/icons/add.png");
-  img.alt = "Add";
-  p.className = "bg-transparent font-semibold sysco-button-class";
+  img.alt = "Add to ProfitSea";
+  p.className = "bg-transparent text-[0.9rem] text-black";
   divOuter.className =
     "sysco-button-class m-auto md:w-[10%] lg:w-[10%] xl:w-[16%]";
   div.className =
-    "sysco-button-div flex flex-row gap-[5px] items-center justify-center border-[1.5px] border-[#FBBB00] rounded cursor-pointer hover:bg-[#FBBB00] hover:text-white hover:border-[#FBBB00] transition-colors duration-200 ease-in-out py-[5px] px-[10px]";
+    "sysco-button-div flex flex-row gap-[5px] items-center justify-center cursor-pointer py-[5px] px-[10px]";
 
   // Set the button's state based on the response
   if (response.isLoggedOut) {
@@ -205,12 +197,12 @@ export const createAddOrUpdateBtnDiv = (
     div.append(p);
   } else if (response.found && response.listItemId) {
     // If the operation was successful, show as Added/Updated and disable
-    p.textContent = "Update";
+    p.textContent = "Update Product";
     div.onclick = () => updateBtnOnClick(card);
-    div.append(p);
+    div.append(p, img);
   } else {
     // Default state, allow adding/updating
-    p.textContent = "Add";
+    p.textContent = "Add to ProfitSea";
     div.onclick = () => AddBtnOnClick(card);
     // Append elements to div
     div.append(p, img);
@@ -218,7 +210,7 @@ export const createAddOrUpdateBtnDiv = (
 
   if (disable) {
     // If the button is disabled, show as Added/Updated and disable
-    p.textContent = "Added";
+    p.textContent = "Added To ProfitSea";
     div.onclick = null;
     div.classList.remove("cursor-pointer");
     div.classList.add("cursor-not-allowed", "opacity-50");
@@ -229,3 +221,4 @@ export const createAddOrUpdateBtnDiv = (
 
   return divOuter;
 };
+

@@ -4,6 +4,7 @@ import { FindListItemResponseType } from "../../utils/types/FindListItemByProduc
 import "../index.css";
 import {
   addProductIntoList,
+  disableButtonWithCustomText,
   loginButtonOnClick,
   updateProductPrices,
 } from "../utils";
@@ -59,6 +60,7 @@ const getProductNumberFromCard = (card: Element) => {
 };
 
 const disableButton = (button: Element) => {
+  button.classList.remove("pointer-cursor");
   button.classList.add("pointer-events-none", "opacity-50", "cursor-wait");
 };
 
@@ -73,11 +75,8 @@ const AddBtnOnClick = async (card: Element) => {
   try {
     const product = scrapProductDetails(card);
     await addProductIntoList(product);
-    button!.querySelector("p")!.textContent = "Added";
-    button!.onclick = null;
-    enableButton(button!);
-    button!.classList.remove("cursor-pointer");
-    button!.classList.add("cursor-not-allowed", "opacity-50");
+    disableButtonWithCustomText(button!, "Added To ProfitSea");
+    // button!.classList.add("cursor-not-allowed", "opacity-50");
   } catch (error) {
     enableButton(button!);
     console.error("Error adding product:", error);
@@ -118,13 +117,7 @@ const updateBtnOnClick = async (card: Element) => {
     }
 
     await updateProductPrices(productNumber!, updatedPrices);
-    button.querySelector("p")!.textContent = "Updated";
-    button.onclick = null;
-    enableButton(button!);
-
-    button!.classList.remove("cursor-pointer");
-
-    button!.classList.add("cursor-not-allowed", "opacity-50");
+    disableButtonWithCustomText(button!, "Product Updated");
   } catch (error) {
     enableButton(button!);
     console.error("Error adding product:", error);
@@ -138,15 +131,15 @@ const createAddOrUpdateBtnDiv = (
 ) => {
   // Create elements
   const div = document.createElement("div");
-  const p = document.createElement("p");
+  const p = document.createElement("div");
   const img = document.createElement("img");
 
   // Set common attributes and styles
-  img.src = chrome.runtime.getURL("assets/icons/add.png");
-  img.alt = "Add";
-  p.className = "bg-transparent font-semibold your-button-class";
+  img.src = chrome.runtime.getURL("assets/icons/add.svg");
+  img.alt = "Add to ProfitSea";
+  p.className = "add-btn-text bg-transparent text-[0.9rem] text-black";
   div.className =
-    "your-button-class p-2 mt-2 flex flex-row gap-[5px] items-center justify-center border-[1.5px] border-[#FBBB00] rounded cursor-pointer";
+    "your-button-class p-2 mt-2 flex flex-row gap-[5px] items-center justify-center cursor-pointer";
 
   // Set the button's state based on the response
   if (response.isLoggedOut) {
@@ -156,12 +149,12 @@ const createAddOrUpdateBtnDiv = (
     div.append(p);
   } else if (response.found && response.listItemId) {
     // If the operation was successful, show as Added/Updated and disable
-    p.textContent = "Update";
+    p.textContent = "Update Product";
     div.onclick = () => updateBtnOnClick(card);
-    div.append(p);
+    div.append(p, img);
   } else {
     // Default state, allow adding/updating
-    p.textContent = "Add";
+    p.textContent = "Add to ProfitSea";
     div.onclick = () => AddBtnOnClick(card);
     // Append elements to div
     div.append(p, img);
@@ -242,14 +235,16 @@ function updateButton(
   card: Element
 ) {
   // Assume button is the <div> containing <p> and possibly <img>
-  const p = div.querySelector("p") || document.createElement("p");
+  const p = div.querySelector(".add-btn-text") || document.createElement("div");
   const img = div.querySelector("img") || document.createElement("img");
+  img.src = chrome.runtime.getURL("assets/icons/add.svg");
+  img.alt = "Add to ProfitSea";
 
   // Reset event handlers by cloning the button
   const newDiv = div.cloneNode(false) as HTMLElement;
   div?.parentNode?.replaceChild(newDiv, div);
   newDiv.className =
-    "your-button-class p-2 mt-2 flex flex-row gap-[5px] items-center justify-center border-[1.5px] border-[#FBBB00] rounded cursor-pointer";
+    "your-button-class p-2 mt-2 flex flex-row gap-[5px] items-center justify-center cursor-pointer";
 
   // Set the button's state based on the response
   if (response.isLoggedOut) {
@@ -259,12 +254,12 @@ function updateButton(
     newDiv.append(p);
   } else if (response.found && response.listItemId) {
     // If the operation was successful, show as Added/Updated and disable
-    p.textContent = "Update";
+    p.textContent = "Update Product";
     newDiv.onclick = () => updateBtnOnClick(card);
-    newDiv.append(p);
+    newDiv.append(p, img);
   } else {
     // Default state, allow adding/updating
-    p.textContent = "Add";
+    p.textContent = "Add to ProfitSea";
     newDiv.onclick = () => AddBtnOnClick(card);
     // Append elements to div
     newDiv.append(p, img);

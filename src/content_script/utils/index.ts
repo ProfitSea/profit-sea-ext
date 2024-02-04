@@ -60,14 +60,36 @@ export const updateProductPrices = async (
 export const updateDivButton = (div: HTMLDivElement) => {
   div.className =
     "mt-2 flex flex-row gap-[5px] items-center justify-center cursor-pointer";
-  const p = document.createElement("p");
+  const p = document.createElement("div");
   const img = document.createElement("img");
   img.src = chrome.runtime.getURL("assets/icons/add.png");
   img.alt = "add";
   p.textContent = "Add To ProfitSea";
-  p.className = "bg-transparent font-semibold your-button-class";
+  p.className = "bg-transparent text-[0.9rem] text-black";
   div.append(p, img);
   return div;
+};
+
+export const disableButtonWithCustomText = (
+  buttonDiv: Element,
+  text: string
+) => {
+  const newDiv = document.createElement("div");
+  newDiv.className =
+    "your-button-class p-2 mt-2 flex flex-row gap-[5px] items-center justify-center cursor-not-allowed opacity-50";
+
+  const p = document.createElement("div");
+  p.className = "bg-transparent text-xs text-black";
+
+  const img = document.createElement("img");
+  img.src = chrome.runtime.getURL("assets/icons/added.svg");
+  img.alt = text;
+
+  p.textContent = text;
+  newDiv.onclick = () => {};
+  newDiv.append(p, img);
+
+  buttonDiv?.parentNode?.replaceChild(newDiv, buttonDiv);
 };
 
 export const loginButtonOnClick = async () => {
@@ -131,7 +153,9 @@ const updateListItemInListItems = (listItem: ListItemInterface) => {
 export const getText = (element: HTMLElement | null): string | null =>
   element ? element.innerText.trim() : null;
 
-export const parsePriceAndUnit = (priceElement: HTMLElement | null): { price: number; unit: string } | null => {
+export const parsePriceAndUnit = (
+  priceElement: HTMLElement | null
+): { price: number; unit: string } | null => {
   if (!priceElement) return null;
 
   const [priceStr, unit] = priceElement.innerText.split(" ");
