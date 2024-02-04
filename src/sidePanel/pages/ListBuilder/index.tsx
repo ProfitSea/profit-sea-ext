@@ -29,7 +29,6 @@ interface ListBuilderProps {
 
 const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
   const dispatch = useAppDispatch();
-  // const [listItems, setListItems] = useState<ListItemInterface[]>([]);
   const [loading, setLoading] = useState<Boolean>(false);
 
   const vendorFilter = useAppSelector(vendorFilterSelector);
