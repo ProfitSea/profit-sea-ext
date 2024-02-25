@@ -18,16 +18,16 @@ import {
   vendorFilterSelector,
 } from "../../redux/app/appSlice";
 import { setListItems as setListItemsInRedux } from "../../redux/lists/listsSlice";
-import Product from "../../components/Product";
 import { listItemsSelector } from "../../redux/lists/listsSlice";
 import { MessagingActions } from "../../../utils/actions/messagingActions.enum";
+import CompareProducts from "../../components/CompareProducts";
 
-interface ListBuilderProps {
+interface CompareProps {
   currentList: any;
   setError: (error: string) => void;
 }
 
-const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
+const Compare: React.FC<CompareProps> = ({ currentList, setError }) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<Boolean>(false);
 
@@ -44,7 +44,7 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
       const listItemsData = await listsApi.getListItemsByListId(listId);
       setListItems(listItemsData);
     } catch (err: any) {
-      console.error("ListBuilder", err);
+      console.error(err.message);
       setError("Failed to fetch list items");
     } finally {
       setLoading(false);
@@ -129,7 +129,7 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
           ) : filteredListItems.length > 0 ? (
             filteredListItems.map((item, index) => (
               <div key={index}>
-                <Product listItem={item} />
+                <CompareProducts listItem={item} />
                 <CustomDivider orientation="horizontal" />
               </div>
             ))
@@ -144,4 +144,4 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
   );
 };
 
-export default ListBuilder;
+export default Compare;

@@ -1,6 +1,7 @@
 export enum Pages {
   LIST_BUILDER = "listBuilder",
   PRODUCTS_TYPE = "productsType",
+  COMPARE = "compare",
   PRODUCTS_ANALYSIS = "productsAnalysis",
 }
 
@@ -17,6 +18,10 @@ export const buttonsData: Record<Pages, ButtonData> = {
   [Pages.PRODUCTS_TYPE]: {
     title: "Continue to Analysis",
     navigateTo: Pages.PRODUCTS_ANALYSIS,
+  },
+  [Pages.COMPARE]: {
+    title: "Continue to Analysis",
+    navigateTo: Pages.COMPARE,
   },
   [Pages.PRODUCTS_ANALYSIS]: {
     title: "Accept and Create Order",
@@ -35,7 +40,7 @@ export const breadcrumbsData = [
   },
   {
     label: "Compare",
-    pageName: Pages.PRODUCTS_TYPE,
+    pageName: Pages.COMPARE,
   },
   {
     label: "Product Analysis",
@@ -46,5 +51,6 @@ export const breadcrumbsData = [
 export const pageToActiveIndex: Record<Pages, number> = {
   [Pages.LIST_BUILDER]: 0,
   [Pages.PRODUCTS_TYPE]: 1,
-  [Pages.PRODUCTS_ANALYSIS]: 2,
+  [Pages.COMPARE]: 2,
+  [Pages.PRODUCTS_ANALYSIS]: 3,
 };

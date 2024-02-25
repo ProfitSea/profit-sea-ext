@@ -19,6 +19,7 @@ import { CircularProgress } from "@mui/material";
 const ListBuilder = React.lazy(() => import("../ListBuilder"));
 const ProductsAnalysis = React.lazy(() => import("../ProductsAnalysis"));
 const ProductsType = React.lazy(() => import("../ProductsType"));
+const Compare = React.lazy(() => import("../Compare"));
 
 interface DefaultLayoutProps {}
 
@@ -60,6 +61,8 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
         return <ProductsAnalysis />;
       case Pages.PRODUCTS_TYPE:
         return <ProductsType currentList={currentList} setError={setError} />;
+      case Pages.COMPARE:
+        return <Compare currentList={currentList} setError={setError} />;
       default:
         return <ListBuilder currentList={currentList} setError={setError} />;
     }
