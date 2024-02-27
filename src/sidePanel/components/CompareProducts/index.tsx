@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ListItemInterface } from "../../../utils/types/product-response.type";
-import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ProductsListModal from "./ProductListModal";
 const ProductImage = React.lazy(() => import("./ProductImage"));
 const ProductDescription = React.lazy(() => import("./ProductDescription"));
@@ -27,13 +27,25 @@ const CompareProducts: React.FC<CompareProductsProps> = ({ listItem }) => {
           />
         </div>
       </div>
-      <div
-        onClick={() => setOpen(true)}
-        className="bg-[#F5F5F5] px-3.5 py-2 w-[100%] flex-row justify-start items-center gap-3.5 inline-flex cursor-pointer"
-      >
-        <AddBoxOutlinedIcon className="text-[#8391A1] text-[25px]" />
-        <p className="text-[13px]">Add a product to compare side by side</p>
-      </div>
+      {listItem.isAnchored ? (
+        <div className="bg-[#F5F5F5] px-3.5 py-2 w-[100%] flex-row justify-start items-center gap-3.5 inline-flex cursor-not-allowed">
+          <img
+            width={"25px"}
+            src={"/assets/icons/anchored.svg"}
+            alt={"Anchored"}
+          />
+
+          <p className="text-[13px]">Anchored Product (Cannot be compared)</p>
+        </div>
+      ) : (
+        <div
+          onClick={() => setOpen(true)}
+          className="bg-[#F5F5F5] px-3.5 py-2 w-[100%] flex-row justify-start items-center gap-3.5 inline-flex cursor-pointer"
+        >
+          <AddCircleOutlineIcon className="text-[#8391A1] text-[25px]" />
+          <p className="text-[13px]">Add a product to compare side by side</p>
+        </div>
+      )}
       <ProductsListModal open={open} setOpen={setOpen} listItem={listItem} />
     </div>
   );

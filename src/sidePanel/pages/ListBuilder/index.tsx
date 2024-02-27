@@ -45,7 +45,7 @@ const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
       setListItems(listItemsData);
     } catch (err: any) {
       console.error("ListBuilder", err);
-      setError("Failed to fetch list items");
+      setError(`Failed to fetch list items:  ${err.message}`);
     } finally {
       setLoading(false);
     }

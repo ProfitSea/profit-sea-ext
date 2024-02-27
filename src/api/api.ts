@@ -3,8 +3,8 @@ import authApi, { authRoutes } from "./authApi";
 import ChromeLocalStorage from "../utils/StorageFunctions/localStorage.function";
 import { identifiers } from "../utils/enums/identifier.enum";
 
-// const env: string = "dev";
-const env: string = "prod";
+const env: string = "dev";
+// const env: string = "prod";
 
 export let baseDomain = "";
 export let webApp = "";
@@ -31,7 +31,7 @@ const instance = axios.create({
   headers: customHeaders,
 });
 
-instance.defaults.timeout = 5000;
+instance.defaults.timeout = 30000;
 
 instance.interceptors.request.use(
   async (config) => {
@@ -53,6 +53,10 @@ instance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     debugger;
+    if (error.code === 'ECONNABORTED') {
+      console.error('Request timed out');
+      throw new Error('Request timed out');
+    }
     // If it's a 401 and not the refresh token endpoint and the request hasn't been retried yet
     if (
       error.response.status === 401 &&

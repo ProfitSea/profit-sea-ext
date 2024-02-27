@@ -45,7 +45,7 @@ const Compare: React.FC<CompareProps> = ({ currentList, setError }) => {
       setListItems(listItemsData);
     } catch (err: any) {
       console.error(err.message);
-      setError("Failed to fetch list items");
+      setError(`Failed to fetch list items:  ${err.message}`);
     } finally {
       setLoading(false);
     }
