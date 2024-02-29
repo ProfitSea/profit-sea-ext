@@ -1,7 +1,13 @@
+import Delete from "@mui/icons-material/Delete";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import React, { useState } from "react";
 import { ListItemInterface } from "../../../utils/types/product-response.type";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import CustomDivider from "../CustomDivider";
 import ProductsListModal from "./ProductListModal";
+import listsItemsApi from "../../../api/listsItemsApi";
+import { setError } from "../../redux/app/appSlice";
+import { useAppDispatch } from "../../redux/store";
+import { IconButton } from "@mui/material";
 const ProductImage = React.lazy(() => import("./ProductImage"));
 const ProductDescription = React.lazy(() => import("./ProductDescription"));
 
@@ -12,9 +18,34 @@ interface CompareProductsProps {
 const CompareProducts: React.FC<CompareProductsProps> = ({ listItem }) => {
   const { product } = listItem;
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const comparisonProductsLength = listItem.comparisonProducts.length;
+  const isAnchored = listItem.isAnchored;
+  const dispatch = useAppDispatch();
+
+  const removeComparisonListItem = async (
+    baseListItemId: string,
+    comparisonListItemId: string
+  ) => {
+    try {
+      setLoading(true);
+      await listsItemsApi.removeComparisonListItem(
+        baseListItemId,
+        comparisonListItemId
+      );
+    } catch (error) {
+      console.log(error);
+      dispatch(setError("Failed to Mark the product as Anchored"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="w-[100%] bg-white flex-col justify-start items-start gap-2.5 inline-flex">
+    <div
+      key={listItem.id}
+      className="w-[100%] bg-white flex-col justify-start items-start inline-flex"
+    >
       <div className="self-stretch px-3.5 py-[17px] bg-white flex-col justify-start items-start gap-3.5 flex">
         <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
           <ProductImage src={product.imgSrc} />
@@ -27,7 +58,7 @@ const CompareProducts: React.FC<CompareProductsProps> = ({ listItem }) => {
           />
         </div>
       </div>
-      {listItem.isAnchored ? (
+      {isAnchored ? (
         <div className="bg-[#F5F5F5] px-3.5 py-2 w-[100%] flex-row justify-start items-center gap-3.5 inline-flex cursor-not-allowed">
           <img
             width={"25px"}
@@ -38,14 +69,55 @@ const CompareProducts: React.FC<CompareProductsProps> = ({ listItem }) => {
           <p className="text-[13px]">Anchored Product (Cannot be compared)</p>
         </div>
       ) : (
-        <div
-          onClick={() => setOpen(true)}
-          className="bg-[#F5F5F5] px-3.5 py-2 w-[100%] flex-row justify-start items-center gap-3.5 inline-flex cursor-pointer"
-        >
-          <AddCircleOutlineIcon className="text-[#8391A1] text-[25px]" />
-          <p className="text-[13px]">Add a product to compare side by side</p>
-        </div>
+        <>
+          {comparisonProductsLength === 0 && (
+            <div
+              onClick={() => setOpen(true)}
+              className="bg-[#F5F5F5] px-3.5 py-2 w-[100%] flex-row justify-start items-center gap-3.5 inline-flex cursor-pointer"
+            >
+              <AddCircleOutlineIcon className="text-[#8391A1] text-[25px]" />
+              <p className="text-[13px]">
+                Add a product to compare side by side
+              </p>
+            </div>
+          )}
+        </>
       )}
+
+      {comparisonProductsLength > 0 &&
+        !isAnchored &&
+        listItem.comparisonProducts.map(
+          (item: ListItemInterface, index: number) => (
+            <div key={`${index}_${item.id}`}>
+              <div className="self-stretch px-3.5 text-zinc-800 text-[13px] font-semibold font-['SF Pro Text'] leading-[1.4]">
+                {"Comparing With: "}
+              </div>
+              <div className="self-stretch px-3.5 py-[10px] bg-white flex-col justify-start items-start flex">
+                <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
+                  <ProductImage src={item.product.imgSrc} />
+                  <ProductDescription
+                    vendor={item.product.vendor}
+                    brand={item.product.brand}
+                    description={item.product.description}
+                    productNumber={item.product.productNumber}
+                    packSize={item.product.packSize}
+                  />
+                  <IconButton
+                    aria-label="delete"
+                    disabled={loading}
+                    onClick={async () => {
+                      await removeComparisonListItem(listItem.id, item.id);
+                    }}
+                    color="warning"
+                  >
+                    <Delete />
+                  </IconButton>
+                </div>
+              </div>
+            </div>
+          )
+        )}
+      <CustomDivider orientation="horizontal" />
       <ProductsListModal open={open} setOpen={setOpen} listItem={listItem} />
     </div>
   );

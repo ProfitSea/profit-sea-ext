@@ -1,3 +1,4 @@
+import { IconButton } from "@mui/material";
 import React from "react";
 
 interface ButtonTypeProps {
@@ -16,14 +17,14 @@ const ButtonType: React.FC<ButtonTypeProps> = ({
   tip,
 }) => {
   return (
-    <button
+    <IconButton
       onClick={onClick}
-      className={`w-[30px] ${loading ? "cursor-progress" : "cursor-pointer"}`}
       disabled={loading}
+      className={`${loading ? "animate-spin" : ""}`}
       title={tip}
     >
-      <img src={imgSrc} alt={altText} />
-    </button>
+      <img width={30} src={imgSrc} alt={altText} />
+    </IconButton>
   );
 };
 

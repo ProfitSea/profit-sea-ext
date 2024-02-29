@@ -127,10 +127,11 @@ const Compare: React.FC<CompareProps> = ({ currentList, setError }) => {
               Loading...
             </p>
           ) : filteredListItems.length > 0 ? (
-            filteredListItems.map((item, index) => (
-              <div key={index}>
+            filteredListItems.map((item: ListItemInterface) => (
+              <div key={item.id}>
                 <CompareProducts listItem={item} />
                 <CustomDivider orientation="horizontal" />
+                <div className="h-[5px] bg-slate-100"></div>
               </div>
             ))
           ) : (

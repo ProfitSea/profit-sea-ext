@@ -20,28 +20,37 @@ export interface SaleUnitQuantityInterface {
   price: PriceInterface;
 }
 
+export interface RecommendationInterface {
+  priceSavings: string | null;
+  reason: string | null;
+  listItemId: string;
+}
+
 export interface ProductInterface {
-  saleUnits: string[]; // This seems to be an array of string IDs now
+  saleUnits: string[];
   vendor: string;
-  imgSrc: string;
+  imgSrc: string; // Updated to reflect nullable field
   brand: string;
   description: string;
   productNumber: string;
   packSize: string;
+  category: string; // New field added
   id: string;
 }
 
 export interface ListItemInterface {
+  recommendation?: RecommendationInterface; // New optional field
+  isBaseProduct: boolean; // New field added
+  comparisonProducts: ListItemInterface[]; // New field added for nested comparison products
+  totalPrice: number; // Corrected type from Number to number for consistency
+  isAnchored: boolean;
   user: string;
   list: string;
-  isAnchored: boolean;
   product: ProductInterface;
   saleUnitQuantities: SaleUnitQuantityInterface[];
-  vendor: string; // This field seems new
-  totalPrice: Number; // This field seems new
+  vendor: string;
   id: string;
 }
-
 export interface ListInterface {
   name: string;
   listItems: ListItemInterface[];

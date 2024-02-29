@@ -16,5 +16,20 @@ class ListItemsApi {
       throw error;
     }
   }
+
+  async removeComparisonListItem(baseListItemId: string, comparisonListItemId: string) {
+    try {
+      debugger;
+      const request = await API.post(
+        `v1/list-items/${baseListItemId}/remove-comparison-product/${comparisonListItemId}`
+      );
+      debugger;
+      return request.data;
+    } catch (error) {
+      debugger;
+      console.log(error);
+      throw error;
+    }
+  }
 }
 export default new ListItemsApi();
