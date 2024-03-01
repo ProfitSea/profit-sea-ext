@@ -6,6 +6,10 @@ import CustomDivider from "../CustomDivider";
 import ProductsListModal from "./ProductListModal";
 import listsItemsApi from "../../../api/listsItemsApi";
 import { setError } from "../../redux/app/appSlice";
+import {
+  removeComparisonListItem as removeComparisonListItemFromRedux,
+  addComparisonListItem as addComparisonListItemInRedux,
+} from "../../redux/lists/listsSlice";
 import { useAppDispatch } from "../../redux/store";
 import { IconButton } from "@mui/material";
 const ProductImage = React.lazy(() => import("./ProductImage"));
@@ -33,11 +37,42 @@ const CompareProducts: React.FC<CompareProductsProps> = ({ listItem }) => {
         baseListItemId,
         comparisonListItemId
       );
+      dispatch(
+        removeComparisonListItemFromRedux({
+          baseListItemId,
+          comparisonListItemId,
+        })
+      );
     } catch (error) {
       console.log(error);
-      dispatch(setError("Failed to Mark the product as Anchored"));
+      dispatch(setError("Failed to remove the product from comparison"));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const addComparisonListItem = async (
+    baseListItemId: string,
+    comparisonListItemId: string
+  ) => {
+    try {
+      setLoading(true);
+      await listsItemsApi.addComparisonListItem(
+        baseListItemId,
+        comparisonListItemId
+      );
+      dispatch(
+        addComparisonListItemInRedux({
+          baseListItemId,
+          comparisonListItemId,
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      dispatch(setError("Failed to add the product to compare"));
+    } finally {
+      setLoading(false);
+      setOpen(false);
     }
   };
 
@@ -88,37 +123,48 @@ const CompareProducts: React.FC<CompareProductsProps> = ({ listItem }) => {
         !isAnchored &&
         listItem.comparisonProducts.map(
           (item: ListItemInterface, index: number) => (
-            <div key={`${index}_${item.id}`}>
+            <div
+              key={`${index}_${item.id}`}
+              className="self-stretch bg-white flex-col justify-start items-start gap-3.5 flex"
+            >
               <div className="self-stretch px-3.5 text-zinc-800 text-[13px] font-semibold font-['SF Pro Text'] leading-[1.4]">
                 {"Comparing With: "}
               </div>
-              <div className="self-stretch px-3.5 py-[10px] bg-white flex-col justify-start items-start flex">
-                <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
-                  <ProductImage src={item.product.imgSrc} />
-                  <ProductDescription
-                    vendor={item.product.vendor}
-                    brand={item.product.brand}
-                    description={item.product.description}
-                    productNumber={item.product.productNumber}
-                    packSize={item.product.packSize}
-                  />
-                  <IconButton
-                    aria-label="delete"
-                    disabled={loading}
-                    onClick={async () => {
-                      await removeComparisonListItem(listItem.id, item.id);
-                    }}
-                    color="warning"
-                  >
-                    <Delete />
-                  </IconButton>
+              <div className="w-[100%] px-3.5 bg-white flex-col justify-start items-start gap-3.5 inline-flex">
+                <div className="self-stretch py-[17px] bg-white flex-col justify-start items-start gap-3.5 flex">
+                  <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
+                    <ProductImage src={item.product.imgSrc} />
+                    <ProductDescription
+                      vendor={item.product.vendor}
+                      brand={item.product.brand}
+                      description={item.product.description}
+                      productNumber={item.product.productNumber}
+                      packSize={item.product.packSize}
+                    />
+                    <IconButton
+                      aria-label="delete"
+                      disabled={loading}
+                      onClick={async () => {
+                        await removeComparisonListItem(listItem.id, item.id);
+                      }}
+                      color="warning"
+                    >
+                      <Delete />
+                    </IconButton>
+                  </div>
                 </div>
               </div>
             </div>
           )
         )}
       <CustomDivider orientation="horizontal" />
-      <ProductsListModal open={open} setOpen={setOpen} listItem={listItem} />
+      <ProductsListModal
+        open={open}
+        setOpen={setOpen}
+        listItem={listItem}
+        loading={loading}
+        addComparisonListItem={addComparisonListItem}
+      />
     </div>
   );
 };

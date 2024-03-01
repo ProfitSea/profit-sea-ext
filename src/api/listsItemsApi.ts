@@ -19,14 +19,23 @@ class ListItemsApi {
 
   async removeComparisonListItem(baseListItemId: string, comparisonListItemId: string) {
     try {
-      debugger;
       const request = await API.post(
         `v1/list-items/${baseListItemId}/remove-comparison-product/${comparisonListItemId}`
       );
-      debugger;
       return request.data;
     } catch (error) {
-      debugger;
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async addComparisonListItem(baseListItemId: string, comparisonListItemId: string) {
+    try {
+      const request = await API.post(
+        `v1/list-items/${baseListItemId}/add-comparison-product/${comparisonListItemId}`
+      );
+      return request.data;
+    } catch (error) {
       console.log(error);
       throw error;
     }

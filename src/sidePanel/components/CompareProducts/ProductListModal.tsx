@@ -23,20 +23,27 @@ interface ProductsListModalProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   listItem: ListItemInterface;
+  loading: boolean;
+  addComparisonListItem: (
+    baseListItemId: string,
+    comparisonListItemId: string
+  ) => void;
 }
 
 const ProductsListModal: React.FC<ProductsListModalProps> = ({
   open,
   setOpen,
   listItem,
+  loading,
+  addComparisonListItem,
 }) => {
   const handleClose = () => setOpen(false);
   const { product } = listItem;
+  const [selectedProduct, setSelectedProduct] = React.useState<string>("");
   const listItems = useAppSelector(listItemsSelector);
   const handleSelectChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      console.log(event.target.value);
-      // Implement your change logic here
+      setSelectedProduct(event.target.value);
     },
     []
   );
@@ -70,14 +77,11 @@ const ProductsListModal: React.FC<ProductsListModalProps> = ({
                   if (item.id === listItem.id) {
                     return null;
                   }
-                  console.log(item);
                   return (
                     <FormControlLabel
                       value={item.id}
                       key={item.id}
-                      label={
-                        <ProductListItem item={item} />
-                      }
+                      label={<ProductListItem item={item} />}
                       className="gap-[20px]"
                       disabled={item.isAnchored}
                       control={<Radio />}
@@ -90,6 +94,13 @@ const ProductsListModal: React.FC<ProductsListModalProps> = ({
         </Box>
       </DialogContent>
       <DialogActions>
+        <Button
+          disabled={loading || !selectedProduct}
+          className={`${loading ? "cursor-not-allowed" : ""}`}
+          onClick={() => addComparisonListItem(listItem.id, selectedProduct)}
+        >
+          {loading ? "Adding..." : "Add"}
+        </Button>
         <Button onClick={() => setOpen(false)}>Cancel</Button>
       </DialogActions>
     </Dialog>

@@ -114,6 +114,53 @@ const listsSlice = createSlice({
       state.lists.unshift(list);
       state.listItems = [listItem];
     },
+    addComparisonListItem(
+      state,
+      action: PayloadAction<{
+        baseListItemId: string;
+        comparisonListItemId: string;
+      }>
+    ) {
+      const { baseListItemId, comparisonListItemId } = action.payload;
+      const baseListItemIndex = state.listItems.findIndex(
+        (listItem: ListItemInterface) => listItem.id === baseListItemId
+      );
+      if (baseListItemIndex !== -1) {
+        const comparisonListItemIndex = state.listItems.findIndex(
+          (listItem: ListItemInterface) => listItem.id === comparisonListItemId
+        );
+        if (comparisonListItemIndex !== -1) {
+          state.listItems[baseListItemIndex].comparisonProducts.push(
+            state.listItems[comparisonListItemIndex]
+          );
+        }
+      }
+    },
+    removeComparisonListItem(
+      state,
+      action: PayloadAction<{
+        baseListItemId: string;
+        comparisonListItemId: string;
+      }>
+    ) {
+      const { baseListItemId, comparisonListItemId } = action.payload;
+      const baseListItemIndex = state.listItems.findIndex(
+        (listItem: ListItemInterface) => listItem.id === baseListItemId
+      );
+      if (baseListItemIndex !== -1) {
+        const comparisonListItemIndex = state.listItems[
+          baseListItemIndex
+        ].comparisonProducts.findIndex(
+          (listItem: ListItemInterface) => listItem.id === comparisonListItemId
+        );
+        if (comparisonListItemIndex !== -1) {
+          state.listItems[baseListItemIndex].comparisonProducts.splice(
+            comparisonListItemIndex,
+            1
+          );
+        }
+      }
+    },
   },
 });
 
@@ -145,6 +192,8 @@ export const {
   updateListItemQuantity,
   pushListItem,
   addListAndListItem,
+  addComparisonListItem,
+  removeComparisonListItem,
 } = listsSlice.actions;
 
 export default listsSlice.reducer;
