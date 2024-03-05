@@ -124,7 +124,7 @@ class ListsApi {
           isLoggedOut: true,
         };
       }
-      
+
       if (!currentList?.listItems?.length)
         return {
           found: false,
@@ -210,5 +210,15 @@ class ListsApi {
 
     return response;
   };
+
+  async getListsAnalysis(listId: string) {
+    try {
+      const request = await API.get(`v1/lists/${listId}/analysis`);
+      return request.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }
 export default new ListsApi();

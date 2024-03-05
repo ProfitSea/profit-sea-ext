@@ -119,7 +119,9 @@ const Compare: React.FC<CompareProps> = ({ currentList, setError }) => {
   return (
     <>
       {currentList.itemsCount === 0 ? (
-        <Home />
+        <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
+          <p className="flex flex-1 justify-center items-center">No Products to Compare</p>
+        </div>
       ) : (
         <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
           {loading ? (

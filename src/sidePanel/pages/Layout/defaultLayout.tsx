@@ -58,7 +58,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
       case Pages.LIST_BUILDER:
         return <ListBuilder currentList={currentList} setError={setError} />;
       case Pages.PRODUCTS_ANALYSIS:
-        return <ProductsAnalysis />;
+        return <ProductsAnalysis currentList={currentList} setError={setError} />;
       case Pages.PRODUCTS_TYPE:
         return <ProductsType currentList={currentList} setError={setError} />;
       case Pages.COMPARE:
