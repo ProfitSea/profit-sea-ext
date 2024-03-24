@@ -18,6 +18,7 @@ import { useAppSelector } from "../../redux/store";
 import ProductDescription from "./ProductDescription";
 import ProductImage from "./ProductImage";
 import ProductListItem from "./ProductListItem";
+import ProductSearch from "./ProductSearch";
 
 interface ProductsListModalProps {
   open: boolean;
@@ -38,6 +39,7 @@ const ProductsListModal: React.FC<ProductsListModalProps> = ({
   addComparisonListItem,
 }) => {
   const handleClose = () => setOpen(false);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const { product } = listItem;
   const [selectedProduct, setSelectedProduct] = React.useState<string>("");
   const listItems = useAppSelector(listItemsSelector);
@@ -46,6 +48,20 @@ const ProductsListModal: React.FC<ProductsListModalProps> = ({
       setSelectedProduct(event.target.value);
     },
     []
+  );
+
+  const handleSearchChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(event.target.value.toLowerCase());
+    },
+    []
+  );
+
+  const filteredItems = listItems.filter(
+    (item) =>
+      item.product.description.toLowerCase().includes(searchTerm) ||
+      item.product.brand.toLowerCase().includes(searchTerm) ||
+      item.product.productNumber.toLowerCase().includes(searchTerm)
   );
 
   return (
@@ -63,17 +79,29 @@ const ProductsListModal: React.FC<ProductsListModalProps> = ({
           <ProductDescription {...product} />
         </div>
       </DialogTitle>
-      <DialogContent dividers={true}>
-        <Box>
-          {listItems.length > 0 && (
-            <FormControl component="fieldset" fullWidth>
-              <FormLabel component="legend">Select a product:</FormLabel>
+      <DialogContent
+        sx={{ padding: "10px 16px", minHeight: '500px' }}
+        dividers={true}
+      >
+        {/* I want to have an search bar */}
+        <ProductSearch onChange={handleSearchChange} />
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center", // Centers content when few items are present
+          }}
+        >
+          <FormControl component="fieldset" fullWidth>
+            <FormLabel component="legend">Select a product:</FormLabel>
+            {filteredItems.length > 0 ? (
               <RadioGroup
                 aria-label="product"
                 name="product"
                 onChange={handleSelectChange}
               >
-                {listItems.map((item) => {
+                {filteredItems.map((item) => {
                   if (item.id === listItem.id) {
                     return null;
                   }
@@ -89,8 +117,12 @@ const ProductsListModal: React.FC<ProductsListModalProps> = ({
                   );
                 })}
               </RadioGroup>
-            </FormControl>
-          )}
+            ) : (
+              <div className="flex items-center justify-center h-[300px]">
+                No products found
+              </div>
+            )}
+          </FormControl>
         </Box>
       </DialogContent>
       <DialogActions>

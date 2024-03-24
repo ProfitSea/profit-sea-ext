@@ -16,7 +16,7 @@ export const buttonsData: Record<Pages, ButtonData> = {
     navigateTo: Pages.PRODUCTS_TYPE,
   },
   [Pages.PRODUCTS_TYPE]: {
-    title: "Continue to Analysis",
+    title: "Continue to Comparison",
     navigateTo: Pages.PRODUCTS_ANALYSIS,
   },
   [Pages.COMPARE]: {
