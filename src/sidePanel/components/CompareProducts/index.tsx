@@ -85,7 +85,7 @@ const CompareProducts: React.FC<CompareProductsProps> = ({ listItem }) => {
         <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
           <ProductImage src={product.imgSrc} />
           <ProductDescription
-            vendor={product.vendor}
+            vendor={product.vendor.name}
             brand={product.brand}
             description={product.description}
             productNumber={product.productNumber}
@@ -135,7 +135,7 @@ const CompareProducts: React.FC<CompareProductsProps> = ({ listItem }) => {
                   <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
                     <ProductImage src={item.product.imgSrc} />
                     <ProductDescription
-                      vendor={item.product.vendor}
+                      vendor={item.product.vendor.name}
                       brand={item.product.brand}
                       description={item.product.description}
                       productNumber={item.product.productNumber}

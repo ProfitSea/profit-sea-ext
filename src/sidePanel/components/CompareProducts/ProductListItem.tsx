@@ -21,10 +21,10 @@ const ProductListItem: React.FC<ProductListItemProps> = React.memo(({ item }) =>
       </div>
       <div className="w-[150px] grow shrink basis-0 flex-col justify-center items-start inline-flex">
         <div
-          title={item.product.vendor}
+          title={item.product.vendor.name}
           className="self-stretch text-zinc-800 text-[12px] font-semibold font-['SF Pro Text'] leading-[1.4] text-ellipsis overflow-hidden whitespace-nowrap"
         >
-          {item.product.vendor}
+          {item.product.vendor.name}
         </div>
         <div
           title={item.product.description}

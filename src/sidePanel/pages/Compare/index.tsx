@@ -77,7 +77,7 @@ const Compare: React.FC<CompareProps> = ({ currentList, setError }) => {
       Sysco: 0,
       all: listItems.length, // Set the count for "All Vendors" to the total length of listItems
       ...listItems.reduce((acc: any, item: ListItemInterface) => {
-        const vendorName = item.product.vendor;
+        const vendorName = item.product.vendor.name;
         acc[vendorName] = (acc[vendorName] || 0) + 1;
         return acc;
       }, {}),
@@ -112,7 +112,7 @@ const Compare: React.FC<CompareProps> = ({ currentList, setError }) => {
   // Memoized filtered list items
   const filteredListItems = useMemo(() => {
     return listItems.filter(
-      (item) => vendorFilter === "all" || item.product.vendor === vendorFilter
+      (item) => vendorFilter === "all" || item.product.vendor.name === vendorFilter
     );
   }, [listItems, vendorFilter]);
 

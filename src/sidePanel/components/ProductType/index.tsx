@@ -17,7 +17,7 @@ const ProductType: React.FC<ProductTypeProps> = ({ listItem }) => {
         <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
           <ProductImage src={product.imgSrc} />
           <ProductDescription
-            vendor={product.vendor}
+            vendor={product.vendor.name}
             brand={product.brand}
             description={product.description}
             productNumber={product.productNumber}

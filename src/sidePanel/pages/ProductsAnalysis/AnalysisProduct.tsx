@@ -45,7 +45,7 @@ const AnalysisProduct: React.FC<AnalysisProductProps> = ({ listItem }) => {
               </div>
               <div className="grow shrink basis-0 flex-col justify-center items-start inline-flex">
                 <div className="self-stretch text-zinc-800 text-[13px] font-semibold leading-tight">
-                  {recommendedListItem.product.vendor}
+                  {recommendedListItem.product.vendor.name}
                   <br />
                   {recommendedListItem.product.brand}
                   <br />
@@ -113,7 +113,7 @@ const AnalysisProduct: React.FC<AnalysisProductProps> = ({ listItem }) => {
             </div>
             <div className="grow shrink basis-0 flex-col justify-center items-start inline-flex">
               <div className="self-stretch text-zinc-800 text-[13px] font-semibold leading-tight">
-                {rejectedListItem.product.vendor}
+                {rejectedListItem.product.vendor.name}
                 <br />
                 {rejectedListItem.product.brand}
                 <br />
@@ -161,7 +161,7 @@ const AnalysisProduct: React.FC<AnalysisProductProps> = ({ listItem }) => {
             </div>
             <div className="grow shrink basis-0 flex-col justify-center items-start inline-flex">
               <div className="self-stretch text-zinc-800 text-[13px] font-semibold leading-tight">
-                {`${recommendedListItem.product.vendor}`}
+                {`${recommendedListItem.product.vendor.name}`}
                 <br />
                 {`${recommendedListItem.product.brand}`}
                 <br />

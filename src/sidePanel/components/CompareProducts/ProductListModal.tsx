@@ -76,11 +76,17 @@ const ProductsListModal: React.FC<ProductsListModalProps> = ({
       <DialogTitle id="scroll-dialog-title">
         <div className="self-stretch justify-start items-center gap-3.5 inline-flex">
           <ProductImage src={product.imgSrc} />
-          <ProductDescription {...product} />
+          <ProductDescription
+            vendor={product.vendor.name}
+            brand={product.brand}
+            description={product.description}
+            productNumber={product.productNumber}
+            packSize={product.packSize}
+          />
         </div>
       </DialogTitle>
       <DialogContent
-        sx={{ padding: "10px 16px", minHeight: '500px' }}
+        sx={{ padding: "10px 16px", minHeight: "500px" }}
         dividers={true}
       >
         {/* I want to have an search bar */}

@@ -28,7 +28,7 @@ export interface RecommendationInterface {
 
 export interface ProductInterface {
   saleUnits: string[];
-  vendor: string;
+  vendor: Vendor;
   imgSrc: string; // Updated to reflect nullable field
   brand: string;
   description: string;
@@ -48,7 +48,7 @@ export interface ListItemInterface {
   list: string;
   product: ProductInterface;
   saleUnitQuantities: SaleUnitQuantityInterface[];
-  vendor: string;
+  vendor: Vendor;
   id: string;
 }
 export interface ListInterface {
@@ -61,4 +61,9 @@ export interface ListInterface {
 
 export interface RootObject {
   list: ListInterface;
+}
+
+export interface Vendor {
+  name: string;
+  id: string;
 }
