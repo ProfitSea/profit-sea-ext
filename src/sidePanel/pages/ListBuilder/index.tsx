@@ -1,145 +1,146 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import productsApi from "../../../api/productsApi";
-import { productTagsData } from "../../../utils/data/productTags.data";
-import { vendorsTagsData } from "../../../utils/data/vendorTags.data";
-import ProductInterface from "../../../utils/product.interface";
-import BreadCrumbs from "../../components/BreadCrumbs";
-import CustomButton from "../../components/CustomButton";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import Home from "../Home";
+import listsApi from "../../../api/listsApi";
 import CustomDivider from "../../components/CustomDivider";
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
-import Tags from "../../components/Tags";
-import Product from "./Product";
+import {
+  ListInterface,
+  ListItemInterface,
+} from "../../../utils/types/product-response.type";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import {
+  setVendorTagsCount,
+  vendorFilterSelector,
+} from "../../redux/app/appSlice";
+import { setListItems as setListItemsInRedux } from "../../redux/lists/listsSlice";
+import Product from "../../components/Product";
+import { listItemsSelector } from "../../redux/lists/listsSlice";
+import { MessagingActions } from "../../../utils/actions/messagingActions.enum";
 
-const defaultProducts: ProductInterface[] = [];
+interface ListBuilderProps {
+  currentList: any;
+  setError: (error: string) => void;
+}
 
-const ListBuilder = () => {
-  const navigate = useNavigate();
+const ListBuilder: React.FC<ListBuilderProps> = ({ currentList, setError }) => {
+  const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState<Boolean>(false);
 
-  const [products, setProducts] = useState(defaultProducts);
-  const [filteredProducts, setFilteredProducts] = useState(defaultProducts);
-  const [loading, setLoading] = useState(false);
-  const [vendorTags, setVendorTags] = useState(vendorsTagsData);
-  const [productTags, setProductTags] = useState(productTagsData);
-  const [vendorFilter, setVendorFilter] = useState<string | null>("all");
-  const [productFilter, setProductFilter] = React.useState<string | null>(null);
+  const vendorFilter = useAppSelector(vendorFilterSelector);
+  const listItems = useAppSelector(listItemsSelector);
+  const setListItems = (listItems: ListItemInterface[]) => {
+    dispatch(setListItemsInRedux(listItems));
+  };
+  const prevListRef = useRef<ListInterface>();
 
-  const fetchProducts = useCallback(async () => {
+  const fetchListItems = useCallback(async (listId: string) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await productsApi.getProducts({});
-      setProducts(res.results);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
+      const listItemsData = await listsApi.getListItemsByListId(listId);
+      setListItems(listItemsData);
+    } catch (err: any) {
+      console.error("ListBuilder", err);
+      setError(`Failed to fetch list items:  ${err.message}`);
+    } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchProducts();
+    if (!currentList.id) return;
 
-    const messageListener = (request: any) => {
-      if (request.action === "refreshListBuilderProducts") {
-        console.log("refreshing list builder products");
-        fetchProducts();
+    const prevList = prevListRef.current;
+
+    if (prevList?.id) {
+      if (!currentList.id) {
+        setListItems([]);
+      } else if (prevList.id !== currentList.id) {
+        fetchListItems(currentList.id);
       }
+    }
+    if (!prevList?.id && currentList.id) {
+      fetchListItems(currentList.id);
+    }
+
+    // Update the ref to the current value
+    prevListRef.current = currentList;
+  }, [currentList, fetchListItems]);
+
+  const updateTagsCount = useCallback(() => {
+    const tags = {
+      "US Foods": 0,
+      Sysco: 0,
+      all: listItems.length, // Set the count for "All Vendors" to the total length of listItems
+      ...listItems.reduce((acc: any, item: ListItemInterface) => {
+        const vendorName = item.product.vendor.name;
+        acc[vendorName] = (acc[vendorName] || 0) + 1;
+        return acc;
+      }, {}),
     };
-
-    chrome.runtime.onMessage.addListener(messageListener);
-    return () => chrome.runtime.onMessage.removeListener(messageListener);
-  }, [fetchProducts]);
+    return tags;
+  }, [listItems]);
 
   useEffect(() => {
-    const newFilteredProducts =
-      vendorFilter === "all"
-        ? products
-        : products.filter((product) => product.vendor === vendorFilter);
-    setFilteredProducts(newFilteredProducts);
-  }, [vendorFilter, products]);
+    const tagsCount = updateTagsCount();
+    Object.entries(tagsCount).forEach(([vendorName, count]) => {
+      dispatch(setVendorTagsCount({ vendorName, count: count as number }));
+    });
+    if (listItems?.length > 0) {
+      chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (
+          message.action === MessagingActions.UPDATE_LIST_ITEM_IN_LIST_ITEMS
+        ) {
+          const updatedListItems = listItems.map(
+            (listItem: ListItemInterface) => {
+              if (listItem.id === message.listItem.id) {
+                return message.listItem;
+              }
+              return listItem;
+            }
+          );
+          setListItems(updatedListItems);
+        }
+      });
+    }
+  }, [listItems, updateTagsCount, dispatch]);
 
-  useEffect(() => {
-    const updatedVendorTags = vendorTags.map((tag) => ({
-      ...tag,
-      count:
-        tag.filterValue === "all"
-          ? products.length
-          : products.filter((product) => product.vendor === tag.filterValue)
-              .length,
-    }));
-    setVendorTags(updatedVendorTags);
-  }, [products]);
-
-  const deleteProduct = useCallback(
-    async (productId: string) => {
-      try {
-        await productsApi.deleteProduct(productId);
-        fetchProducts();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    [fetchProducts]
-  );
+  // Memoized filtered list items
+  const filteredListItems = useMemo(() => {
+    return listItems.filter(
+      (item) => vendorFilter === "all" || item.product.vendor.name === vendorFilter
+    );
+  }, [listItems, vendorFilter]);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header refresh refreshOnClick={fetchProducts} />
-      <div className="flex-1 flex flex-col">
-        <CustomDivider orientation="horizontal" />
-        <div className="flex-none h-[40px] flex items-center justify-start px-[8px] gap-[12px]">
-          <p className="text-lg">Main Order Guide (72 Items)</p>
-          <img src="/assets/icons/pen.png" className="w-[18px]" alt="edit" />
-        </div>
-        <CustomDivider orientation="horizontal" />
-        <BreadCrumbs />
-        <CustomDivider orientation="horizontal" />
-        <div className="flex-none h-[100px] bg-[#F5F5F5] flex flex-col items-start justify-center px-[8px] gap-[12px] overflow-x-auto">
-          <Tags
-            tags={vendorTags}
-            setTags={setVendorTags}
-            setFilter={setVendorFilter}
-          />
-          <Tags
-            tags={productTags}
-            setTags={setProductTags}
-            setFilter={setProductFilter}
-          />
-        </div>
-        <CustomDivider orientation="horizontal" />
+    <>
+      {currentList.itemsCount === 0 ? (
+        <Home />
+      ) : (
         <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
           {loading ? (
             <p className="flex flex-1 justify-center items-center">
               Loading...
             </p>
-          ) : filteredProducts.length > 0 ? (
-            filteredProducts.map((product, index) => (
+          ) : filteredListItems.length > 0 ? (
+            filteredListItems.map((item, index) => (
               <div key={index}>
-                <Product product={product} deleteProduct={deleteProduct} />
+                <Product listItem={item} />
                 <CustomDivider orientation="horizontal" />
               </div>
             ))
           ) : (
             <p className="flex flex-1 justify-center items-center">
-              No products
+              No products with this filter
             </p>
           )}
         </div>
-        <CustomDivider orientation="horizontal" />
-        <div className="h-[60px] px-[10px] flex items-center justify-center">
-          <CustomButton
-            title="Continue to Product Type"
-            bgColor="#FBBB00"
-            textColor="white"
-            onClick={() => {
-              navigate("/productsType");
-            }}
-          />
-        </div>
-      </div>
-      <Footer />
-    </div>
+      )}
+    </>
   );
 };
 

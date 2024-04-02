@@ -1,15 +1,26 @@
-import React from "react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import ProductsAnalysis from "./pages/ProductsAnalysis";
+import React, { useEffect } from "react";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import DefaultLayout from "./pages/Layout/defaultLayout";
+import { MessagingActions } from "../utils/actions/messagingActions.enum";
 
 const Login = React.lazy(() => import("./pages/login"));
-const Home = React.lazy(() => import("./pages/Home"));
-const ListBuilder = React.lazy(() => import("./pages/ListBuilder"));
-const ProductsType = React.lazy(() => import("./pages/ProductsType"));
 const ProtectedRoute = React.lazy(() => import("./pages/ProtectedRoute"));
 
 const SidePanel = () => {
+  useEffect(() => {
+    chrome.runtime.connect({ name: "mySidepanel" });
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.type === MessagingActions.REFRESH_SIDEPANEL_AFTER_LOGIN) {
+        // Implement your logic here to refresh the side panel
+        location.reload(); // This is a simple way to refresh the current page
+      }
+    });
+
+    return () => {
+    };
+  }, []);
+
   return (
     <React.Suspense
       fallback={
@@ -21,34 +32,10 @@ const SidePanel = () => {
       <MemoryRouter initialEntries={["/login"]}>
         <Routes>
           <Route
-            path="home"
+            path="app"
             element={
               <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="listbuilder"
-            element={
-              <ProtectedRoute>
-                <ListBuilder />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="productsType"
-            element={
-              <ProtectedRoute>
-                <ProductsType />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="productsAnalysis"
-            element={
-              <ProtectedRoute>
-                <ProductsAnalysis />
+                <DefaultLayout />
               </ProtectedRoute>
             }
           />

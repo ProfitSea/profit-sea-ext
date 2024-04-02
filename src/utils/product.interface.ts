@@ -11,7 +11,6 @@ interface ProductInterface {
   productNumber: string;
   packSize: string;
   prices: Price[];
-  quantity: number | 0;
   id?: string;
 }
 

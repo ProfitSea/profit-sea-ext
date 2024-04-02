@@ -7,7 +7,7 @@ module.exports = {
   entry: {
     sidePanel: path.join(srcDir, "sidePanel", "index.tsx"),
     apiKeyVerification: path.join(srcDir, "apiKeyVerification", "index.tsx"),
-    background: path.join(srcDir, "background.ts"),
+    background: path.join(srcDir, "background", "background.ts"),
     us_foods_content_script: path.join(
       srcDir,
       "content_script",

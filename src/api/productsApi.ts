@@ -1,6 +1,5 @@
 import ProductInterface from "../utils/product.interface";
-import { FilterProductsType } from "../utils/types/FilterProducts.type";
-import API, { toQueryString } from "./api";
+import API from "./api";
 
 const routes = {
   create: "v1/products",
@@ -13,17 +12,6 @@ class ProductsApi {
     try {
       const request = await API.post(routes.create, product);
       return request;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
-
-  async getProducts(filterProducts: FilterProductsType) {
-    try {
-      const queryString = toQueryString({ ...filterProducts, limit: 100 });
-      const request = await API.get(`${routes.get}?${queryString}`);
-      return request.data;
     } catch (error) {
       console.log(error);
       throw error;

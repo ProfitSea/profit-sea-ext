@@ -5,7 +5,7 @@ export const productTagsData: TagType[] = [
     active: true,
     count: 0,
     icon: "anchor",
-    filterValue: null,
+    filterValue: "123",
   },
   {
     id: 2,
@@ -13,7 +13,7 @@ export const productTagsData: TagType[] = [
     active: false,
     count: 0,
     icon: "anchor",
-    filterValue: null,
+    filterValue: "123",
   },
   {
     id: 3,
@@ -21,6 +21,6 @@ export const productTagsData: TagType[] = [
     active: false,
     count: 0,
     icon: "anchor",
-    filterValue: null,
+    filterValue: "123",
   },
 ];

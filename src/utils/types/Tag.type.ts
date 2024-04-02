@@ -2,7 +2,7 @@ type TagType = {
     id: number;
     name: string;
     active: boolean;
-    filterValue: string | null,
+    filterValue: string,
     count: number;
     icon: string;
 }

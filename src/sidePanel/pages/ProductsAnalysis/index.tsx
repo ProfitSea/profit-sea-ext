@@ -1,65 +1,64 @@
-import React from "react";
-import { productTagsData } from "../../../utils/data/productTags.data";
-import { vendorsTagsData } from "../../../utils/data/vendorTags.data";
-import BreadCrumbs from "../../components/BreadCrumbs";
-import CustomButton from "../../components/CustomButton";
+import { CircularProgress } from "@mui/material";
+import React, { useCallback, useEffect, useState } from "react";
+import listsApi from "../../../api/listsApi";
 import CustomDivider from "../../components/CustomDivider";
-import Footer from "../../components/Footer";
-import Header from "../../components/Header";
-import Tags from "../../components/Tags";
 import AnalysisProduct from "./AnalysisProduct";
 
-const ProductsAnalysis = () => {
-  const [vendorTags, setVendorTags] = React.useState(vendorsTagsData);
-  const [productTags, setProductTags] = React.useState(productTagsData);
-  const [vendorFilter, setVendorFilter] = React.useState<string | null>(null);
-  const [productFilter, setProductFilter] = React.useState<string | null>(null);
+interface ProductsAnalysisProps {
+  currentList: any;
+  setError: (error: string) => void;
+}
 
-  return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <div className="flex-1 flex flex-col">
-        <CustomDivider orientation="horizontal" />
-        <div className="flex-none h-[40px] flex items-center justify-start px-[8px] gap-[12px]">
-          <p className="text-lg">Main Order Guide (72 Items)</p>
-          <img src="/assets/icons/pen.png" className="w-[18px]" alt="edit" />
-        </div>
-        <CustomDivider orientation="horizontal" />
-        <BreadCrumbs />
-        <CustomDivider orientation="horizontal" />
-        <div className="flex-none h-[100px] bg-[#F5F5F5] flex flex-col items-start justify-center px-[8px] gap-[12px] overflow-x-auto">
-          <Tags
-            tags={vendorTags}
-            setTags={setVendorTags}
-            setFilter={setVendorFilter}
-          />
-          <Tags
-            tags={productTags}
-            setTags={setProductTags}
-            setFilter={setProductFilter}
-          />
-        </div>
-        <CustomDivider orientation="horizontal" />
-        <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
-          <AnalysisProduct />
-          <CustomDivider orientation="horizontal" />
-          <AnalysisProduct />
-          <CustomDivider orientation="horizontal" />
-          <AnalysisProduct />
-          <CustomDivider orientation="horizontal" />
-          <AnalysisProduct />
-        </div>
-        <CustomDivider orientation="horizontal" />
-        <div className="h-[60px] px-[10px] flex items-center justify-center">
-          <CustomButton
-            title="Continue to Analysis"
-            bgColor="#FBBB00"
-            textColor="white"
-            onClick={() => {}}
-          />
+const ProductsAnalysis: React.FC<ProductsAnalysisProps> = ({
+  currentList,
+  setError,
+}) => {
+  const [loading, setLoading] = useState<Boolean>(false);
+  const [analyzedList, setAnalyzedList] = useState<[]>();
+
+  const getAnalysis = useCallback(async (listId: string) => {
+    setLoading(true);
+    try {
+      const data = await listsApi.getListsAnalysis(listId);
+      console.log(data);
+      setAnalyzedList(data.list);
+    } catch (err: any) {
+      console.error(err.message);
+      setError(`Failed to fetch list items:  ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!currentList.id) return;
+    getAnalysis(currentList.id);
+  }, [currentList.id, getAnalysis]);
+
+  if (loading) {
+    return (
+      <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
+        <div className="flex flex-1 justify-center items-center">
+          <CircularProgress className="color-[#F5F5F5] text-sm" />
         </div>
       </div>
-      <Footer />
+    );
+  }
+
+  return (
+    <div className="bg-[#F5F5F5] flex-grow flex flex-col overflow-y-auto">
+      {analyzedList?.length === 0 ? (
+        <div className="flex flex-1 justify-center items-center">
+          <p className="text-sm text-gray-500">No products to analyze</p>
+        </div>
+      ) : (
+        analyzedList?.map((item: any) => (
+          <React.Fragment key={item.id}>
+            <AnalysisProduct listItem={item} />
+            <CustomDivider orientation="horizontal" />
+          </React.Fragment>
+        ))
+      )}
     </div>
   );
 };
