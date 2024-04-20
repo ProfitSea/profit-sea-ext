@@ -1,3 +1,4 @@
+import { CircularProgress } from "@mui/material";
 import React, {
   useCallback,
   useEffect,
@@ -12,9 +13,10 @@ import ErrorNotification from "../../components/ErrorNotification";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import ListName from "../../components/ListName";
+import SavingsCard from "../../components/PurchaseList/SavingsCard";
 import TagFilters from "../../components/TagFilters";
+import PurchaseList from "../PurchaseList";
 import useApi from "./useList";
-import { CircularProgress } from "@mui/material";
 
 const ListBuilder = React.lazy(() => import("../ListBuilder"));
 const ProductsAnalysis = React.lazy(() => import("../ProductsAnalysis"));
@@ -58,11 +60,15 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
       case Pages.LIST_BUILDER:
         return <ListBuilder currentList={currentList} setError={setError} />;
       case Pages.PRODUCTS_ANALYSIS:
-        return <ProductsAnalysis currentList={currentList} setError={setError} />;
+        return (
+          <ProductsAnalysis currentList={currentList} setError={setError} />
+        );
       case Pages.PRODUCTS_TYPE:
         return <ProductsType currentList={currentList} setError={setError} />;
       case Pages.COMPARE:
         return <Compare currentList={currentList} setError={setError} />;
+      case Pages.PURCHASE_LIST:
+        return <PurchaseList currentList={currentList} setError={setError} />;
       default:
         return <ListBuilder currentList={currentList} setError={setError} />;
     }
@@ -129,10 +135,14 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = () => {
           <CustomDivider orientation="horizontal" />
           <BreadCrumbs page={page} setPage={setPage} />
           <CustomDivider orientation="horizontal" />
-          <TagFilters
-            setVendorFilter={setVendorFilter}
-            setProductFilter={setProductFilter}
-          />
+          {page === Pages.PURCHASE_LIST ? (
+            <SavingsCard />
+          ) : (
+            <TagFilters
+              setVendorFilter={setVendorFilter}
+              setProductFilter={setProductFilter}
+            />
+          )}
           <CustomDivider orientation="horizontal" />
           {renderPageContent()}
           <CustomDivider orientation="horizontal" />

@@ -21,7 +21,7 @@ export interface SaleUnitQuantityInterface {
 }
 
 export interface RecommendationInterface {
-  priceSavings: string | null;
+  priceSaving: string | null;
   reason: string | null;
   listItemId: string;
 }

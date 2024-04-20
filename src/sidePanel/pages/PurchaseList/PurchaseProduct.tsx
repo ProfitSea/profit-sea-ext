@@ -5,11 +5,11 @@ import {
 } from "../../../utils/types/product-response.type";
 import SaleUnitQuantity from "../../components/ProductAnalysis/SaleUnitQuantity";
 
-interface AnalysisProductProps {
+interface PurchaseProductProps {
   listItem: ListItemInterface;
 }
 
-const AnalysisProduct: React.FC<AnalysisProductProps> = ({ listItem }) => {
+const PurchaseProduct: React.FC<PurchaseProductProps> = ({ listItem }) => {
   const [isSelected, setIsSelected] = React.useState(false);
 
   const recommendedListItem =
@@ -226,4 +226,4 @@ const AnalysisProduct: React.FC<AnalysisProductProps> = ({ listItem }) => {
   );
 };
 
-export default AnalysisProduct;
+export default PurchaseProduct;

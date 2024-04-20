@@ -3,6 +3,7 @@ export enum Pages {
   PRODUCTS_TYPE = "productsType",
   COMPARE = "compare",
   PRODUCTS_ANALYSIS = "productsAnalysis",
+  PURCHASE_LIST = "puchaseList",
 }
 
 interface ButtonData {
@@ -24,7 +25,12 @@ export const buttonsData: Record<Pages, ButtonData> = {
     navigateTo: Pages.COMPARE,
   },
   [Pages.PRODUCTS_ANALYSIS]: {
-    title: "Accept and Create Order",
+    title: "Generate or Update Purchase List",
+    navigateTo: Pages.PURCHASE_LIST,
+  },
+
+  [Pages.PURCHASE_LIST]: {
+    title: "Create Order",
     navigateTo: Pages.PRODUCTS_ANALYSIS,
   },
 };
@@ -46,6 +52,10 @@ export const breadcrumbsData = [
     label: "Product Analysis",
     pageName: Pages.PRODUCTS_ANALYSIS,
   },
+  {
+    label: "Purchase List",
+    pageName: Pages.PURCHASE_LIST,
+  },
 ];
 
 export const pageToActiveIndex: Record<Pages, number> = {
@@ -53,4 +63,5 @@ export const pageToActiveIndex: Record<Pages, number> = {
   [Pages.PRODUCTS_TYPE]: 1,
   [Pages.COMPARE]: 2,
   [Pages.PRODUCTS_ANALYSIS]: 3,
+  [Pages.PURCHASE_LIST]: 4,
 };
